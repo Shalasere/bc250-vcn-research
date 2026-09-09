@@ -2,7 +2,20 @@
 
 **Enable VCN (Video Core Next 2.0.3) hardware on AMD BC-250 by overcoming firmware-imposed isolation gates.**
 
-## Status
+## Latest Status: 2026-09-09
+
+📄 **`research/COMMUNITY_REPORT_2026_09_09.md`** — Updated framing after two of
+the four hypotheses in the 09-06 report were independently tested and both
+shown insufficient from host-side software. Both succeed from PSP context.
+The binding blocker has been narrowed to a **single byte of PSP boot-config**
+at PSP kernel RAM address `0x6007`. Silicon proven functional
+(`UVD_VERSION = 0x0002001B` from PSP hook).
+
+Read the 09-09 update first if you're new here; the 09-06 report below is
+preserved as a historical snapshot and remains valid for its SMU-side proof
+work, but its hypothesis ranking has been superseded.
+
+## Status (2026-09-06)
 
 🔓 **Breakthrough Achieved (September 2026)**
 

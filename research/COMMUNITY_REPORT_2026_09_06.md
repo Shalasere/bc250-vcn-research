@@ -1,5 +1,14 @@
 # BC-250 VCN Enablement: Notable Progress Report (2026-09-06)
 
+> **⚠ UPDATED 2026-09-09** — this report's four hypotheses (A/B/C/D) were
+> subsequently tested by another researcher. Hypotheses A and B (rated HIGH
+> and VERY HIGH here) were both shown *insufficient* from host-side software,
+> though both succeed from PSP context. Hypothesis D (rated LOW here) turned
+> out to be closer to the actual answer: the binding gate is a single-byte
+> PSP boot-config value. See **`COMMUNITY_REPORT_2026_09_09.md`** for the
+> revised framing. This document is preserved as a historical snapshot; the
+> SMU-side proof work below remains valid.
+
 ## Status: Breakthrough — Root Blocker Isolated & Measurable
 
 **TL;DR:** VCN is **not impossible**. The SMU-side power sequencing is now **fully working and persistent**. The remaining blocker is a **specific, measurable root-level isolation gate** that survives all SMU sequencing. This session transformed the problem from theoretical to actionable.
