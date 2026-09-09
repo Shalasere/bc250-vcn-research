@@ -250,3 +250,76 @@ we thought, but still gated on PSP-side work.
 BIOS-side fix to the GFX-KIQ regression in P's current build  
 **Status:** Silicon proven functional; blocking mechanism identified; near-term
 video-acceleration alternative shipping
+
+---
+
+## Addendum: Direct SMU message probe on stock robin_1 (2026-09-09, later)
+
+After publishing the above, this repo's author ran a direct SMU probe on their
+own stock BC-250 board (BIOS P3.00, SMU robin_1 v0.58.6.0) using the
+`bc250-smu-unlock` mailbox API. Two findings that **partially contradict this
+repo's earlier work**, followed by a "not the missing lever" negative result.
+
+### Finding: Q3 handlers 0x19 and 0x1A DO exist on robin_1
+
+`BC250_VCN_FINDINGS.md` earlier stated the robin_1 SMU has "zero VCN / VCLK /
+DCLK / PowerUpVcn / JPEG" messages in its 338-message table. Direct probe:
+
+```
+Q0 msg 0x02 GetSmuVersion        -> status=0x01(OK) arg0=0x00580600  (v0.58.6.0)
+Q0 msg 0x3D GetEnabledFeatures   -> status=0x01(OK) arg0=0xDD602C7D
+Q3 msg 0x18 (safety)             -> status=0x01(OK) arg0=0x00000000
+Q3 msg 0x19 (claim: PowerUpVcn)  -> status=0x01(OK) arg0=0x00000001
+Q3 msg 0x19 arg=0                -> status=0x01(OK) arg0=0x00000000
+Q3 msg 0x1A (claim: PowerDownVcn)-> status=0x01(OK) arg0=0x00000000
+```
+
+Status codes: `0x01=OK, 0xFE=UNKNOWN_CMD, 0xFF=FAILED`. All three Q3 messages
+returned `OK`, not `UNKNOWN_CMD`. **The handlers exist.** This repo's earlier
+message-table enumeration missed them.
+
+The GetEnabledFeatures bitmask `0xDD602C7D` has bit 11 (VCN DPM per the
+community's convention) SET.
+
+### Finding: msg 0x19 arg=1 does not power up VCN by itself
+
+Second probe, with strict "no VCN MMIO access" discipline (previous probe
+hung the board, requiring physical power-cycle). Read the safe/documented
+SMN registers before and after `Q3 msg 0x19 arg=1`, and inspect the
+kernel's own PM view.
+
+```
+                                Before        After
+  0x0050d6c (DF fabric-present)  0x000000F0   0x000000F0   (unchanged)
+  0x0116f200 (clock-IP enable)   0x00000000   0x00000000   (unchanged)
+  0x0115a820 (gfx clock sanity)  0x48140880   0x48140880   (unchanged)
+  Features mask (Q0 0x3D)        0xDD602C7D   0xDD602C7D   (unchanged)
+  amdgpu_pm_info VCN state       —            "Powered down"
+```
+
+**Nothing visible changed.** The handler exists and returns OK, but the DF
+fabric-present bit stays `0xf0`, the clock-IP enable stays 0, the feature
+mask is untouched, and the kernel driver still reports VCN as powered down.
+
+### What this means
+
+- The community claim "0x19 = PowerUpVcn (Xtensa addr 0x1E5B0)" is either
+  wrong about what 0x19 does, or the handler is a stub that acknowledges
+  the message without executing the tile power sequence.
+- **Sending msg 0x19 alone is NOT the missing lever.** Anyone running
+  `bc250-smu-unlock` today can send it and observe the same no-op result.
+- The board-wedge that followed the previous probe was almost certainly
+  caused by the SEQUENCE of `0x19 arg=1` then `0x19 arg=0` then `0x1A`,
+  not by `0x19 arg=1` in isolation.
+- The right next step is not another blind message probe. It's finding
+  which SMU function actually performs the tile-power sequence
+  (`power_gate_tile(3)`/`(4)` at Xtensa 0x1EE90 per the VCPU-state
+  analysis), and calling THAT via the code-execution primitive rather than
+  the standard mailbox.
+
+### Correction to publish
+
+The 2026-08 `BC250_VCN_FINDINGS.md` claim of "zero VCN messages in the
+robin_1 message table" needs correction: at minimum handlers at Q3 0x19
+and Q3 0x1A exist and return OK. Whether they *do* anything is a separate
+question the observation above tentatively answers "no, not on their own."
