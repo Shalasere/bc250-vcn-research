@@ -388,3 +388,67 @@ Recovery: physical PSU unplug. ATX relay cycle alone did NOT recover.
 - The target call `smu.call(0x1EE90)` was not exercised in this
   session because of the self-inflicted wedge. That test is still
   pending.
+
+### Third probe (retry): `smu.call(0x1EE90)` alone (2026-09-09, later)
+
+Fresh boot after physical unplug. Same sequence as the second probe
+but with zero intermediate calls: unlock → patch → straight to
+`smu.call(0x1EE90)` with no args.
+
+**Result: SMU wedged.** Same signature as the sanity-call wedge —
+`queue 3 msg 0x22 timed out` (msg 0x22 is the rpc.s trampoline the
+patch installs for `smu.call`). Kernel amdgpu logs `SMU: I'm not
+done with your previous command: SMN_C2PMSG_66:0x00000006
+SMN_C2PMSG_82:0x00000006` on repeat.
+
+**What this tells us:**
+
+The rpc trampoline dispatched into `0x1EE90` and never returned. That
+means:
+- The function IS real code (not a no-op stub). If it were empty, the
+  trampoline would return quickly and we'd get a clean return value.
+- Whatever `0x1EE90` does, it hangs when invoked with no args from
+  arbitrary context. Candidate causes: hardware polling loop waiting
+  for a state transition that never occurs; access to an
+  unpowered/unrouted device that hangs the SMU's own SMN bridge;
+  missing arg (ABI needs args); missing prior-call context (e.g. must
+  be preceded by other setup functions).
+- The community claim that `0x1EE90` is `vcn_power_sequence()` that
+  calls `power_gate_tile(3)/(4)` remains consistent with these
+  observations, but "just call this function" is NOT sufficient to
+  make it complete cleanly.
+
+**Ancillary observation: host-side vs SMU-side read of 0x50d6c differ**
+
+Pre-state, before the wedging call:
+
+```
+0x50d6c via host CPU-SMN bridge (amdgpu_regs_pcie): 0x00000070
+0x50d6c via SMU-side mem64 window (msg 0x2A):       0x000000F0
+```
+
+Same register, two masters, bit 7 differs. The 2026-08 analysis in
+this repo always read `0xf0` from the host bridge — this session's
+first two probes also read `0xf0` from the host bridge. On this third
+boot (fresh cold-cycle), host-side read is `0x70` while SMU-side
+still reads `0xF0`. One data point isn't enough to draw a conclusion
+but the master-dependence is worth noting for anyone
+cross-referencing register values from different tools.
+
+Recovery from this wedge: same as the second probe. ATX relay
+insufficient; physical PSU unplug required.
+
+### Where the research stands after this session
+
+- **Two negative results** (msg 0x19 no-op; smu.call(0x1EE90) hangs)
+  are published so nobody else spends time re-deriving them.
+- **One community-claim correction** (SRAM 0xCCB8 has bit 11 SET, not
+  0x00000000) is published so the "feature gate blocks it" hypothesis
+  can be revisited on other boards.
+- **Exploit chain is proven functional on stock BIOS P3.00** — anyone
+  else wanting to attempt SMU-side VCN work on this board revision
+  has a working baseline.
+- **`vcn_power_sequence()` at 0x1EE90 needs preconditions to complete**
+  — the next investigation would be either RE the function to find
+  its ABI/prereqs, or find the SMU code path that normally calls it
+  and replicate that context.
