@@ -323,3 +323,68 @@ The 2026-08 `BC250_VCN_FINDINGS.md` claim of "zero VCN messages in the
 robin_1 message table" needs correction: at minimum handlers at Q3 0x19
 and Q3 0x1A exist and return OK. Whether they *do* anything is a separate
 question the observation above tentatively answers "no, not on their own."
+
+### Second probe: unlock + patch + direct SRAM 0xCCB8 read (2026-09-09)
+
+Same board, second probe. This one ran `unlock.py` and `patcher.py` to
+gain arbitrary SMU-local memory access, then read PSP-side data
+directly. Two findings, then a self-inflicted SMU wedge.
+
+**Exploit chain works cleanly on stock robin_1 (BIOS P3.00).** Unlock
+succeeded (`dbg unlocked; SMU still alive (this was a triumph..)`),
+patcher applied all 60 patch sites cleanly (none previously applied).
+
+**Direct read of SRAM address 0xCCB8 (the community-cited "feature mask"
+address, per the VCPU-STATE-LOADING analysis).**
+
+```
+  SRAM 0xCCB4..0xCCC0 = f0730200 243c0200 d8de0100
+  SRAM 0xCCB8 (u32)   = 0x00023C24
+    bit 11 (VCN DPM)  = 1  (SET)
+```
+
+Compare to what other sources report:
+- Community VCPU-STATE-LOADING analysis: "feature mask at SRAM 0xCCB8
+  reads 0x00000000 (all features disabled, firewalled from host write)"
+- Q0 msg 0x3D `GetEnabledFeatures`: `0xDD602C7D` (bit 11 SET)
+- Direct SRAM 0xCCB8: `0x00023C24` (bit 11 SET)
+
+**All three sources disagree on the numeric value, but two of three agree
+that bit 11 (VCN DPM) is SET on stock robin_1.** The community's claim
+that VCN DPM is disabled and therefore `power_gate_tile(3)/(4)` are
+never called is FALSIFIED by direct SRAM readback on this board. The
+"unpowered VCN tile due to feature gate" theory needs revisiting — the
+feature mask says the feature IS enabled.
+
+This does not automatically mean `vcn_power_sequence()` at Xtensa
+0x1EE90 was ever actually called during boot — it just removes one of
+the community's hypothesized reasons for why it wouldn't have been.
+
+### Wedge (session author's error, for the record)
+
+Before attempting `smu.call(0x1EE90)` (the target of the run), the
+script also ran a "sanity" call: `smu.call(0x23744, 0x99)` intending to
+invoke `FN_CLK_DOMAIN_UNGATE` with a "harmless unknown" clock slot
+0x99. **This wedged the SMU** — 0x99 is not a valid slot, and the
+function does not validate its argument. Post-wedge, the target call
+never ran.
+
+Lesson: `rpc_demo.py` uses slots 0x16/0x17/0x18 for a reason. Do not
+invent arg values for these SMU internal functions without RE of the
+handler.
+
+Recovery: physical PSU unplug. ATX relay cycle alone did NOT recover.
+5VSB rail keeps some SMU state alive across a soft power-off.
+
+### Net for a community reader
+
+- The community's stated blocker for VCN tile power (feature mask =
+  0 at SRAM 0xCCB8) is not what the actual SRAM says on this board.
+  If you're going down that path, verify on your own board first.
+- The unlock + patcher chain works cleanly on stock robin_1 with
+  BIOS P3.00 — good baseline for anyone attempting SMU-level VCN work.
+- `FN_CLK_DOMAIN_UNGATE (0x23744)` does not validate arg. Don't call
+  it with untested slot values.
+- The target call `smu.call(0x1EE90)` was not exercised in this
+  session because of the self-inflicted wedge. That test is still
+  pending.
