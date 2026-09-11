@@ -2,18 +2,30 @@
 
 **Enable VCN (Video Core Next 2.0.3) hardware on AMD BC-250 by overcoming firmware-imposed isolation gates.**
 
-## Latest Status: 2026-09-09
+## Latest Status: 2026-09-11
 
-📄 **`research/COMMUNITY_REPORT_2026_09_09.md`** — Updated framing after two of
-the four hypotheses in the 09-06 report were independently tested and both
-shown insufficient from host-side software. Both succeed from PSP context.
-The binding blocker has been narrowed to a **single byte of PSP boot-config**
-at PSP kernel RAM address `0x6007`. Silicon proven functional
-(`UVD_VERSION = 0x0002001B` from PSP hook).
+📄 **`research/COMMUNITY_REPORT_2026_09_11.md`** — A firmware register audit
+found no code path in the borrowed Navi10/Renoir VCN firmware that touches
+BC-250's harvest register, and a live probe confirmed that register
+(`CC_UVD_HARVESTING` at `0x1f81c`) reads `3` and **stays `3` through a PSP
+secure write**. Separately, a missing KDB (key database) signing key was
+found and worked around via a transient interposer injection — firmware
+authentication now passes cleanly for two independent firmware candidates,
+but the VCPU still never executes. Authentication is solved; a hardware-level
+harvest latch is the current blocker.
 
-Read the 09-09 update first if you're new here; the 09-06 report below is
-preserved as a historical snapshot and remains valid for its SMU-side proof
-work, but its hypothesis ranking has been superseded.
+Read the 09-11 update first if you're new here. The 09-09 report is preserved
+below as a historical snapshot — its PSP-context findings and the `0x6007`
+staging-slot-walker analysis remain valid, but it's now understood to be one
+of at least three gates in the pipeline rather than the whole story.
+
+## Status (2026-09-09)
+
+Updated framing after two of the four hypotheses in the 09-06 report were
+independently tested and both shown insufficient from host-side software.
+Both succeed from PSP context. The binding blocker was narrowed to a
+**single byte of PSP boot-config** at PSP kernel RAM address `0x6007`.
+Silicon proven functional (`UVD_VERSION = 0x0002001B` from PSP hook).
 
 ## Status (2026-09-06)
 

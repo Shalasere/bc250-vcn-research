@@ -1,5 +1,13 @@
 # BC-250 VCN Enablement: Update Report (2026-09-09)
 
+> **⚠ UPDATED 2026-09-11** — a firmware register audit and a live probe
+> confirmed a separate, so-far-immutable harvest latch (`CC_UVD_HARVESTING`
+> at `0x1f81c`), and a KDB (key database) authentication gap was found and
+> worked around — successfully, but without producing a running VCPU. The
+> `0x6007` staging-slot-walker finding below remains valid; it turned out to
+> be one of at least three gates in the pipeline, not the only one. See
+> **`COMMUNITY_REPORT_2026_09_11.md`** for the revised picture.
+
 > **Update to `COMMUNITY_REPORT_2026_09_06.md`.** Three days after the last
 > report, a different researcher independently ran the exact two tests it
 > proposed (Hypothesis A + Hypothesis B) and produced a decisive result. This
