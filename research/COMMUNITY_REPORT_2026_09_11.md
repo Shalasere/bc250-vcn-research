@@ -231,3 +231,99 @@ actually move `CC_UVD_HARVESTING` off `3`; alternatively, confirm on a
 second board that the latch is universal rather than a fault on this one
 **Status:** Authentication solved (two independent methods); hardware
 harvest latch confirmed immutable via the one write path tried so far
+
+---
+
+## Addendum: `ip_discovery`'s "not harvested" verdict is not measuring what
+## we thought, plus a confirmed hang on a plain register read (2026-09-11, later)
+
+Same day, this repo's author checked two things directly on a stock board
+(cross-referencing assisted by Claude for the static-analysis and
+source-citation work — tool cited, not a contributor, same convention as
+`codex` above).
+
+### 1. Every single `harvest` field in `ip_discovery` reads `0x0` — not just VCN's
+
+`EXHAUSTION_LOG.md` Iter #2 (2026-08-04) rules out the fuse-harvest
+hypothesis on the strength of `ip_discovery` reporting `harvest=0x0` for
+VCN (HWID 12). Every report since has cited this as settled.
+
+Direct read on a stock BC-250 (`/sys/bus/pci/devices/0000:01:00.0/ip_discovery/die/0/*/*/harvest`):
+**every single HWID in the table reads `0x0`** — VCN included (confirmed
+major.minor.rev = `2.0.3`, matching "VCN 2.0.3" as used throughout this
+project), with zero exceptions across ~35 entries. A table that reports
+literally nothing as harvested, on a die that is demonstrably cut down in
+other ways, is a red flag that the field itself isn't measuring anything on
+this platform.
+
+It isn't. The `cachenetics/recon` toolkit's static analysis of
+`amdgpu_discovery.c` (its `discovery-harvest-audit.json`, dated 2026-05-21 —
+predating this project's Discord thread) identifies the mechanism: BC-250
+(the mining-card variant, PCI dev `0x13FE`) takes a **different code path**
+than the PS5-devkit-like `CYAN_SKILLFISH2` variant. BC-250's path calls a
+hardcoded `cyan_skillfish_reg_base_init()` and **never calls
+`amdgpu_discovery_harvest_ip()` at all** — so `harvest_ip_mask` simply stays
+at its zero-initialized default. It was never a live readout to begin with,
+on this code path. We independently found real, upstream amd-gfx
+mailing-list patch series titled "add support for cyan skillfish without IP
+discovery" and "add ip offset support for cyan skillfish" (mail-archive.com
+— a legitimate, canonical list mirror) that corroborate this two-path
+split exists; we have not personally traced every cited line number in
+`amdgpu_discovery.c`, so treat the exact line citations as recon's, not
+independently confirmed by us line-for-line.
+
+**This does not overturn "VCN is present and not IP-block-gated."** The
+same recon data shows BC-250's actual harvest-equivalent mechanism —
+omission from the hardcoded 13-IP-block table in
+`cyan_skillfish_reg_init.c` — does NOT omit VCN/UVD either; it's one of the
+IP blocks explicitly wired up. So the conclusion "VCN isn't blocked at the
+IP-block level" still holds, just via different reasoning than Iter #2
+gave. **What it does overturn is treating `ip_discovery`'s harvest field as
+evidence about anything on BC-250** — good for Iter #2's actual subject
+(VCN specifically), misleading if anyone extends the same "check
+`ip_discovery`" method to a different IP block on this platform in the
+future.
+
+**What remains genuinely unexplained:** `CC_UVD_HARVESTING` at `0x1f81c`
+is referenced by *neither* driver mechanism discussed here — not the
+discovery-table path, not the hardcoded reg-base-init path. Nothing in
+mainline amdgpu reads or acts on it for this chip. Its live value (`3`,
+immutable per the finding earlier in this report) is a real hardware/fuse-
+style signal that exists completely outside what the driver's own
+IP-presence logic checks. That gap — a register the driver never looks at,
+that nonetheless reads a fixed nonzero value — is still the open question.
+
+### 2. A plain, read-only MMIO read of this same register hard-hung a stock board
+
+Separately (not part of the same session as the audit above), a
+completely standard, unmodified board — stock Fedora-based OS, stock
+upstream `amdgpu.ko`, no interposer, no patched kernel, no PSP hooks — was
+asked to read `CC_UVD_HARVESTING` at `0x1f81c` through the **mainline
+kernel's own read-only debugfs register interface**
+(`/sys/kernel/debug/dri/<minor>/amdgpu_regs`, a facility AMD's own driver
+developers use for register debugging — not exploit tooling, not a write,
+just a 4-byte read at a byte offset).
+
+The read never returned. Within seconds, the board dropped off the network
+entirely — SSH refused new connections, and ICMP came back
+"destination host unreachable" from the router, meaning the NIC itself
+was gone, not just the SSH daemon. A full physical power cycle (AC off,
+not just a soft reset) was required to recover; the board came back up
+clean with no lasting damage once power was restored (in this instance a
+loose PSU connector added to the downtime, unrelated to the register read
+itself).
+
+This is a stronger result than the community's "experimental enable;
+register access may hang" dmesg warning implies — that warning was written
+for a *patched* kernel doing PSP-context probing. Here, the exact same
+class of hang happened through completely stock tooling with **zero
+third-party code involved**. **Treat `CC_UVD_HARVESTING` / `0x1f81c` as
+unsafe to read at all from host context, on any kernel, until someone
+understands why the read itself stalls the fabric** — this is now the
+second independent report of this exact failure mode (the first being the
+Discord thread's own "register access may hang" note), and the first with
+a full reproduction and recovery procedure documented.
+
+**For anyone continuing this:** if you need this register's value, get it
+from PSP-context reads only (as the KDB/authentication work above already
+does safely), never from a plain host MMIO read.

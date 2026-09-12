@@ -2,7 +2,7 @@
 
 **Enable VCN (Video Core Next 2.0.3) hardware on AMD BC-250 by overcoming firmware-imposed isolation gates.**
 
-## Latest Status: 2026-09-11
+## Latest Status: 2026-09-11 (Afternoon)
 
 📄 **`research/COMMUNITY_REPORT_2026_09_11.md`** — A firmware register audit
 found no code path in the borrowed Navi10/Renoir VCN firmware that touches
@@ -14,10 +14,31 @@ authentication now passes cleanly for two independent firmware candidates,
 but the VCPU still never executes. Authentication is solved; a hardware-level
 harvest latch is the current blocker.
 
-Read the 09-11 update first if you're new here. The 09-09 report is preserved
-below as a historical snapshot — its PSP-context findings and the `0x6007`
-staging-slot-walker analysis remain valid, but it's now understood to be one
-of at least three gates in the pipeline rather than the whole story.
+### Three Parallel Experiments Ready for Testing
+
+📋 **`research/EXPERIMENT_CANDIDATES_2026_09_11.md`** — Three independent
+research threads are now ready for parallel execution, each addressing a
+different aspect of the VCN blockers:
+
+1. **SPI MITM Verify-then-Use Capture** (0 risk, passive)  
+   `tools/spi-mitm-prep/parse_spi_trace.py` ready to analyze boot captures.  
+   Precondition: pico2 wired to BIOS flash in TAP MODE.
+
+2. **Q0 SMU Message IDs 0x0B/0x0C Test** (low risk, live hardware)  
+   `tools/vcn_q0_power_test_board.py` ready to probe untested VCN power handlers.  
+   Precondition: board reachable, bc250_smu deployed.
+
+3. **SVC 0x87 Literal-Pool Verification** (0 risk, static analysis)  
+   Pending agent completion on firmware binary analysis.  
+   Outcome: confirms whether 0x6007 gate is PSP bootloader's actual check.
+
+Each experiment is independent; parallel execution safe and recommended.
+
+Read the 09-11 update and experiment plan first if you're new here. The 09-09
+report is preserved below as a historical snapshot — its PSP-context findings
+and the `0x6007` staging-slot-walker analysis remain valid, but it's now
+understood to be one of at least three gates in the pipeline rather than the
+whole story.
 
 ## Status (2026-09-09)
 
