@@ -4,16 +4,19 @@
 
 ---
 
-## Current State: Three Independent Gates Block Execution
+## Current State: Three Sequential Gates Form a Pipeline
 
-| Gate | Layer | Status | Cause |
-|------|-------|--------|-------|
-| **Gate 1: PSP 0x6007 (Staging-Slot Walker)** | Firmware/PSP | Known, unsolved | One byte gates LOAD_IP_FW acceptance; no host-context write primitive |
-| **Gate 2: KDB Usage-6 Key** | Firmware auth | **Solved (transient)** | Missing key works around via Pico interposer; authenticated cleanly |
-| **Gate 3: Hardware Harvest Latch** | Hardware | Immutable | Register 0x1f81c reads 3, stays 3; fuse-level or unfixable |
-| **Gate 4: Clock/Reset/Isolation (Second Gate)** | Hardware | **Active blocker NOW** | Soft reset not released, isolation gates not cleared, VCLK/DCLK not enabled |
+**CORRECTED from community cross-reference:** Gates are **dependent stages**, not independent blockers. Each must clear sequentially.
 
-**All four gates are INDEPENDENT.** Solving one doesn't solve the others.
+| Stage | Layer | Status | Blocker | Notes |
+|-------|-------|--------|---------|-------|
+| **Stage 1: PSP 0x6007 (Staging-Slot Walker)** | Firmware/PSP | Blocked | Host context has no write primitive | One byte gates LOAD_IP_FW acceptance |
+| **Stage 2: KDB Usage-6 Key** | Firmware auth | **Solved (transient)** | — | Missing key worked around via Pico interposer; firmware authenticates cleanly |
+| **Stage 3: Hardware Harvest Latch (0x1f81c)** | Hardware | **Current blocker** | Software-locked (not fuse-level) | PSP secure write fails; bootloader & SMU RPC paths untested |
+
+**Pipeline dependency:** Stage 1 → Stage 2 → Stage 3. Must clear each sequentially to reach execution.
+
+**Key correction:** Register 0x1f81c immutability is **proven only to one specific write path (PSP secure write)**. Other paths (bootloader, SMU RPC, alternate PSP code) remain unexplored.
 
 ---
 
@@ -32,20 +35,26 @@
 
 **From host-side SMU access (proven):**
 - ✅ Queue 3 msg 0x98 (arbitrary SMN write 0xFF) — works reliably in always-on domains
+  - **Caveat:** Source of 0x98 message ID needs verification (not documented in community reports; may be parallel research or firmware variant)
 - ✅ SMU mailbox transport — no collisions with GPU governor
 - ✅ PCI 0xB8/0xBC SMN access — functional, no auth required
 
 ### ❌ BLOCKED
 
-**From host context (Sept 6 testing + hardware constraints):**
-- ❌ Direct MMIO access to VCN registers → hard hang (unmapped SMN frame)
-- ❌ Clock/reset/isolation registers remain asserted despite power-on
-- ❌ VCPU never executes (PC stays at 0x00000000)
-- ❌ Ring test hangs (decode ring not ready)
+**Stage 1 (PSP 0x6007):**
+- ❌ Blocks firmware load via normal driver
+- ❌ No host-context write primitive known
 
-**From PSP path (confirmed insufficient):**
-- ❌ PSP 0x6007 gate blocks firmware load via normal driver
-- ❌ Direct register writes to VCN clocks hang (clock sub-block unpowered at L1 layer)
+**Stage 3 (0x1f81c harvest latch) — CRITICAL HAZARD:**
+- ⚠️ **Host-side read of 0x1f81c causes PHYSICAL BOARD HANG** (requires PSU power-cycle to recover)
+- Safe workaround: Read 0x1f81c only from PSP context (returns successfully without hanging)
+- ❌ PSP secure write fails (value stays 3)
+- ❌ Register immutability proven only to this one write path; other paths untested
+
+**Downstream (after stages 1-3 clear):**
+- Clock/reset/isolation gates remain asserted
+- VCPU never executes (PC stays at 0x00000000)
+- Ring test hangs (decode ring not ready)
 
 ---
 
@@ -61,7 +70,9 @@
 
 **Why it hasn't been cleared:**
 - BC-250 has **no `dpm_set_vcn_enable` callback** in amdgpu driver (deliberately omitted, VCN not public API)
-- SMU firmware has **zero VCN code** — no handlers, no clock programming
+- SMU firmware has **VCN handlers (0x19, 0x1A)** but they are either:
+  - Non-functional stubs that acknowledge but don't execute, OR
+  - Missing prerequisites to operate (direct function call at 0x1EE90 hangs the SMU)
 - Direct MMIO hangs — can't write these registers from host context
 - SMU 0x98 primitive only works in **always-on domains** — clock sub-block is unpowered
 
@@ -94,14 +105,19 @@
 
 ---
 
-## The L1 Power-Enable Mystery
+## Priority: Clear Stage 3 (0x1f81c Harvest Latch)
 
-**Missing piece identified by agent analysis:**
+**Current blocker:** Register 0x1f81c controls VCN execution permission. Proven immutable via PSP secure write; other paths untested.
 
-VCN clock registers (`0x5c1xx`, `0x401xx`) are in an **unpowered sub-block**.
-Direct access hangs the board.
+**Tested:**
+- ❌ PSP secure write (fails, value stays 3)
 
-**Hypothesis:** There's an **always-on domain register** that gates the L1 (clock layer) power to VCN, similar to how domain 6 itself is enabled.
+**Untested write paths (high priority):**
+1. **Bootloader-level access** — May have privilege to clear latch at boot time
+2. **SMU RPC mechanism** — Possible SMU-side register write path
+3. **Alternate PSP code paths** — Different PSP firmware entry points or debug modes
+
+**After Stage 3 clears:** VCN clock sub-block may need L1 power-enable (unknown register address). This will require register state diff post-power-on to identify.
 
 **Search for it:**
 1. Extract BC-250 SMU firmware from BIOS
@@ -114,89 +130,112 @@ Direct access hangs the board.
 
 ---
 
-## Parallel Research Paths (Ready to Execute)
+## Priority Research Paths
 
-### Path 1: SMU Function Discovery (0 Risk, Passive)
+### HIGHEST PRIORITY: Discover Write Path to Clear 0x1f81c
+
+**0x1f81c immutability is proven only to PSP secure write.** Other paths untested.
+
+#### Path 1: Bootloader Analysis (0 Risk, Static)
+**Time:** 1-2 hours  
+**Goal:** Determine whether bootloader has authority to clear harvest latch
+**Method:**
+1. Extract BIOS → extract bootloader blob (PSPTool)
+2. Disassemble with Ghidra (ARM or Xtensa depending on stage)
+3. Search for writes to 0x1f81c or harvest-related code
+4. Document if bootloader has clear authority
+
+**Success:** Identifies bootloader write path (if exists)
+
+#### Path 2: SMU RPC Exploration (Low Risk, Hardware)
+**Time:** 2-3 hours  
+**Goal:** Test whether SMU has a register-write path to 0x1f81c
+**Method:**
+1. Reverse-engineer SMU function `FUN_00024764` (teardown, touches slots 0x16/0x17/0x18)
+2. Identify if it references or clears 0x1f81c
+3. Test SMU-side power-down to see if harvest latch state changes
+
+**Success:** Identifies SMU authority / function path
+
+#### Path 3: PSP Debug Mode (Medium Risk, Hardware)
+**Time:** 2-4 hours  
+**Goal:** Test if PSP has alternate code paths (debug, production, attestation) that can write 0x1f81c
+**Method:**
+1. Document all PSP entry points in firmware (FET)
+2. Identify any marked for debug/development
+3. Test write via alternate entry point if available
+
+**Success:** Discovers alternate PSP write path
+
+---
+
+### SECONDARY: SMU & Clock Analysis (for after Stage 3 clears)
+
+#### Path 4: SMU Function Discovery (0 Risk, Passive)
 **Time:** 30 minutes  
 **Tools:** Ghidra + smu_function_helper.py  
-**Goal:** Discover FUN_00023b14, FUN_00023744, FUN_0002362c, FUN_00024764
+**Goal:** Discover all VCN-related SMU functions
 
 **Steps:**
-1. Extract SMU firmware from user's BIOS (PSPTool)
-2. Open in Ghidra with Xtensa-LE architecture
-3. Run smu_function_helper.py → generates complete function list
-4. Locate and trace teardown path to identify L1 enable register
+1. Extract SMU firmware from BIOS
+2. Open in Ghidra with Xtensa-LE
+3. Run smu_function_helper.py
+4. Trace `FUN_00024764` → `FUN_00023744` → `FUN_0002362c` chain
 
-**Success metric:** Confirm all four power-related functions; identify L1 enable register address
+**Success metric:** Map all power-related functions; understand clock slot programming
 
-### Path 2: Register State Diff (Low Risk, Live Hardware)
+#### Path 5: Register State Diff (Low Risk, Live Hardware)
 **Time:** 1 hour  
-**Tools:** SMU 0x98 writes, careful register reading  
-**Goal:** Identify which gate is still asserted post-power-on
+**Goal:** After Stage 3 clears, identify which clock gates remain asserted
 
 **Steps:**
-1. Read VCN control registers pre-power-on (SMU 0x98 if in readable domain, else boot script)
-2. Execute `FUN_00023b14(6, 1)` (SMU internal function via exploit/hook)
+1. Read control registers pre-power-on
+2. Execute `FUN_00023b14(6, 1)` 
 3. Read same registers post-power-on
-4. Diff output to see which bits transitioned
+4. Diff to identify which bits need clearing
 
-**Registers to diff:**
-- `mmVCN_SOFT_RESET`, `mmVCN_CLOCK_GATING_DELAY`
-- `mmVCN_PGFSM_CONFIG`, `mmVCN_PGFSM_STATUS`
-- `mmVCN_DCFE_CTRL` (if addressable)
+**Registers:** `mmVCN_SOFT_RESET`, `mmVCN_CLOCK_GATING_DELAY`, `mmVCN_PGFSM_*`
 
-**Success metric:** Identify which gate (soft reset, isolation, or PGFSM) is still asserted
+**Success metric:** Identify next gate (soft reset vs isolation vs PGFSM)
 
-### Path 3: Van Gogh Cross-Reference (Medium Risk, Static Analysis)
+#### Path 6: Van Gogh Cross-Reference (Medium Risk, Static)
 **Time:** 2 hours  
-**Tools:** Ghidra, PSPReverse tools, kernel sources  
-**Goal:** Compare working VCN platform clock sequence to BC-250 pattern
+**Goal:** Verify clock sequence against working platform
 
 **Steps:**
-1. Extract Van Gogh SMU firmware (public in amd/firmware_binaries)
-2. Ghidra analysis of Van Gogh clock slot programming (SMU 13.x)
-3. Cross-reference with Linux `smu_v13_0_vcn_enable()` kernel driver code
-4. Map Renoir register offsets (`0x401C`, `0x401E`) to Van Gogh equivalent
-5. Identify if BC-250 uses same register offsets (likely yes, same VCN 2.0.3 IP)
+1. Extract Van Gogh SMU firmware
+2. Compare `smu_v13_0_vcn_enable()` kernel code (Linux)
+3. Map Renoir register offsets to BC-250
 
-**Success metric:** Confirm register offsets and sequence apply to BC-250
-
-### Path 4: SMU Arbitrary Code Execution (High Risk, Requires Expertise)
-**Time:** 4+ hours  
-**Tools:** bc250-smu-unlock (if code-exec variant available)  
-**Goal:** Bypass firmware limitation by running custom SMU code
-
-**Approach:** If SMU arbitrary code execution exists in the community toolkit, write custom SMU handler to:
-1. Enable L1 power to VCN clock sub-block
-2. Program clock slots 0x16/0x17/0x18
-3. Clear soft reset + isolation gates
-4. Return control to host
-
-**Risk:** Requires intimate SMU firmware knowledge; wrong code can hang/crash board
-
-**Status:** rw-r-r-0644 reportedly has this capability; verify before attempting
+**Success metric:** Confirm register offsets and sequence apply
 
 ---
 
 ## Integration Path Forward
 
-### Phase 1: Diagnosis (This Week)
-**Execute Path 1 (function discovery) + Path 2 (register diff) in parallel**
+### Phase 1: Unlock Stage 3 (0x1f81c Harvest Latch) — CRITICAL
+**Execute Paths 1-3 in parallel (bootloader, SMU RPC, PSP debug modes)**
+- Goal: Find **any** write path to clear 0x1f81c
+- Expected outcome: Bootloader authority (highest probability) or SMU RPC
+- Timeline: 2-4 days with parallel exploration
+- **Blocker until Stage 3 clears:** Nothing downstream can execute
+
+### Phase 2: Diagnosis After Stage 3 Clears
+**Execute Path 5 (register state diff) + Path 4 (SMU function discovery)**
+- Run register diff to identify which clock gates are asserted
 - Discover all VCN functions in SMU firmware
-- Identify which gate is still asserted after power-on
-- **Gate #4 isolation level** → determines whether simple register writes suffice
+- **Outcome:** Determines whether simple register writes suffice or complex SMU code needed
 
-### Phase 2: Mitigation (If Gate #4 Is Soft-Reset/Isolation Only)
-**If register diff shows only soft reset or isolation gates asserted:**
-- Attempt Renoir sequence via SMU 0x98 writes to clock-sub-block enable register
-- If found, test releasing soft reset + clearing isolation
-- Risk: Low (register writes in always-on domain, same primitive as CPU unlock)
+### Phase 3: Mitigation (Clock/Reset/Isolation Gates)
+**If register diff shows soft reset or isolation gates asserted:**
+- Attempt Renoir register sequence via SMU 0x98 writes
+- May need L1 power-enable register discovery (unknown address)
+- Risk: Low to medium (register writes in always-on domain)
 
-### Phase 3: Complex Solutions (If Gate #4 Is PGFSM/Unpowered)
-**If L1 enable register not found or clock sub-block truly unpowered:**
-- Execute Path 4 (SMU arbitrary code execution)
-- Or pursue Pico interposer route for transient SMU hook (permanent solution)
-- Risk: High (requires firmware knowledge)
+**If clock sub-block remains unpowered after Stage 3:**
+- Execute Path 6 (Van Gogh cross-reference) to verify register locations
+- Or pursue SMU arbitrary code execution (high risk, requires firmware expertise)
+- Or Pico interposer route for persistent SMU hook
 
 ---
 
@@ -227,15 +266,17 @@ Firmware execution (final)
 
 ### What We Know vs. Don't Know
 
-| Element | Known? | Source |
-|---------|--------|--------|
-| VCN is present | ✅ Yes | IP discovery, harvest=0 |
-| Domain 6 power path | ✅ Yes | FUN_00023b14(6,1) proven |
-| Clock register addresses | ✅ Yes | Renoir reference, driver code |
-| L1 enable register address | ❌ **NO** | Still missing |
-| Exact reset/isolation sequence | ⚠️ Partial | Renoir reference, may differ |
-| PGFSM usage on BC-250 | ❌ Unknown | Need register diff |
-| Clock slot programming (0x16-18) | ❌ Unknown | Need FUN_00023744 analysis |
+| Element | Known? | Notes | Priority |
+|---------|--------|-------|----------|
+| VCN is present | ✅ Yes | IP discovery, harvest=0 | — |
+| Domain 6 power path | ✅ Yes | FUN_00023b14(6,1) proven | — |
+| 0x1f81c immutability | ⚠️ Partial | PSP secure write fails; other paths untested | **CRITICAL** |
+| 0x1f81c write authority | ❌ Unknown | Bootloader? SMU? Alternate PSP? | **HIGHEST** |
+| Clock register addresses | ✅ Yes | Renoir reference, driver code | Secondary |
+| L1 enable register address | ❌ Unknown | May not exist; only needed if Stage 3 clears | Secondary |
+| Exact reset/isolation sequence | ⚠️ Partial | Renoir reference, may differ | Secondary |
+| PGFSM usage on BC-250 | ❌ Unknown | Need register diff after Stage 3 clears | Secondary |
+| Clock slot programming (0x16-18) | ❌ Unknown | Need FUN_00023744 analysis | Secondary |
 
 ---
 
