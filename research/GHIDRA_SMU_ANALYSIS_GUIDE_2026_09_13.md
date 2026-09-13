@@ -12,7 +12,7 @@
 | **Firmware** | robin_1 v88.6.0 | SMU 11.8 on BC-250 (Cyan Skillfish) |
 | **Queues** | 7 total (0-6) | Q0-Q4 active; Q5-Q6 minimal/unused |
 | **Host Interface** | PCI config 0xB8/0xBC | SMN (System Management Network) R/W |
-| **VCN Support** | **ZERO documented** | Complete gap in reverse engineering |
+| **VCN Support** | **Messages 0x19, 0x1A exist** | Handlers present but non-functional or incomplete |
 
 ---
 
@@ -64,19 +64,25 @@
 
 ---
 
-## Critical Missing: VCN-Specific Functions
+## Critical Missing: VCN-Specific Functions & Messages
 
-**Known VCN Addresses (NOT in public Ghidra DB):**
-- `FUN_00023b14` — Domain 6 power-on (allegedly)
+**VCN Message Handlers (Community Find):**
+- **Message 0x19** — Exists in firmware, returns status 0x01 (OK)
+- **Message 0x1A** — Exists in firmware, returns status 0x01 (OK)
+- **Status:** Handlers are present but **do not power up VCN** when called in isolation
+  - Likely non-functional stubs, OR
+  - Missing prerequisites (function call at 0x1EE90 hangs SMU when called without context)
+
+**Known VCN Helper Addresses (NOT in message handler tables):**
+- `FUN_00023b14` — Domain 6 power-on
 - `FUN_00023744` — Clock slot programming framework
 - `FUN_0002362c` — `soc_clk_program_slot` (clock slot setter)
 - `FUN_00024764` — Domain 6 teardown (references slots 0x16/0x17/0x18)
 
-**Why they're missing:**
-1. Repository decompile stops at documented handler tables
-2. These may be **helper functions** not directly exposed as message handlers
-3. Could be discovered via `smu_function_helper.py` (opcode 0x36 pattern scanning)
-4. Possible firmware version difference (Robin 1 vs. Robin 5)
+**Why helpers are missing from tables:**
+1. Not directly exposed as message handlers
+2. Could be discovered via `smu_function_helper.py` (opcode 0x36 pattern scanning)
+3. Possible firmware version difference (Robin 1 vs. Robin 5)
 
 **Recovery Path:** Run smu_function_helper.py on extracted firmware to auto-discover all functions including undocumented ones.
 
@@ -229,6 +235,8 @@ execute_handler(handler, arg);
 - OC limits and offsets
 - Temperature slope calibration
 - **Message 0x98:** Arbitrary SMN write (fixed 0xFF value)
+  - **⚠️ NOTE:** This message ID does NOT appear in community reports (2026-09-06 through 09-11)
+  - Source should be verified (parallel research, different firmware variant, or documentation gap)
 
 ---
 
