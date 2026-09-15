@@ -674,6 +674,41 @@ amdgpu: finishing device.
 
 Recovery worked cleanly across every hang in this investigation via the fast relay cold-cycle (~76s each) — the only thing that changed between attempts was how much of the boot log survived long enough to read afterward, and eventually, how to isolate the actual cause without needing a single additional recovery cycle once the right question was asked.
 
+## Community Cross-Reference: Reconciling This Document Against `COMMUNITY_REPORT_2026_09_09/11.md`
+
+This repo also carries two other community-facing writeups — `COMMUNITY_REPORT_2026_09_09.md` and `COMMUNITY_REPORT_2026_09_11.md` — documenting a parallel line of research by other community members (aliased **P** = the physical-interposer researcher, **R** = a PSP static analyst) working the same problem from a different angle. As of this update, **neither document cites the other**, despite both being about VCN unlock on the identical board revision, and despite the registers involved being four bytes apart. This section reconciles them.
+
+### The community's three-gate pipeline (summary)
+
+Independently of this document's SEC_GASKET/fabric-ACL work, the other line of research established:
+
+1. **Request acceptance** — the PSP's `LOAD_IP_FW` staging-slot walker (`FUN_0000a030`, `svc #0x87` at PSP address `0xa06e`) checks a single byte at PSP kernel RAM `0x6007`. Non-zero (as on Steam Deck) → accept. Zero (as on BC-250) → `ERROR 0x80000205`. No known host-side transport can write PSP kernel RAM to flip this byte.
+2. **Cryptographic authentication** — BC-250's PSP key database (KDB) is missing the usage-6 VCN signing key that Steam Deck's has. Fixable via a **transient** interposer injection of the key (a persistent flash KDB edit fails outer-signature verification and no-POSTs) — demonstrated working for both a borrowed Navi10 firmware and Steam Deck's own Van Gogh firmware.
+3. **Hardware harvest latch** — `CC_UVD_HARVESTING` at MMIO `0x1f81c` reads `3` and **stays `3` even through a PSP secure write of zero**, verified via both PSP-side and independent host-side readback. Clearing gates 1 and 2 does not move this latch. The VCPU never executes even with clean authentication.
+
+A later addendum to that work adds a severity-relevant finding: **a plain, read-only MMIO read of `0x1f81c`, through the mainline kernel's own stock debugfs register interface, on a completely unmodified board (no patch, no interposer, no PSP hooks) hard-hangs the board** — NIC drops off the network entirely, requiring a full AC power cycle. This is a stronger and more general result than this document's own iter#23 finding (`umr -r *.*.mmCC_UVD_HARVESTING` hangs a board already running a patched/probed kernel) — it shows the hang is a property of the register itself, triggerable from totally stock tooling.
+
+### How this document's own mechanism fits alongside it
+
+This document's independent contribution — SEC_GASKET's 926-tuple table, its two VCN-policy writes (`[0x1f820]=0x00185103`, `[0x1f8a4]=0x0000000b`), the ~816-write DF fabric ACL, and the PSP SVC `0x7c`/`0xa0`/`0xa5`/`0xaa` family with its near-permissive auth gate — sits at a **different point in the same overall picture**, and explains a phenomenon the community reports don't address at all: *why every non-PSP master's write near the VCN aperture (host `0xB8/0xBC`, SMU mailbox, GPU `regs_pcie`) gets silently dropped rather than erroring or succeeding.* The fabric ACL is the mechanism; SEC_GASKET is the signed data that programs it; PSP is the only master positioned to reverse it.
+
+Put side by side:
+
+| Layer | This document | Community reports |
+|---|---|---|
+| Request acceptance | Not investigated | `0x6007` staging-walker byte (Rukkus) |
+| Crypto auth | PSP SVC `0x7c`-family auth gate confirmed permissive (would work from PSP context) | KDB usage-6 key gap, transient-interposer fix (PhishMaster) |
+| Aperture/fabric policy | SEC_GASKET → DF fabric ACL, locks non-PSP masters out (`0x1f820`/`0x1f8a4` + ~816 ACL writes) | Not investigated |
+| Hardware harvest latch | Not directly tested (adjacent to but distinct from our SEC_GASKET writes) | `CC_UVD_HARVESTING` @ `0x1f81c` confirmed immutable via PSP secure write; hangs on plain host read |
+
+**The open question this comparison surfaces, unresolved by either side:** are the SEC_GASKET-programmed policy words at `0x1f820`/`0x1f8a4` and the harvest latch at `0x1f81c` — four bytes apart — the same underlying hardware mechanism seen from two different angles, or genuinely separate locks that would both need clearing? Answering this needs PSP-context write access to both addresses in a single session, which neither research line currently has. Until then, treat them as two confirmed, independent walls rather than assume clearing one implies anything about the other.
+
+**PhishMaster's `UVD_VERSION` result (`0xDEADBEEF` → `0x0002001B`) remains the single strongest piece of evidence, from either research line, that VCN 2.0.3 silicon is not fundamentally broken** — it responds correctly to the right PSP-context sequence. It's cited here as corroboration for this document's own iter#14-era thesis ("the walls are policy/config, not silicon"), not as a path this document's research intends to reproduce: it required a physical interposer on the BIOS SPI flash chip, which is explicitly outside this project's owned-hardware-runtime-configuration scope.
+
+### One new, more precise PSP-RCE lead
+
+This document's iter#37/#38/#40 concluded CVE-2023-31316 has a circular dependency on BC-250 (it requires a VCN firmware power-save/restore cycle that never happens here, since no VCN firmware ever loads) and that the community researcher's "uninitialized `saved_len`" bug must live inside encrypted PSP_BL, unreachable without the RCE it would itself provide. The Discord thread narrows this: the researcher's actual target is now understood to be an **ABL4/APCB parsing bug at PSP VA `0x0005DE0C`** — not the VCN-specific save/restore path CVE-2023-31316 describes. This fits this document's own iter#37 prediction exactly: a viable PSP-RCE candidate on BC-250 would have to be in a subsystem that "runs on BC-250 without extra firmware" — ABL4/APCB parsing happens unconditionally at every boot, unlike VCN power-save/restore which never fires. Still out of scope (closed/encrypted firmware, no public proof-of-concept, original vulnerability research), but the most precisely-located PSP-RCE lead referenced anywhere in this investigation to date.
+
 ## Reproducing Our Findings — Tools & Scripts
 
 All code lives under `scratchpad/` in the working directory:
@@ -717,6 +752,7 @@ External tools used:
 4. **daveconde's stated `5s timeout` on their msg-0x61 fire is not what we observe** — we get status=0x01 arg0=0x50 in ~2-4s. Either their firmware version differs or the description was outdated. Worth noting so others don't waste time debugging a "missing timeout."
 5. **Deck BIOS diff** is now available locally as evidence — the exact `(0x1f820, 0x00185103)` tuple simply does not exist in the entire Deck 16MB BIOS. Anyone else with a Deck BIOS can verify with a byte-search for `20 f8 01 00 03 51 18 00`.
 6. **@daveconde: your msg-0x21 hunt is probably a dead end**, and we can show why — robin's SMU firmware has zero VCN register literals anywhere in its 256KB image (Van Gogh's has all of them). There's likely nothing VCN-specific to find in Q3's message space. Also: your `(0x06900900, 0xe8)` ISO-clamp candidate wedges the SMU mailbox on read — same signature as every other VCN-adjacent address we've hit. Negative result, but a result.
+7. **To Rukkus/PhishMaster/mergeconflicted (this repo's `COMMUNITY_REPORT_2026_09_09/11.md` authors):** see the new "Community Cross-Reference" section above — our SEC_GASKET/fabric-ACL mechanism and your staging-walker/KDB/harvest-latch pipeline describe adjacent but distinct registers (yours at `0x1f81c`, ours at `0x1f820`/`0x1f8a4`) and neither writeup currently cites the other. Worth a joint session to test whether they're the same underlying lock.
 
 ## Prior-Iteration Log (memory reference)
 
