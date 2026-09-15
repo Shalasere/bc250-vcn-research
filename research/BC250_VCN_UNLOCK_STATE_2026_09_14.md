@@ -11,6 +11,80 @@ Consolidated writeup of a full day of iteration (iter#25 through iter#34) on the
 - We validated **two exec-primitive paths on the SMU** — our msg-0x22 `rpc.s` + `smu.call(fn, args)`, and daveconde's msg-0x61 handler-table repoint + 20-byte-stub-fire. Both work reliably.
 - **Runtime unlock remains blocked** because the fabric ACL applies to every runtime master, and the only in-scope BIOS modification lever (skipping `MboxBiosCmd 0x1B`) empirically bricks the board.
 
+## Why We're Stuck — Mechanism Map
+
+VCN unlock is not blocked by one wall — it requires clearing **three independent conditions simultaneously**, and we currently fail all three from any master we can reach:
+
+```mermaid
+flowchart TD
+    A["VCN 2.0.3 silicon present<br/>harvest = 0 (PSP IP Discovery, iter#22)"] --> B["Signed PSP boot chain<br/>(runs once, at boot, before x86 even starts)"]
+
+    B --> C1["PSP_BL (encrypted)<br/>sets CC_UVD_HARVESTING = 0x3<br/>(0x1f81c)"]
+    B --> C2["ABL / AGESA<br/>sets DF fabric present bit = 0<br/>(0x50d6c bits[12:11])<br/>locked via MboxBiosCmd 0x1B"]
+    B --> C3["SEC_GASKET type 0x24<br/>926 signed addr/value writes"]
+
+    C3 --> D1["VCN policy regs<br/>0x1f820 = 0x185103<br/>0x1f8a4 = 0xb"]
+    C3 --> D2["DF Fabric ACL<br/>~816 writes, 0x09xxxxxx range"]
+
+    C1 --> E["DF Fabric ACL (hardware)<br/>VCN aperture locked to non-PSP masters"]
+    C2 --> E
+    D2 --> E
+
+    E --> F1["Host CPU write<br/>0xB8/0xBC PCI config — BLOCKED"]
+    E --> F2["SMU mailbox write<br/>sec_smn_write32 — BLOCKED, wedges"]
+    E --> F3["GPU regs_pcie write — BLOCKED"]
+    E --> F4["SMU-executed code (our exec primitive)<br/>reaches SOME dom6 regs —<br/>register file still clamped (wall 2)"]
+
+    G["PSP kernel svc #0x7c family<br/>0x7c / 0xa0 / 0xa5 / 0xaa"] -->|"auth gate blocks only<br/>2MB of unrelated SMN space"| H["would succeed —<br/>PSP sits inside the fabric ring"]
+
+    I1["CVE-2023-31316"] -.->|"circular dependency:<br/>needs VCN fw running,<br/>which never happens on BC-250"| G
+    I2["CVE-2021-46747"] -.->|"no exposed surface<br/>found on this BIOS"| G
+    I3["community 'saved_len' bug"] -.->|"lives inside encrypted PSP_BL<br/>— unreachable without RCE"| G
+    I4["hardware fault injection"] -.->|"out of scope"| G
+
+    style A fill:#2e7d32,color:#fff
+    style E fill:#b71c1c,color:#fff
+    style F1 fill:#b71c1c,color:#fff
+    style F2 fill:#b71c1c,color:#fff
+    style F3 fill:#b71c1c,color:#fff
+    style F4 fill:#e65100,color:#fff
+    style G fill:#1565c0,color:#fff
+    style H fill:#2e7d32,color:#fff
+    style I1 fill:#616161,color:#fff
+    style I2 fill:#616161,color:#fff
+    style I3 fill:#616161,color:#fff
+    style I4 fill:#616161,color:#fff
+```
+
+### The plain-language version — three ANDed requirements, all currently failing
+
+Getting hardware video decode working needs **all** of the following. This is a conjunction, not a single blocker — fixing one doesn't fix the others.
+
+**1. A runtime master must be able to write the VCN aperture through the DF Fabric ACL.**
+   - Host CPU (`0xB8/0xBC`): ❌ silently dropped
+   - SMU mailbox (`sec_smn_write32`): ❌ wedges the mailbox (5s timeout)
+   - GPU `regs_pcie`: ❌ silently dropped
+   - SMU-executed code (our exec primitive / daveconde's stub): ⚠️ partial — reaches domain-6 sequencer registers, but see requirement 2
+   - PSP kernel itself (`svc #0x7c` family): ✅ would work — the auth gate barely blocks anything — **but we cannot get code running in this context** (see below)
+
+**2. Even where a write lands, the VCN register file must un-clamp.**
+   - This is `bc250-vcn-enable`'s independent finding: SMU reports domain-6 UP, clocks program cleanly, but VCN MMIO reads still return `0xFFFFFFFF` uniformly
+   - Root-level clamp, not per-cluster — mechanism not yet identified by either project
+   - Unclear whether this is downstream of requirement 1 (i.e., resolves itself once PSP-authorized writes land) or an independent gate
+
+**3. The kernel needs `vcn_2_0_3.bin` firmware, which AMD/Sony never shipped for the mining SKU.**
+   - Confirmed: kernel 6.17.7 skips VCN IP-block registration entirely (`case IP_VERSION(2,0,3): break;`) before it would even request the file
+   - Untested community suggestion: substitute `navi10_vcn.bin` (same major.minor version, different revision) — low-risk, easily reversible, nobody has reported trying it
+   - This requirement is moot until 1 and 2 are solved, but it's a real independent gate
+
+**What would unlock requirement 1:** code execution inside a PSP userspace/TA context, so we can issue `svc #0x7c` (or a sibling) ourselves — from *inside* the fabric ring, where the ACL doesn't apply. We looked for a way in and came up empty:
+- `CVE-2023-31316` — the public CVE closest to "PSP RCE" — has a circular dependency on BC-250 (needs VCN firmware's power-save/restore cycle to trigger, but VCN firmware never runs here)
+- `CVE-2021-46747` — the only other AMD PSP CVE that lists BC-250's silicon family — shows no exposed exploit surface on this BIOS when we enumerated it
+- The community researcher's "uninitialized `saved_len`" lead sits inside the *encrypted* PSP_BL, which we can't reach without the RCE it would provide (chicken-and-egg)
+- Hardware fault injection would work in principle but is out of scope for this research
+
+**Net picture:** three real, independent requirements; we currently fail all three; the one requirement (1) that has a known bypass mechanism (PSP-context execution) has no available entry point.
+
 ## The Community Lead — Verified
 
 Community poster (Discord, 2026-09-14) reported: *"the BC250 type 0x24 security policy contains a write for 0x1f820 = 0x185103, which is the register immediately next to CC_UVD_HARVESTING at 0x1f81c. the Deck policy never writes 0x1f820 at all."*

@@ -2,7 +2,43 @@
 
 **Enable VCN (Video Core Next 2.0.3) hardware on AMD BC-250 by overcoming firmware-imposed isolation gates.**
 
-## Latest Status: 2026-09-11 (Afternoon)
+## Latest Status: 2026-09-14/15 — Mechanism Understood End-to-End
+
+📄 **`research/BC250_VCN_UNLOCK_STATE_2026_09_14.md`** — The "island isolation
+gate" from the 09-06/09-11 reports is now identified precisely: BC-250's PSP
+firmware directory ships a **`SEC_GASKET~0x24`** entry (926 signed `(addr,
+value)` writes) that a community researcher first flagged part of
+(`[0x1f820] = 0x00185103`, verified byte-for-byte in our ROM and confirmed
+**absent from Steam Deck's F7A0133 BIOS**). We found a second write in the
+same table (`[0x1f8a4] = 0x0000000b`) and mapped the other ~816 entries as
+**DF fabric access-control programming** — the mechanism that makes runtime
+writes to VCN registers get silently dropped for every non-PSP master (host,
+SMU mailbox, GPU `regs_pcie`), independent of which register you target.
+
+Reversed the PSP TOS SVC dispatch table (128 slots): the syscall PSP itself
+uses to perform these writes (`svc #0x7c`, and 3 siblings) routes through an
+address-resolution gate that is **almost entirely permissive** — it blocks
+only 2MB of unrelated SMN space. VCN is not specially denied at the PSP
+kernel level. The only thing standing between "userspace root" and "VCN
+aperture write" is **execution inside a PSP TA/userspace context** — which we
+do not have and could not find a working public CVE for (see the doc for the
+full walk: `CVE-2023-31316` has a circular dependency on BC-250, `CVE-2021-
+46747` shows no exposed surface on our BIOS, and the community's own
+"uninitialized `saved_len`" lead sits inside encrypted PSP_BL, unreachable
+from our position).
+
+Both known SMU-side exec primitives (this repo's `bc250-smu-unlock`-based
+approach and daveconde's `msg-0x61` stub-repoint) were re-validated on fresh
+hardware and run cleanly — no wedge, ~50ms round trip. The "register file
+stays clamped even once SMU reports dom6 UP" observation from `bc250-vcn-
+enable` is the same wall we describe (downstream of the fabric ACL, not a
+separate bug) — good independent convergence between the two projects.
+
+Read the new doc first. Everything below (09-06 through 09-11) is preserved
+as historical record — the empirical results still stand, this update just
+explains *why* they came out the way they did.
+
+## Status: 2026-09-11 (Afternoon)
 
 📄 **`research/COMMUNITY_REPORT_2026_09_11.md`** — A firmware register audit
 found no code path in the borrowed Navi10/Renoir VCN firmware that touches
@@ -145,6 +181,14 @@ Status register polling validates each transition before proceeding. Retry loops
 
 ### Root Blocker: Island-Level Isolation Gate
 
+**Superseded 2026-09-14 — see `research/BC250_VCN_UNLOCK_STATE_2026_09_14.md`.**
+The "island-level isolation gate" described below is the DF fabric access
+control mechanism, now identified as programmed by the signed `SEC_GASKET~0x24`
+PSP directory entry. It's not a separate silicon-level gate independent of
+SMU — it's the same fabric ACL that also blocks direct host/GPU writes,
+applied uniformly regardless of which runtime master (SMU included, for most
+addresses) issues the write. Kept below for historical context.
+
 Despite successful SMU power-up sequence:
 - All SMU register writes complete successfully
 - Status register reads confirm power state transitions
@@ -197,8 +241,10 @@ curl -X POST http://10.0.0.78/api/switch/BC250%20PSU%20PS_ON/turn_on -d ''
 ## Community References
 
 - **bc250-smu-unlock**: github.com/rw-r-r-0644/bc250-smu-unlock (SMU exploit library)
-- **bc250-vcn-enable**: github.com/daveconde/bc250-vcn-enable (Reference implementation)
+- **bc250-vcn-enable**: github.com/daveconde/bc250-vcn-enable (Reference implementation; independently reaches the same "register file clamped at root" wall)
+- **bc250-vcn-linux-research**: github.com/m2jgh8tg7r-bot/bc250-vcn-linux-research (Linux enablement side — firmware/ring/doorbell staging)
 - **Van Gogh SMU**: Linux kernel amd/pm code (SMU register reference)
+- **recon**: github.com/cachenetics/recon (BC-250-specific PSP/SMU firmware analysis toolkit — used for the SVC dispatch table + SEC_GASKET extraction in the 09-14 report)
 
 ## Next Steps
 
