@@ -495,6 +495,184 @@ The Discord researcher's "uninitialized `saved_len`" blocker suggests a specific
 - **Any direct write to VCN MMIO aperture** via host `0xB8/0xBC`, GPU `regs_pcie`, SMU mailbox, or SMU-exec-primitive — hits fabric wall.
 - **`sec_smn_read32(0x0900c004)`** via mailbox — SMU wedge (iter#26).
 - **PLL_POWER_SET(d, 0)** cold-call to turn off any domain — SMU wedge (state-change path hangs without SMU-internal preconditions).
+- **`sec_smn_read32(0x06900900)`** (daveconde's "ISO-clamp candidate," see below) — SMU wedge, same signature as `0x1f820`/`0x0900c004`.
+
+## Cross-Check Against daveconde/bc250-vcn-enable
+
+Full comparison of our findings against the actively-worked `daveconde/bc250-vcn-enable` repo (same target: BIOS 3.00, PMFW 0.58.6.0).
+
+### Where we converge
+
+| Finding | daveconde | Us |
+|---|---|---|
+| Kernel skips VCN entirely | "upstream kernel deliberately skips VCN instantiation on Cyan Skillfish, PMFW message list has no VCN message" | Confirmed via dmesg: IP block enumeration excludes VCN, zero firmware-request attempt |
+| Register-file clamp (wall 2) | "whole register file clamped at root — UVD_VERSION reads all-ones with no hang post-clock-work" | Same wall: SMU-executed writes reach some dom6 regs, register file stays clamped regardless |
+| Fabric write asymmetry | "host writes via config-window IGNORED; SMU-executed debug writes land" | Same finding — fabric ACL blocks host/mailbox/GPU, partially permits SMU-exec context |
+| SMU mem64 window frame | Corrected to LOW frame (`0x0006D1xx`), not NBIO high frame | Already absorbed into our model from an earlier pull of their repo |
+
+Good independent convergence — two projects arriving at the same walls from different empirical angles is a useful sanity check on both.
+
+### Where we fill a gap in their picture
+
+Their own 467-register map explicitly doesn't cover `0x0900c004` or any `0x09xxxxxx` address (confirmed directly — asking for those addresses returns "outside this register set"). Their repo has **zero mentions of `SEC_GASKET`**, the DF fabric-ACL programming range, or the PSP kernel `svc #0x7c` auth-gate analysis. They know writes get dropped; we know *why* (PSP-signed ACL programming) and *which specific registers* carry the policy (`0x1f820`, `0x1f8a4`).
+
+### Resolving the `PPSMC_MSG_PowerUpVcn` question
+
+daveconde's working theory: renoir (same silicon family, VCN works there) powers the island via PMFW message `PPSMC_MSG_PowerUpVcn`, gated behind `SMU_FEATURE_VCN_PG_BIT`. That message doesn't exist in BC-250's exposed PMFW interface, so they're hunting the Q3 internal message space (147 handlers enumerated) for a native equivalent — **message 0x21 → handler `0x249DC`** is their #1 suspect.
+
+This reconciles cleanly with our own firmware-dump analysis rather than conflicting with it: robin's 256KB SMU image contains **zero VCN register literals anywhere** (verified against Van Gogh's SMU, which contains all of them). There's no `PowerUpVcn`-equivalent to find in Q3 — not because it's feature-gated off, but because the implementing code was never carried into robin's build. We independently ran their exact experiment this session: `smu.call(0x249DC, 0)` returned `0` cleanly with no observable state change, consistent with "nothing VCN-specific lives behind that handler."
+
+**Worth relaying to them directly:** the msg-0x21 hunt is very likely a dead end, for a reason we can demonstrate (a full-firmware literal scan) that isn't visible from their side without the same dump.
+
+### Their ISO-clamp candidate — tested
+
+Their `scan_fw.py` flags four identical `(0x06900900, 0xe8)` pairs at dom6 sequencer block offsets `+0x54..+0x70` as "the most structured unknown... a prime ISO-clamp/release candidate (the July RE spoke of a PCIe iso-clamp)." Their own probe code exists to read `0x06900900` via the config-window transport, but no measured result appears in the public repo.
+
+**We ran it: `sec_smn_read32(0x06900900)` → 5000ms timeout, SMU mailbox wedged.** Same signature as `0x1f820` and `0x0900c004`. This extends the fabric-ACL-locked-range pattern to the `0x069xxxxx` frame — informative even as a negative result, since it rules out "config-window reads 0 because it's simply unmapped" in favor of "it's locked the same way everything VCN-adjacent is locked."
+
+### Their `--direct-load` flag — reasoned through, not tested live (and riskier than our first read suggested)
+
+`--direct-load` stages navi10 VCN firmware into VRAM and replicates the kernel's `AMDGPU_FW_LOAD_DIRECT` register sequence (`amdgpu_vcn_resume` → `vcn_v2_0_mc_resume` → `vcn_v2_0_start`) from a userspace script instead of from inside the kernel module — explicitly to avoid PSP/TEE involvement.
+
+Worth being precise about what this is, since it's easy to conflate with our own working power-up sequence and they're not the same thing. **We *do* have a validated means of powering the VCN clock domain** — `smu.call(FN_PLL_POWER_SET, domain, 1)` + `smu.call(FN_CLK_DOMAIN_UNGATE, 0x16/0x17/0x18)`, run cleanly multiple times this session with no wedge. But that's an SMU-*executed* sequencer command, issued from inside the SMU's own Xtensa core — a different fabric master than anything host-side, and it only powers the SMU's clock-domain sequencer state. Even with dom6 reporting UP via this path, VCN's own register file still reads `0xFFFFFFFF` (wall 2, confirmed independently by us and daveconde). So "powering the domain" this way gets partway through wall 1 and never touches wall 2 at all.
+
+`--direct-load` is a different kind of attempt, not a bigger version of the same one: it writes directly into **VCN's own MMIO register block** (`UVD_VCPU_CNTL`, `UVD_SOFT_RESET`, and similar) via the BAR5-mapped aperture, from the host side — the same register class the kernel driver would touch on working hardware, not the SMU's internal sequencer functions.
+
+That matters for risk, not just for outcome. **Host-side touches of this exact register class have already hung the board outright elsewhere in this investigation** — `umr -r *.*.mmCC_UVD_HARVESTING` while amdgpu was loaded hung it, and BAR5 reads at VCN-block offsets have wedged/hung the board on other occasions this session. This is a materially different risk profile than "the write gets silently dropped and the ACL denies it cleanly," which is what host writes to the *SEC_GASKET-locked policy registers* (`0x1f820`, `0x1f8a4`) do. **The honest expectation for `--direct-load` is closer to "this may hang the board the same way every other host-side VCN-aperture touch has," not "the script completes harmlessly and just doesn't work."**
+
+We did not spend a board-recovery cycle testing this empirically — the public implementation is incomplete (truncated in the repo as fetched), and given the hang history on this exact register class, it isn't a cheap thing to just try. Anyone attempting it should treat it with the same caution as the other DO-NOT-REPEAT items above: expect a hang, have cold-cycle recovery ready, and don't be surprised if it's not a clean "no effect" outcome.
+
+**Update — we did end up testing the closely-related "patched driver + substitute firmware" approach directly (see below), and it confirms this prediction: it hangs.**
+
+## Prior-Session Context Recovered: DPM State + AMD's Own Statement
+
+An earlier session (2026-09-13) on this same investigation produced results that hadn't made it into this writeup. Recovering them here since they're directly relevant.
+
+### SMU already has VCN fully configured — it's just never asked to use it
+
+Live SMU introspection established:
+
+- **Feature bitmap** `0x00000000dd602c7d` — **`DPM_VCLK` (bit 4) and `DPM_DCLK` (bit 5) are already ON**, alongside GFXCLK, FCLK, MP1CLK, and others.
+- **Clock DPM tables** (Q3 msg `0x38`/`0x39`/`0x3A`) return real, populated data — not sentinel garbage:
+  - VCLK p-states: 225 / 225 / 425 / 875 MHz
+  - DCLK p-states: 112 / 112 / 106 / 109 MHz
+- **PerfProfileTable** (Q3 msg `0x41`): 1200/875/875/109/109 MHz — VCN clocks included in the max-values table.
+
+This matters for calibrating risk: these are all **mailbox message reads/writes** — a fundamentally safer access class than the direct BAR5/MMIO pokes that hang the board. Several Q3 messages were tested this way and returned cleanly with no wedge, including a real state-changing call (`set_PerfProfileIndex(3)`, msg `0x1E`). The SMU's internal configuration for VCN is complete and correctly populated; the block simply never gets asked to power up through any legitimate SMU message. (Message `0x1B` is a confirmed hazard — never returns a done state and risks wedging the mailbox; don't send it.)
+
+### An AMD engineer's own statement
+
+From the amd-gfx mailing list (Alex Deucher, AMD):
+
+> "VCN was never part of BC-250 product definition — SMU 11.8 PMFW has no VCN power management, VBIOS lacks the entry, PSP does not have signed VCN ucode for this SKU."
+
+Primary-source confirmation, from AMD itself, of the same four-layer absence this investigation has independently reconstructed from the hardware side.
+
+## Patched Driver + Substitute Firmware — Tested Live; PSP Cleanly Rejects the Firmware, the Hangs Are Elsewhere Entirely
+
+A pre-built, patched `amdgpu.ko` already exists on the board (`/var/lib/vcn-patch/amdgpu.ko`, 45MB unstripped, built 2026-09-07) that correctly re-adds `vcn_v2_0`/`jpeg_v2_0` IP block registration — undoing the `case IP_VERSION(2,0,3): break;` skip stock amdgpu takes. Symbol-table inspection (`nm`/`modinfo` on-board) confirms all standard `vcn_v2_0.c` functions present under their normal names, `vermagic` matching the running kernel exactly, and a bonus `vcnfw_log` module parameter for extra VCN-specific logging. A substitute firmware file was also already staged at the kernel's firmware path override (`firmware_class.path=/var/firmware` is on the cmdline): `/var/firmware/amdgpu/vcn_2_0_3.bin.xz`, byte-identical to `green_sardine_vcn.bin.xz` (Renoir-family).
+
+This is exactly the "untested community suggestion" our own writeup flagged earlier (substitute a same-major.minor VCN firmware) — except it turned out to already be prepared, just never run to completion. We ran it, and separately swapped in `navi10_vcn.bin` as a second substitute.
+
+**Four live attempts across two rounds:**
+
+| # | Firmware | Launch method | Outcome |
+|---|---|---|---|
+| 1 | `green_sardine` substitute | plain foreground insmod | Full hard hang — whole board unreachable via SSH, no dmesg captured |
+| 2 | `navi10` substitute | detached (`setsid nohup … &`) for resilient polling | Completed without hanging — failed early on an unrelated resource-allocation race (`workqueue: Failed to create a rescuer kthread … -EINTR`), never reached VCN-specific code |
+| 3 | `navi10` substitute | plain foreground insmod, no detach pattern | Full hard hang again |
+| 4 | `navi10` substitute | plain foreground insmod, boosted `drm.debug=0x1ff` + `vcnfw_log=1` for instrumentation | Full hard hang again |
+
+Three of four attempts hard-hang the whole board — not just the SMU mailbox, the entire system: no SSH, no ping, nothing until a cold power cycle. That's a materially different failure class than everything else in this document, where "blocked" means either a clean silent drop (host writes to SEC_GASKET-locked registers) or an SMU-mailbox-only wedge (OS keeps responding). Every hang killed the SSH channel before dmesg could be returned, so the first three attempts told us *that* it hangs but not *where*.
+
+**Attempt 4 fixed that, via journald forensics rather than a live dmesg capture.** Persistent journald was already enabled on this system (confirmed beforehand: `/var/log/journal/` exists, ~55MB on disk). After the hang, `bc250-recover` brought the board back, and `journalctl --list-boots` located the frozen boot by its timestamp window. Pulling its kernel log with `-o short-monotonic` (kernel-uptime timestamps, not wall-clock) gives the exact sequence up to the freeze:
+
+```
+[316.972008] amdgpu: failed to load ucode VCN(0x37)
+[316.972368] amdgpu: psp gfx command LOAD_IP_FW(0x6) failed and response status is (0xFFFF0008)
+[316.972523] amdgpu: SMU is initialized successfully!
+[316.972664] [drm:amdgpu_dm_irq_init [amdgpu]] DM_IRQ
+[316.974055] [drm:create_links [amdgpu]] BIOS object table - number of connectors: 2
+[316.975109] [drm:construct_phy [amdgpu]] BIOS object table - link_id: 19
+[316.976175] [drm:construct_phy [amdgpu]] BIOS object table - is_internal_display: 0
+[316.976378] [drm:construct_phy [amdgpu]] BIOS object table - hpd_gpio id: 3
+[316.977205] [drm:construct_phy [amdgpu]] BIOS object table - hpd_gpio en: 0
+                                                              ← log ends here
+```
+
+Every line up to this point is under 1ms apart; this is also the frozen boot's last journal entry, timestamp-for-timestamp. **This pins the freeze down precisely, and it is not where we expected.**
+
+**PSP cleanly rejects the substitute VCN firmware — no hang there at all.** `LOAD_IP_FW(0x6)` fails with status `0xFFFF0008` (a PSP-side rejection code, consistent with signature/version mismatch), the driver logs it, and moves on. This is independent confirmation of our signed-firmware model — obtained through a completely different mechanism (the kernel driver's real PSP firmware-load path) than our static SEC_GASKET analysis — and it behaves exactly as that model predicts: cleanly, not catastrophically.
+
+**The actual freeze happens ~5ms later, inside Display Core connector/PHY construction — specifically right after a hot-plug-detect GPIO read in `construct_phy`.** This has nothing to do with VCN. It plausibly matches the "DAL IRQ warnings" (`dal_irq_service_ack`, `dal_irq_service_dummy_ack`) stock amdgpu produced on this same board earlier in this investigation, which we noted at the time as "unrelated to VCN" and moved past. Likely the same underlying display-core/GPIO quirk on this board's video output path — escalated from a warning (stock driver, VCN registration skipped, different IP-block ordering) to a hard lockup (patched driver, VCN block re-added, timing/ordering changed enough to expose a race).
+
+**Practical implication: don't bother testing more VCN firmware substitutes expecting a different outcome.** The freeze point is downstream of, and unrelated to, VCN entirely — supplying a valid firmware image wouldn't change what happens, because execution already gets past the VCN load step cleanly before hitting this.
+
+### Trying to route around it: `amdgpu.dc=0` — different hang, still not VCN
+
+`amdgpu.dc=0` disables the full atomic Display Core path in favor of the legacy display driver, which should skip `construct_phy`/connector-BIOS-object-table construction entirely. Tried it (`insmod ... dc=0 vcnfw_log=1`, same journald-forensics technique as above).
+
+**It worked, for what it was meant to fix.** The connector-construction hang is gone. IP block detection now correctly shows:
+
+```
+detected ip block number 7 <vcn_v2_0>
+detected ip block number 8 <jpeg_v2_0>
+```
+
+— both present, matching the patched driver's intent — followed by VBIOS fetch, gfx microcode init, VRAM/GART setup (512M VRAM, 7630M GTT), and fence-driver setup across the gfx/compute/kiq rings. All of that succeeded, and the log grew to over 1500 lines (versus ~100 in the first attempt).
+
+**But a second, different hang appears further along.** The true last line is:
+
+```
+[334.118401] [drm:sdma_v5_0_sw_init [amdgpu]] SDMA 0 use_doorbell being set to: [true]
+```
+
+— mid-way through SDMA ring/doorbell configuration (IP block 6), which runs *before* `vcn_v2_0` (block 7) or `jpeg_v2_0` (block 8) get to their own `sw_init`. **Still not VCN.**
+
+Two independent hangs now, in two different unrelated subsystems, both upstream of any VCN-specific code actually running. A plausible unifying hypothesis: the patched driver activates two more doorbell-consuming IP blocks (VCN + JPEG) than this mining SKU's BAR2 doorbell aperture (512KB, confirmed via the earlier `register mmio size: 524288` line) may have been sized or wired for at fabrication. Whatever doorbell-index-dependent operation runs next may be reading or writing unbacked space and hanging the bus — display GPIO polling and SDMA doorbell setup both plausibly fit that shape.
+
+**This is a genuinely different problem from everything else in this document.** SEC_GASKET, the DF fabric ACL, and PSP firmware signing all behaved exactly as this investigation's model predicts — the substitute firmware was cleanly rejected, no hang, no surprises. The patched-driver route is blocked by something else entirely: pre-existing driver/hardware compatibility issues in unrelated IP blocks.
+
+### Root cause confirmed: `ip_block_mask` isolates it to VCN/JPEG's `early_init`, not their own hardware bring-up
+
+The patched driver exposes the standard amdgpu `ip_block_mask` module parameter — a bitmask over registered IP blocks (0=`nv_common` … 8=`jpeg_v2_0`, matching the detection order seen above). Loading with `dc=0 ip_block_mask=0x7f` (bits 0–6 set, excluding bit 7 `vcn_v2_0` and bit 8 `jpeg_v2_0` entirely) is a direct test: if the hang requires VCN/JPEG's own hardware-bring-up code to run, excluding them should produce a clean boot; if the hang is something else entirely, it should persist.
+
+**It loaded completely cleanly.** dmesg shows `disabled ip block: 7 <vcn_v2_0>` and `disabled ip block: 8 <jpeg_v2_0>` right after detection, and the rest of driver init runs to full completion: SMU init, KFD topology and GPU node creation, every ring set up — **including both `sdma0` and `sdma1`, the exact step that hung in the previous attempt** — ending in `Initialized amdgpu 3.64.0 for 0000:01:00.0 on minor 1`. Confirmed via `lsmod` and continued board responsiveness throughout.
+
+This pins down not just correlation but causal direction. amdgpu's init sequence runs `early_init` for *every* registered IP block, in order, in one pass — completed in full before *any* block's `sw_init` begins. So although `vcn_v2_0`/`jpeg_v2_0` are numbered 7 and 8 ("after" `sdma_v5_0` at block 6), their `early_init` still executes, and completes, before SDMA's `sw_init` ever runs. Excluding them before that pass avoids whatever they do in it.
+
+### Pinning down exactly what: source-level confirmation, no kernel patch needed
+
+To go from "excluding them avoids it" to "here's the actual mechanism," we read the driver source directly — sparse-cloning `torvalds/linux` (nearest matching tag; this board is Bazzite, whose own kernel patches are all handheld/WMI/audio quirks per its changelog, nothing touching VCN or doorbell code, so vanilla upstream is a safe proxy) straight onto the board, which already had a matching `kernel-devel` package and full toolchain installed.
+
+`amdgpu_mm_wdoorbell()` (`amdgpu_doorbell_mgr.c`) turned out to be bounds-checked, logging a clean `"writing beyond doorbell aperture"` error on overflow — which we never saw in any captured log. That ruled out a simple doorbell-index overflow as the mechanism.
+
+`vcn_v2_0_early_init()` calls shared code, `amdgpu_vcn_early_init()` (`amdgpu_vcn.c`), which calls `amdgpu_ucode_request(..., AMDGPU_UCODE_REQUIRED, "amdgpu/%s.bin", ucode_prefix)` — **a firmware file read that happens in the shared early_init pass**, separate from and prior to PSP's later signature check. That reframed the question entirely: the divergence isn't about VCN's registration or doorbell math — it's about whether this file read succeeds or fails.
+
+**Decisive test:** moved the staged firmware file aside entirely (the board's natural no-VCN-firmware state) and loaded with `dc=0`, all blocks enabled, no `ip_block_mask`. Result, confirmed via fresh SSH connection and full dmesg with kernel timestamps:
+
+```
+Direct firmware load for amdgpu/vcn_2_0_3.bin failed with error -2
+amdgpu: early_init of IP block <vcn_v2_0> failed -19
+amdgpu: Fatal error during GPU init
+amdgpu: finishing device.
+```
+
+**Not a hang — a clean, graceful failure.** But also not a working GPU: the whole device probe aborts, not just the VCN block. No `/dev/dri`, nothing initializes.
+
+**Complete picture, three configurations, now precisely characterized:**
+
+| Configuration | Result |
+|---|---|
+| `ip_block_mask` excludes VCN/JPEG before `early_init` runs at all | Full clean success — gfx/compute/SDMA/display all work |
+| No firmware file present, VCN/JPEG not masked | `early_init` genuinely fails (ENOENT) — clean abort of the *whole* device probe, no hang, but nothing works at all |
+| Wrong-version-but-parseable firmware present (`green_sardine` or `navi10`), VCN/JPEG not masked | `early_init` **wrongly succeeds** (the file parses as a valid `common_firmware_header` even though it's the wrong hardware generation) — downstream code proceeds as if VCN is genuinely present and correctly initialized — hangs |
+
+**This is the complete answer to "what's needed to allow VCN+JPEG to coexist without hanging": `ip_block_mask` exclusion is the only configuration that yields a fully working system.** There is no configuration where VCN's `early_init` genuinely succeeds without either a hang (wrong-but-parseable firmware) or a whole-device failure (no firmware), because genuine success requires real signed BC-250 VCN firmware, which doesn't exist — and "successfully parsed firmware for the wrong hardware generation" is a code path upstream amdgpu developers never had reason to test, since nobody ships mismatched firmware expecting it to work.
+
+**No kernel source patch is warranted.** Even fixing the "wrongly succeeds, then hangs downstream" bug wouldn't unlock real VCN function — it would only get the driver to the already-documented PSP signature-rejection wall (`LOAD_IP_FW` status `0xFFFF0008`, described above) slightly more reliably than a hang does. **This is not a PSP/SEC_GASKET/fabric-ACL problem** — that wall is confirmed working exactly as this document's model predicts throughout. It's a driver-robustness gap in an upstream code path nobody ever needed to harden, on a SKU nobody ever shipped VCN firmware for.
+
+Recovery worked cleanly across every hang in this investigation via the fast relay cold-cycle (~76s each) — the only thing that changed between attempts was how much of the boot log survived long enough to read afterward, and eventually, how to isolate the actual cause without needing a single additional recovery cycle once the right question was asked.
 
 ## Reproducing Our Findings — Tools & Scripts
 
@@ -517,6 +695,11 @@ All code lives under `scratchpad/` in the working directory:
 | `b2_amdgpu_post_sequence.py` | Load amdgpu post-sequence, check dmesg |
 | `fuzz_smu_functions.py` | FN_PLL_POWER_SET / FN_CLK_DOMAIN_UNGATE sweep |
 | `fuzz_defensive.py`, `fuzz_B_neighbors_then_A.py` | Persistent-log fuzz variants |
+| `iso_clamp_probe.py` | Test daveconde's `(0x06900900, 0xe8)` ISO-clamp candidate |
+| `try_patched_vcn_driver.py`, `try_navi10_sub.py`, `try_navi10_clean.py`, `try_navi10_verbose.py` | Load patched amdgpu.ko + substitute VCN firmware (hangs board in Display Core, not VCN) |
+| `try_dc_disabled.py` | Retry with `dc=0` to route around the Display Core hang (hangs in SDMA doorbell setup instead) |
+| `try_ip_block_mask.py` | Root-cause confirmation: `ip_block_mask=0x7f` excludes VCN/JPEG — driver loads 100% cleanly |
+| `try_no_firmware.py` | Decisive test: no VCN firmware file present — clean whole-device failure, no hang |
 
 External tools used:
 
@@ -533,6 +716,7 @@ External tools used:
 3. **The full mechanism story** (SEC_GASKET → fabric ACL → aperture wall) unifies previously-separate observations: iter#14's "SMU has no VCN clock code," iter#15's "DF fabric present bit locked," iter#22's "signed IPDS declares VCN present," iter#26's "runtime writes silently dropped."
 4. **daveconde's stated `5s timeout` on their msg-0x61 fire is not what we observe** — we get status=0x01 arg0=0x50 in ~2-4s. Either their firmware version differs or the description was outdated. Worth noting so others don't waste time debugging a "missing timeout."
 5. **Deck BIOS diff** is now available locally as evidence — the exact `(0x1f820, 0x00185103)` tuple simply does not exist in the entire Deck 16MB BIOS. Anyone else with a Deck BIOS can verify with a byte-search for `20 f8 01 00 03 51 18 00`.
+6. **@daveconde: your msg-0x21 hunt is probably a dead end**, and we can show why — robin's SMU firmware has zero VCN register literals anywhere in its 256KB image (Van Gogh's has all of them). There's likely nothing VCN-specific to find in Q3's message space. Also: your `(0x06900900, 0xe8)` ISO-clamp candidate wedges the SMU mailbox on read — same signature as every other VCN-adjacent address we've hit. Negative result, but a result.
 
 ## Prior-Iteration Log (memory reference)
 
