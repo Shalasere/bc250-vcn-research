@@ -67,6 +67,7 @@ Verdicts: `SAFE`, `NEEDS_REVIEW`, `SUSPICIOUS`, `NOT_REVIEWED`, `DEAD_CODE`, `UT
 - **verdict:** SAFE — size capped, buffer check present
 - **confidence:** HIGH — ARM-level verification confirms ALL branches are unsigned (BHI, BLS)
 - **assumptions:** None remaining
+- **borderline_candidate:** At 0x16E8 (second memcpy, appending table B), the dest offset within the caller's buffer is influenced by APCB count value from [0xB834]. But bounded by 3 checks: count <= 0xAAAAAA9, computed_size <= 0x4F0, computed_size <= caller_buf_size (0x9E0 from sole call site at 0x59B4). Not an arbitrary write.
 - **last_reviewed:** session 12 (skeptical validation pass)
 
 ---
@@ -289,5 +290,5 @@ said "no obvious memcpy-to-stack-with-variable-size" but that's a narrow check.
 - Indirect data flow through global buffers (function A writes to global, function B uses it unsafely) — **OPEN**
 - Dynamic behavior (PSPEmu tracing) — **OPEN** (requires emulator, out of scope for static analysis)
 - Functions below 0x0300 (exception handlers, startup stubs — mostly covered by SVC analysis but not exhaustively)
-- **Write-what-where primitives** — session 12 scanned all 26 APCB address loads and 32 memcpy/copy calls. **No hits.** No APCB-derived value is used as a memory write destination (STR base or memcpy dest) via direct double-dereference. Caveat: complex chains through function call boundaries not fully checked.
+- **Write-what-where primitives** — session 12: two independent scans (manual + agent with 3-tier taint tracking across 16,340 instructions). **No hits.** Pattern-level finding: APCB values are used as sizes/counts throughout PSP_BL, never directly as addresses. Staging buffer re-reads use hardcoded offsets only. One borderline: FUN_00001670 at 0x16E8 (bounded offset within caller buffer, 3 checks). Caveat: deeply cross-function flows (3+ call layers) not fully checked.
 - **Arbitrary SRAM read at 0x7644** — FUN_000075A4 dereferences value at 0xB820 as a pointer (`ldr r0, [r1]` where r1=[0xB820]). If 0xB820 is attacker-controlled, this is an arbitrary read influencing control flow. READ primitive only, not exploitable for code execution alone.
