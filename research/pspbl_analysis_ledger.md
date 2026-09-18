@@ -166,6 +166,102 @@ Verdicts: `SAFE`, `NEEDS_REVIEW`, `SUSPICIOUS`, `NOT_REVIEWED`, `DEAD_CODE`, `UT
 - **confidence:** HIGH (95%) — ARM-level verification of all comparisons and buffer target
 - **last_reviewed:** session 13 (deep ARM-level analysis by agent)
 
+### 0x66A0 — APCB Token Resolver (ELEVATED)
+- **size:** 284 bytes (0x66A0–0x67BC), literal pool at 0x67BC (1 word: 0x9B60)
+- **role:** Locates APCB token data, copies 0x100 bytes into a structure, performs minimal validation, passes structure to FUN_07014. **Primary feeder for the SUSPICIOUS alignment gap chain.**
+- **stack_frame:** PUSH {r1-r3, r4-r11, lr} = 48 bytes. No SUB SP. Pushed r1-r3 reused as 12 bytes of scratch.
+- **signature:** `FUN_066A0(mode_flag, token_id, data_base, data_size, [sp]=passthrough, [sp+4]=lookup_table_ptr, [sp+8]=header_flag)` — 7 parameters
+- **callers:** **14 call sites** found via raw BL scan. 9 of 14 pass r0=0 (Path C). Callers include 0x3282 (FUN_03214), 0x6FBC, 0x72F6, 0x7398, 0x7588, and others.
+- **apcb_contact:** YES — indirect but significant. Paths B and C call FUN_0083C / FUN_02C80 which perform APCB token lookup and copy 0x100 bytes of APCB data into the structure.
+- **three code paths:**
+  - **Path A** (param5 != NULL): loop over entry array, match token_id, copy 0x100 bytes, type validation at 0x670E
+  - **Path B** (param5 == NULL, mode != 0): FUN_0083C lookup → copy → **SKIPS type validation**
+  - **Path C** (param5 == NULL, mode == 0): FUN_02C80 lookup → **SKIPS type validation**. Used by 9/14 callers.
+- **CRITICAL FINDING — type validation bypass (3 routes):**
+  1. Path C (9/14 callers): branches to 0x670A, skips all validation of structure contents
+  2. Path B: same bypass, branches to 0x670A after FUN_0083C
+  3. Path A with field_5A >= 2: switch at 0x670E only handles 0 and 1; values >= 2 fall through unconditional `b 0x6734` with r7=0 (success)
+- **CRITICAL FINDING — field_54 never validated:** The content size field at structure offset 0x54 is never checked in FUN_066A0. Fully attacker-controlled.
+- **CRITICAL FINDING — field_58 bypass:** Type discriminator at +0x58 (16-bit) is validated ONLY in Path A when field_5A == 1 (must match token_id). Bypassed on Paths B/C and when field_5A >= 2.
+- **FUN_07014 argument setup at 0x6788:**
+  - r0 = structure pointer (0x9B60 fixed SRAM when param6==0, else param2)
+  - r1 = data region start (param2 when param6==0, else param2+0x100)
+  - r2 = data size (param3 raw when param6==0 — **no minimum-size check**; else param3-0x100 with 0xFF check)
+  - r3 = APCB data pointer from FUN_0083C/02C80
+- **attacker can trigger alignment gap:** YES. Craft APCB with field_58=0x2F/0x4C/0x4D, field_54 mod 16 == 1 (max +15 delta), field_5A >= 2 (bypass validation). Via any of 9 Path C callers.
+- **bounds_checks:** 8 CMP+branch pairs, all correct signedness. Loop uses signed BGT but both operands non-negative (LDRB count). BHS for 64-bit overflow check. All equality checks otherwise.
+- **loop:** Token search (Path A only), max 255 iterations via LDRB zero-extension. Not a corruption vector.
+- **verdict:** SUSPICIOUS — confirms attacker reachability for FUN_07014 alignment gap. field_54 and field_58 fully attacker-controlled on most paths.
+- **confidence:** HIGH (85%)
+- **last_reviewed:** session 13 (deep ARM-level analysis by agent)
+
+### 0x5850 — APCB Config Loader
+- **size:** 420 bytes (0x5850–0x59F3), literal pool 0x59F4–0x59FF
+- **role:** Boot-time APCB config query (entry 0x62 via FUN_0850), buffer allocation via FUN_3600, data load/verify via FUN_823C and FUN_1670
+- **stack_frame:** PUSH {r0-r2, r4-r11, lr} (48 bytes) + SUB SP, #0x28 (40 bytes) = 88 bytes total
+- **callers:** 1 at 0x569A (passes r2=0, making FUN_56C4 path dead)
+- **apcb_contact:** INDIRECT — FUN_0850 query returns APCB-controlled values to 4 stack variables (size, flags, param, base_offset)
+- **bounds_checks:** 8 comparisons, all correct signedness. 64-bit carry-chain overflow check is mathematically sound. No signed/unsigned confusion.
+- **loop:** Discovery loop with UXTB implicit 256-iteration limit. Not a corruption vector.
+- **findings:**
+  - FUN_3600(value_low) allocates APCB-controlled size — if allocator doesn't cap to SRAM, could OOM. Null-checked.
+  - FUN_823C has independent bounds checking (null checks, overflow, SRAM limit) — safety net for copies.
+  - FUN_1670 reads 0x9E0 bytes at alloc_buf + base_offset — if alloc < base_offset + 0x9E0, OOB. 64-bit check validates no wrap but not allocation sufficiency.
+  - 0x9E0/0xD80 size discrepancy in FUN_56C4 path — DEAD CODE at only call site (r2=0).
+- **verdict:** NEEDS_REVIEW — no direct vulnerability in FUN_05850 itself, but transitive risks through allocator and FUN_1670 size assumptions
+- **confidence:** MEDIUM (65%)
+- **last_reviewed:** session 13
+
+### 0x3214 — Boot Config Query Dispatcher
+- **size:** 312 bytes (0x3214–0x334B), literal pool 0x334C–0x3369
+- **role:** Two-path dispatcher (R0 selects path). Calls FUN_066A0, FUN_3600 (SPI flash), FUN_1C18.
+- **stack_frame:** PUSH {r1-r3, r4-r9, lr} = 40 bytes. No SUB SP. Pushed r1-r3 as scratch.
+- **callers:** 2 (0x4F40, 0x649A)
+- **apcb_contact:** None direct. Calls FUN_066A0 (which is APCB-involved). FUN_3600 returns SPI flash pointer → passed to FUN_1C18 without validation.
+- **bounds_checks:** 3 comparisons, all equality (BEQ/BNE). No range checks needed.
+- **loop:** 1 polling loop (hardware status wait, no iteration counter). Not a corruption vector.
+- **copy_ops:** None in this function.
+- **verdict:** NEEDS_REVIEW — no local vulnerability, but FUN_3600 flash pointer flows to FUN_1C18 unchecked. Also calls FUN_066A0 at 0x3282.
+- **confidence:** MEDIUM (60%)
+- **last_reviewed:** session 13
+
+### 0x73D0 — SMU/PSP Command Handler
+- **size:** 102 bytes (0x73D0–0x7436)
+- **role:** Command handler for 3 SMU/PSP message IDs (0x95, 0x42, 0x91)
+- **stack_frame:** SUB SP, #0x54 (84 bytes) + PUSH 5 regs (20 bytes) = 104 bytes. **"0x58 stack buffer" flag was FALSE POSITIVE** — actual SUB is 0x54, scanner off by 4.
+- **callers:** 1 at 0x47AC (dispatch function)
+- **apcb_contact:** None
+- **bounds_checks:** 5 comparisons, all equality (BEQ/BNE). No range checks.
+- **copy_ops:** None direct. Callees FUN_5F5C and FUN_68AC fill stack buffers.
+- **verdict:** SAFE
+- **confidence:** HIGH (88%)
+- **last_reviewed:** session 13
+
+### 0x74C8 — Type-Dispatched Register Accessor
+- **size:** 146 bytes (0x74C8–0x755A), literal pool 0x755C–0x7566
+- **role:** Register read for types {5, 6, 0xa}. Returns error 0x22 for invalid types.
+- **stack_frame:** PUSH 6 regs (24 bytes) + SUB SP, #0x18 (24 bytes) = 48 bytes. Three scalar output slots, NOT an array.
+- **callers:** 2 at 0x57DA and 0x5814 (both in FUN_057C4)
+- **apcb_contact:** None (globals at 0x9408, 0x9A24, 0x93EC — all SRAM, not APCB)
+- **"local array + param index" flag:** FALSE POSITIVE — "array" is 3 independent scalar output-parameter slots at fixed offsets; "param index" is a type discriminator used only in equality comparisons. No register-indexed memory access anywhere.
+- **bounds_checks:** 4 comparisons, all equality (BEQ/BNE). No range checks exist.
+- **verdict:** SAFE
+- **confidence:** HIGH (92%)
+- **last_reviewed:** session 13
+
+### 0x2B80 — Capability/Status Detector
+- **size:** 164 bytes (0x2B80–0x2C24), literal pool 0x2C24–0x2C2F
+- **role:** Builds bitmask of hardware subsystem features. Pure read + OR into r0.
+- **stack_frame:** PUSH 3 regs (12 bytes) + SUB SP, #0x1C (28 bytes) = 40 bytes. 7-field struct, NOT an array.
+- **callers:** 1 at 0x771A (FUN_7568)
+- **apcb_contact:** None (0x03010000 MMIO, 0x00080002 mask, 0x9AC0 SRAM struct)
+- **"local array access" flag:** FALSE POSITIVE — 7 distinct struct fields at fixed offsets, zero register-indexed access, no loops.
+- **bounds_checks:** 11 unsigned (CBZ/CBNZ), 4 neutral (BEQ after TST). Zero signed comparisons.
+- **copy_ops:** None
+- **verdict:** SAFE
+- **confidence:** HIGH (92%)
+- **last_reviewed:** session 13
+
 ### 0x75A4 — Config Buffer Builder
 - **size:** varies (part of larger chain)
 - **role:** Reads APCB-derived data from SRAM 0xB800 area, writes to 0x4F000 region
@@ -292,15 +388,14 @@ stack buffer with attacker-controlled size" and found none.
 | ~~0x53C4~~ | ~~214~~ | ~~Largest stack buffer~~ — **RESOLVED session 12: SAFE** (hardcoded 0x640, no callers) |
 | ~~0x7014~~ | ~~320~~ | ~~Two large stack buffers~~ — **RESOLVED session 13: SUSPICIOUS** (alignment delta gap on special-type path, FUN_062F8 needs follow-up) |
 | ~~0x1A60~~ | ~~248~~ | ~~Triple flag~~ — **RESOLVED session 13: SAFE** (no stack buffers, fixed SRAM at 0xA500, all unsigned checks) |
-| **0x66A0** | **284** | **ELEVATED** — caller of SUSPICIOUS FUN_07014, processes APCB tokens (FUN_0083C/FUN_02C80). Param controls loop bound. **Analyze next.** |
-| 0x5850 | 420 | Large function, param controls loop bound |
-| 0x3214 | 312 | param controls loop bound |
-| 0x73D0 | 102 | Large stack buffer (0x58) |
-| 0x74C8 | 146 | local array + param index — double flag |
-| 0x2B80 | 164 | local array access |
+| ~~0x66A0~~ | ~~284~~ | ~~ELEVATED~~ — **RESOLVED session 13: SUSPICIOUS (85%)** — confirms attacker reachability for FUN_07014 alignment gap. field_54/field_58 fully attacker-controlled on 9/14 caller paths. |
+| ~~0x5850~~ | ~~420~~ | ~~Large function~~ — **RESOLVED session 13: NEEDS_REVIEW (65%)** — transitive risks through allocator FUN_3650 and FUN_1670 size assumptions. No direct vuln. |
+| ~~0x3214~~ | ~~312~~ | ~~param controls loop bound~~ — **RESOLVED session 13: NEEDS_REVIEW (60%)** — false positive loop flag. Transitive: FUN_3600 flash ptr → FUN_1C18 unchecked. Calls FUN_066A0. |
+| ~~0x73D0~~ | ~~102~~ | ~~Large stack buffer (0x58)~~ — **RESOLVED session 13: SAFE (88%)** — false positive (SUB SP is 0x54, scanner off by 4). No APCB contact. |
+| ~~0x74C8~~ | ~~146~~ | ~~local array + param index~~ — **RESOLVED session 13: SAFE (92%)** — false positive (equality dispatch, not array indexing). |
+| ~~0x2B80~~ | ~~164~~ | ~~local array access~~ — **RESOLVED session 13: SAFE (92%)** — false positive (struct fields at fixed offsets, not array). |
 
-All of these are `NOT_REVIEWED` at the manual/semantic level. The heuristic scan
-said "no obvious memcpy-to-stack-with-variable-size" but that's a narrow check.
+**All 10 priority candidates now RESOLVED.** Summary: 6 SAFE, 2 SUSPICIOUS (0x7014 + 0x66A0 form a chain), 2 NEEDS_REVIEW (transitive only).
 
 ---
 
@@ -331,6 +426,14 @@ said "no obvious memcpy-to-stack-with-variable-size" but that's a narrow check.
 2. FUN_00007014 (two large stack buffers) → **SUSPICIOUS**: heuristic's 0x4C/0x5C buffer flags were false positives (type discriminator CMP immediates, not sizes). Actual stack buffers are 16 and 20 bytes. But found genuine bounds-check gap: special APCB types (0x2F/0x4C/0x4D) skip local bounds check, `ALIGN_UP(field_54, 16)` can exceed FUN_071AC's validated raw size by up to 15 bytes. FUN_062F8 receives unvalidated aligned size — **first SUSPICIOUS verdict from deep analysis pass**.
 3. Caller discovery: FUN_066A0 (itself a priority candidate) is a caller of FUN_07014 and processes APCB tokens — elevated to top priority.
 4. Raw BL encoding scan technique: Capstone linear disassembly misses callers when literal pool data breaks instruction-boundary tracking. Fixed by scanning raw halfwords for BL target encoding.
+5. **FUN_066A0 (ELEVATED, APCB token resolver) → SUSPICIOUS:** Confirmed attacker reachability for the 0x7014 alignment gap. Three type-validation bypass routes (Path C skips all validation, Path B skips type validation, Path A field_5A >= 2 falls through). field_54 (content size) NEVER validated. field_58 (type discriminator) bypassable. 14 callers found, 9 use bypass Path C. **This + FUN_07014 forms the strongest attack chain found in PSP_BL.**
+6. FUN_05850 → NEEDS_REVIEW: APCB-controlled allocation size, FUN_823C provides safety net but FUN_1670 reads 0x9E0 bytes at alloc+offset without confirming allocation sufficiency.
+7. FUN_03214 → NEEDS_REVIEW: No local vuln. FUN_3600 flash pointer flows to FUN_1C18 without validation.
+8. FUN_073D0 → SAFE: "0x58 stack buffer" was scanner off-by-4 (actual 0x54). No APCB contact.
+9. FUN_074C8 → SAFE: "local array + param index" was equality dispatch on type discriminator, not array indexing.
+10. FUN_02B80 → SAFE: "local array access" was 7 struct fields at fixed offsets, no register-indexed access.
+11. **Heuristic false positive rate:** Of 10 priority candidates, 6 had false-positive flags (wrong buffer size, CMP immediates mistaken for sizes, struct fields mistaken for arrays, equality dispatch mistaken for indexing). The heuristic scan's value was in identifying the right FUNCTIONS, even when the stated REASON was wrong.
+12. **All 10 priority candidates now resolved.** Next critical target: FUN_062F8 (receives unvalidated aligned size from the 066A0→07014 chain).
 
 ### What it DID NOT check (before session 12):
 - ~~Semantic correctness of bounds checks (signed vs unsigned, off-by-one)~~ — **partially addressed session 12** for FUN_00002434, FUN_00001670, FUN_00001D30
