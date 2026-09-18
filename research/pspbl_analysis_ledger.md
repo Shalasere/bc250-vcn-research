@@ -140,8 +140,14 @@ Verdicts: `SAFE`, `NEEDS_REVIEW`, `SUSPICIOUS`, `NOT_REVIEWED`, `DEAD_CODE`, `UT
 ### 0x44CC — FUN_000044CC (874 lines decompiled)
 - **verdict:** DEAD_CODE — no callers in entire binary
 - **confidence:** HIGH — exhaustive call graph from 0x0300 confirms unreachable. Session 12: zero references of any kind (no BL/BLX, no pointer table entries, no 32-bit constant 0x44CC/0x44CD in data). Neighbor function has 72 call references proving the scanner works.
-- **notes:** Full decompilation in artifacts/psp-rce-outputs/fun044cc_decompiled.c. Contains the ONLY write to SRAM 0xB814 (at binary offset 0x4D08: `ldr r1, =0xB814; str r2, [r1]`). Since FUN_000044CC is dead, PSP_BL never writes to 0xB814 — the value there comes from the boot ROM's APCB load. Also contains writes to 0xB818 and 0xB81C.
-- **last_reviewed:** session 12 (confirmed dead + identified as sole 0xB814 writer)
+- **role:** Directory Entry Processor — large switch-based dispatcher on entry type (0x00-0x43 via TBB, plus special paths). Args: R0=entry type, R1=pointer to 16-byte directory entry. R10=0xB7F8 (from pool 0x48E4), R8=0xB808.
+- **notes:** Full decompilation in artifacts/psp-rce-outputs/fun044cc_decompiled.c. Is the SOLE writer to the entire 0xB7F8-0xB81F SRAM region:
+  - 0xB7F8-0xB807: unconditional writes from entry[0..3] (at 0x4500-0x4506)
+  - 0xB808-0xB810: case 3, validation gate (calls 0x61E4), or from PSP_BL globals at 0x95C8
+  - 0xB814-0xB81C: case 4 (entry[3]==0x10000000), writes entry[1]/entry[2]/constant
+  - 0xB820-0xB82B: **NO WRITER FOUND** — not even in dead code
+  Since FUN_000044CC is dead, PSP_BL never executes ANY of these writes. The 0xB800-0xB82B region is populated entirely by the prior boot stage (boot ROM APCB load).
+- **last_reviewed:** session 12 (confirmed dead + mapped all write targets)
 
 ---
 
