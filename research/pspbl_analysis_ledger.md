@@ -139,9 +139,9 @@ Verdicts: `SAFE`, `NEEDS_REVIEW`, `SUSPICIOUS`, `NOT_REVIEWED`, `DEAD_CODE`, `UT
 
 ### 0x44CC — FUN_000044CC (874 lines decompiled)
 - **verdict:** DEAD_CODE — no callers in entire binary
-- **confidence:** HIGH — exhaustive call graph from 0x0300 confirms unreachable
-- **notes:** Full decompilation in artifacts/psp-rce-outputs/fun044cc_decompiled.c
-- **last_reviewed:** session 9
+- **confidence:** HIGH — exhaustive call graph from 0x0300 confirms unreachable. Session 12: zero references of any kind (no BL/BLX, no pointer table entries, no 32-bit constant 0x44CC/0x44CD in data). Neighbor function has 72 call references proving the scanner works.
+- **notes:** Full decompilation in artifacts/psp-rce-outputs/fun044cc_decompiled.c. Contains the ONLY write to SRAM 0xB814 (at binary offset 0x4D08: `ldr r1, =0xB814; str r2, [r1]`). Since FUN_000044CC is dead, PSP_BL never writes to 0xB814 — the value there comes from the boot ROM's APCB load. Also contains writes to 0xB818 and 0xB81C.
+- **last_reviewed:** session 12 (confirmed dead + identified as sole 0xB814 writer)
 
 ---
 
@@ -283,4 +283,5 @@ said "no obvious memcpy-to-stack-with-variable-size" but that's a narrow check.
 - Indirect data flow through global buffers (function A writes to global, function B uses it unsafely) — **OPEN**
 - Dynamic behavior (PSPEmu tracing) — **OPEN** (requires emulator, out of scope for static analysis)
 - Functions below 0x0300 (exception handlers, startup stubs — mostly covered by SVC analysis but not exhaustively)
-- **Write-what-where primitives** — APCB-derived values used as memory write destinations (NEW, session 12, analysis in progress)
+- **Write-what-where primitives** — session 12 scanned all 26 APCB address loads and 32 memcpy/copy calls. **No hits.** No APCB-derived value is used as a memory write destination (STR base or memcpy dest) via direct double-dereference. Caveat: complex chains through function call boundaries not fully checked.
+- **Arbitrary SRAM read at 0x7644** — FUN_000075A4 dereferences value at 0xB820 as a pointer (`ldr r0, [r1]` where r1=[0xB820]). If 0xB820 is attacker-controlled, this is an arbitrary read influencing control flow. READ primitive only, not exploitable for code execution alone.
