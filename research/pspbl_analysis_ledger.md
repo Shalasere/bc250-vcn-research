@@ -124,6 +124,48 @@ Verdicts: `SAFE`, `NEEDS_REVIEW`, `SUSPICIOUS`, `NOT_REVIEWED`, `DEAD_CODE`, `UT
 - **reachability:** No direct callers found (no BL/BLX targets 0x53C4/0x53C5 in binary). Likely dead code or externally dispatched via PSP mailbox command table.
 - **last_reviewed:** session 12 (skeptical validation pass, ARM bytes verified)
 
+### 0x7014 — APCB Token Processor
+- **size:** 318 bytes (0x7014–0x7152), literal pool at 0x7154–0x715F
+- **role:** Processes APCB token data through validation pipeline — type-discriminated dispatch with alignment, delegation to sub-functions
+- **stack_frame:** PUSH.W {r0-r3, r4-r11, lr} (52 bytes) + SUB SP, #0x34 (52 bytes) = 104 bytes total
+- **stack_buffers:** SP+0x0C (16 bytes) and SP+0x1C (20 bytes) — passed as output pointers to FUN_08064. **The heuristic's "0x4C/0x5C buffers" flag is a FALSE POSITIVE** — 0x4C and 0x4D are CMP immediates for the type discriminator check, not buffer sizes.
+- **parameters:** (struct *s, addr, size, arg3, arg4). Structure fields: +0x14 (offset), +0x18 (type flag), +0x30 (boolean), +0x48 (mode selector), +0x50 (size/limit), +0x54 (content size — key bounds field), +0x58 (type discriminator, 16-bit LDRH, checked against 0x2F/0x4C/0x4D)
+- **callers:** Two (found via raw BL encoding scan, Capstone missed both due to literal pool data breaking instruction-boundary tracking):
+  1. **0x563E** in FUN_055C0: `FUN_07014(r7, r7+0x100, *r5-0x100, sp[8], 2)` — r7 from FUN_07910, size from caller's arg3
+  2. **0x6788** in FUN_066A0: `FUN_07014(r5, r6, r8, sp[4], sp[0x30])` — structure from APCB token lookup (FUN_0083C at 0x6748, FUN_02C80 at 0x6762). **FUN_066A0 is itself a priority candidate.**
+- **apcb_contact:** INDIRECT — no direct APCB SRAM references. APCB data flows through caller FUN_066A0 which processes APCB tokens and passes parsed structure. Fields field_54 (content size), field_50 (limit), field_58 (type) are APCB-derived.
+- **bounds_checks:** All explicit comparisons use UNSIGNED branches (BHI at 0x70E0, BLS at 0x70E6, BHS at 0x7234 in callee FUN_071AC).
+  - Normal types (not 0x2F/0x4C/0x4D): `ALIGN_UP(field_54, 32) > size → return 3` (BHI) + `field_50 > size → return 3` (BLS). Safe.
+  - Special types (0x2F/0x4C/0x4D): **NO LOCAL bounds check** — skips directly to main processing with `r7 = ALIGN_UP(field_54, 16)`.
+  - FUN_071AC (called at 0x7074) validates `field_54 <= size` (BHS at 0x7232). This catches raw overflows.
+- **FINDING — alignment delta gap:** FUN_071AC validates `field_54 <= size` (raw), but FUN_07014 uses `r7 = ALIGN_UP(field_54, 16)` which can be up to 15 bytes larger than field_54. After FUN_071AC succeeds:
+  - FUN_0823C at 0x70A0: reads FROM `arg3 + r7 + 0x100` (up to 15 bytes past validated boundary) into fixed destination SRAM 0x9C60 with hardcoded 0x200 size. This is a **read overshoot**, not a write overflow.
+  - FUN_062F8 at 0x714E: receives `r7` (the unvalidated aligned size) as a parameter. **Behavior with oversized r7 needs separate analysis.**
+- **preconditions for gap:** special type (0x2F/0x4C/0x4D) + field_48==1 + (field_18==1 or field_30/arg4 flags)
+- **verdict:** SUSPICIOUS — genuine bounds-check gap on special-type fast path. Alignment rounding bypasses FUN_071AC's raw-size validation by up to 15 bytes.
+- **confidence:** MEDIUM-HIGH (75%) — alignment gap is real but narrow (max 15 bytes). Practical exploitability unclear: read overshoot into fixed SRAM buffer, and FUN_062F8 impact unknown.
+- **what_would_change:** If FUN_062F8 uses r7 as a memcpy size to a bounded buffer, the 15-byte overshoot could become a write overflow. Also: if field_54 can be crafted to maximize (ALIGN_UP - raw) = 15 bytes, and FUN_062F8 writes r7 bytes somewhere bounded.
+- **literal_pool:** 0x9B30, 0x9C60, 0x9A2C — all SRAM data area, not APCB region
+- **next_steps:** (1) Deep analysis of FUN_062F8 with oversized r7, (2) Analyze caller FUN_066A0 (priority candidate) for APCB token parsing safety
+- **last_reviewed:** session 13 (deep ARM-level analysis by agent)
+
+### 0x1A60 — Block Data Processor
+- **size:** 248 bytes
+- **role:** Processes block-structured data — reads blocks from source, validates sizes, copies to fixed SRAM buffer
+- **stack_buffers:** NONE — all data operations target fixed SRAM buffer at 0xA500 (0x600 = 1536 bytes). **Triple flag was a FALSE POSITIVE** — the heuristic flagged "local array + param index + param loop bound" but no local arrays exist.
+- **bounds_checks:** All unsigned comparisons (BHI/BLS):
+  - block_size <= 0x200 (512 bytes max per block)
+  - valid_len <= block_size
+  - block_size * 3 <= 0x600 (max 3 blocks fit in 1536-byte buffer)
+  - No integer overflow possible: 512 * 3 = 1536, well within 32-bit
+- **callers:** Two (found via BL encoding scan):
+  1. **0x1DD6** in FUN_00001D30 (RSA-PSS verifier, already analyzed SAFE)
+  2. **0x503E** in FUN_00005030
+- **apcb_contact:** INDIRECT — sizes flow from callers
+- **verdict:** SAFE — no stack buffers, all sizes unsigned-bounded, buffer capacity enforced
+- **confidence:** HIGH (95%) — ARM-level verification of all comparisons and buffer target
+- **last_reviewed:** session 13 (deep ARM-level analysis by agent)
+
 ### 0x75A4 — Config Buffer Builder
 - **size:** varies (part of larger chain)
 - **role:** Reads APCB-derived data from SRAM 0xB800 area, writes to 0x4F000 region
@@ -248,9 +290,9 @@ stack buffer with attacker-controlled size" and found none.
 |---------|------|-------------|
 | ~~0x1D30~~ | ~~380~~ | ~~RSA-PSS verifier~~ — **RESOLVED session 12: SAFE** (5 defense layers, ARM-verified) |
 | ~~0x53C4~~ | ~~214~~ | ~~Largest stack buffer~~ — **RESOLVED session 12: SAFE** (hardcoded 0x640, no callers) |
-| 0x7014 | 320 | Two large stack buffers (0x4C + 0x5C), local array access |
-| 0x1A60 | 248 | local array + param index + param loop bound — triple flag |
-| 0x66A0 | 284 | Large function, param controls loop bound |
+| ~~0x7014~~ | ~~320~~ | ~~Two large stack buffers~~ — **RESOLVED session 13: SUSPICIOUS** (alignment delta gap on special-type path, FUN_062F8 needs follow-up) |
+| ~~0x1A60~~ | ~~248~~ | ~~Triple flag~~ — **RESOLVED session 13: SAFE** (no stack buffers, fixed SRAM at 0xA500, all unsigned checks) |
+| **0x66A0** | **284** | **ELEVATED** — caller of SUSPICIOUS FUN_07014, processes APCB tokens (FUN_0083C/FUN_02C80). Param controls loop bound. **Analyze next.** |
 | 0x5850 | 420 | Large function, param controls loop bound |
 | 0x3214 | 312 | param controls loop bound |
 | 0x73D0 | 102 | Large stack buffer (0x58) |
@@ -283,6 +325,12 @@ said "no obvious memcpy-to-stack-with-variable-size" but that's a narrow check.
 7. Function pointer table scan — only 1 in entire binary (0x03B8, 3 entries), none reference dead code
 8. **Identified new vulnerability class: write-what-where primitives** (analysis in progress)
 9. Corrected FUN_00001D30 dismissal reasoning: "global buffer dest = safe" is WRONG; actual safety is from bounds checks
+
+### What session 13 deep analysis added:
+1. FUN_00001A60 (triple-flagged) → SAFE: no stack buffers at all (fixed SRAM at 0xA500), all unsigned comparisons, block_size*3 <= 0x600 enforced. Triple flag was false positive.
+2. FUN_00007014 (two large stack buffers) → **SUSPICIOUS**: heuristic's 0x4C/0x5C buffer flags were false positives (type discriminator CMP immediates, not sizes). Actual stack buffers are 16 and 20 bytes. But found genuine bounds-check gap: special APCB types (0x2F/0x4C/0x4D) skip local bounds check, `ALIGN_UP(field_54, 16)` can exceed FUN_071AC's validated raw size by up to 15 bytes. FUN_062F8 receives unvalidated aligned size — **first SUSPICIOUS verdict from deep analysis pass**.
+3. Caller discovery: FUN_066A0 (itself a priority candidate) is a caller of FUN_07014 and processes APCB tokens — elevated to top priority.
+4. Raw BL encoding scan technique: Capstone linear disassembly misses callers when literal pool data breaks instruction-boundary tracking. Fixed by scanning raw halfwords for BL target encoding.
 
 ### What it DID NOT check (before session 12):
 - ~~Semantic correctness of bounds checks (signed vs unsigned, off-by-one)~~ — **partially addressed session 12** for FUN_00002434, FUN_00001670, FUN_00001D30
