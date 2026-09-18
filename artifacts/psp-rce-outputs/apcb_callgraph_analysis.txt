@@ -1,0 +1,173 @@
+APCB Call Graph Overflow Analysis
+======================================================================
+
+Reachable from FUN_00000300: 258 functions
+Functions with stack buffers: (analyzed above)
+Functions with variable-bound writes to stack: 2
+
+======================================================================
+[0x7DE8] FUN_00007de8 (144 bytes) — depth 2 from FUN_00000300
+Findings:
+  - Stack var: local_18 (offset 0x18, 3 bytes)
+  - Stack var: local_18 (offset 0x18, 0 bytes)
+  - Stack var: local_18 (offset 0x18, 1 bytes)
+  - Stack var: local_18 (offset 0x18, 2 bytes)
+  - Stack var: local_18 (offset 0x18, 2 bytes)
+  - Stack var: local_18 (offset 0x18, 0 bytes)
+  - Stack var: local_18 (offset 0x18, 2 bytes)
+  - WRITE with variable index: local_18[uVar3]
+  - WRITE with variable index: local_18[-iVar5]
+  - WRITE with variable index: local_18[uVar3]
+  - WRITE with variable index: local_18[-iVar5]
+  - WRITE with variable index: local_18[uVar3]
+  - WRITE with variable index: local_18[-iVar5]
+  - WRITE with variable index: local_18[uVar3]
+  - WRITE with variable index: local_18[-iVar5]
+  - WRITE with variable index: local_18[uVar3]
+  - WRITE with variable index: local_18[-iVar5]
+  - WRITE with variable index: local_18[uVar3]
+  - WRITE with variable index: local_18[-iVar5]
+  - WRITE with variable index: local_18[uVar3]
+  - WRITE with variable index: local_18[-iVar5]
+  - LOOP WRITE to local_18 at line 30: local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+  - LOOP WRITE to local_18 at line 30: local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+  - LOOP WRITE to local_18 at line 30: local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+  - LOOP WRITE to local_18 at line 30: local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+  - LOOP WRITE to local_18 at line 30: local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+  - LOOP WRITE to local_18 at line 30: local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+  - LOOP WRITE to local_18 at line 30: local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+
+Full decompilation:
+
+undefined8 FUN_00007de8(undefined4 param_1,uint param_2,undefined4 param_3,uint param_4)
+
+{
+  int iVar1;
+  uint *puVar2;
+  uint uVar3;
+  undefined4 *puVar4;
+  int iVar5;
+  uint local_18 [3];
+  
+  local_18[0] = param_2;
+  local_18[1] = param_3;
+  local_18[2] = param_4;
+  puVar2 = (uint *)FUN_00003568(DAT_00007e80);
+  if (puVar2 == (uint *)0x0) {
+    iVar5 = 0xb;
+  }
+  else {
+    local_18[2] = *puVar2;
+    FUN_0000511c();
+    iVar5 = 0;
+  }
+  iVar1 = DAT_00007e84;
+  if (iVar5 != 0) {
+LAB_00007e7c:
+    return CONCAT44(local_18[0],iVar5);
+  }
+  uVar3 = 0;
+  do {
+    local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+    uVar3 = uVar3 + 1;
+  } while (uVar3 < 2);
+  uVar3 = 0;
+  do {
+    puVar4 = (undefined4 *)(iVar1 + uVar3 * 0x10);
+    switch(puVar4[1]) {
+    default:
+      iVar5 = 4;
+      goto LAB_00007e7c;
+    case 1:
+      iVar5 = (int)(puVar4[2] << 9) >> 0x1f;
+      if ((uint)-iVar5 < 2) {
+        if (local_18[-iVar5] == 0) {
+          *puVar4 = 0xff1;
+          puVar4[1] = 2;
+          puVar4[3] = 1;
+          puVar4[2] = 0xff;
+          iVar5 = FUN_000079d0(uVar3);
+        }
+        else {
+          iVar5 = 0;
+        }
+      }
+      else {
+        iVar5 = 4;
+      }
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+      if ((iVar5 != 0) || (uVar3 = uVar3 + 1, 0x15 < uVar3)) goto LAB_00007e7c;
+    }
+  } while( true );
+}
+
+
+
+======================================================================
+[0x2434] FUN_00002434 (140 bytes) — depth 5 from FUN_00000300
+Findings:
+  - Stack var: auStack_6c (offset 0x6C, 68 bytes)
+  - Stack var: local_28 (offset 0x28, 2 bytes)
+  - Stack var: local_28 (offset 0x28, 0 bytes)
+  - Stack var: local_28 (offset 0x28, 0 bytes)
+  - Stack var: local_28 (offset 0x28, 0 bytes)
+  - WRITE with variable index: auStack_6c[param_2]
+  - WRITE with variable index: auStack_6c[param_2 + 1]
+  - WRITE with variable index: auStack_6c[param_2 + 2]
+  - WRITE with variable index: auStack_6c[param_2 + 3]
+  - MEMCPY variable size to auStack_6c: size=param_2
+  - LOOP WRITE to auStack_6c at line 16: auStack_6c[param_2] = (char)((uint)iVar3 >> 0x18);
+  - LOOP WRITE to auStack_6c at line 17: auStack_6c[param_2 + 1] = (char)((uint)iVar3 >> 0x10);
+  - LOOP WRITE to auStack_6c at line 18: auStack_6c[param_2 + 2] = (char)((uint)iVar3 >> 8);
+  - LOOP WRITE to auStack_6c at line 19: auStack_6c[param_2 + 3] = (char)iVar3;
+
+Full decompilation:
+
+int FUN_00002434(undefined4 param_1,uint param_2,int param_3,uint param_4,undefined4 param_5)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  int iVar3;
+  undefined1 auStack_6c [68];
+  uint local_28 [2];
+  
+  uVar1 = DAT_000024c0;
+  if (param_2 < 0x41) {
+    if ((param_2 & 3) == 0) {
+      iVar3 = 0;
+      FUN_00000458(auStack_6c,param_1,param_2);
+      for (; iVar2 = 0, param_4 != 0; param_4 = param_4 - local_28[0]) {
+        auStack_6c[param_2] = (char)((uint)iVar3 >> 0x18);
+        auStack_6c[param_2 + 1] = (char)((uint)iVar3 >> 0x10);
+        auStack_6c[param_2 + 2] = (char)((uint)iVar3 >> 8);
+        auStack_6c[param_2 + 3] = (char)iVar3;
+        iVar3 = iVar3 + 1;
+        iVar2 = FUN_000022aa(uVar1,auStack_6c,param_2 + 4,param_5,local_28);
+        if (iVar2 != 0) {
+          return iVar2;
+        }
+        if (param_4 <= local_28[0]) {
+          FUN_00000458(param_3,uVar1,param_4);
+          return 0;
+        }
+        FUN_00000458(param_3,uVar1);
+        param_3 = param_3 + local_28[0];
+      }
+    }
+    else {
+      iVar2 = 6;
+    }
+  }
+  else {
+    iVar2 = 5;
+  }
+  return iVar2;
+}
+
+
+

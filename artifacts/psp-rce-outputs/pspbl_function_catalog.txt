@@ -1,0 +1,4977 @@
+PSP_BL Function Catalog - CVE-2025-29951 Hunt
+======================================================================
+
+Total functions: 321
+Unanalyzed: 302
+
+[0x0104] FUN_00000104 (8 bytes)
+
+[0x010C] FUN_0000010c (8 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0134] FUN_00000134 (16 bytes)
+
+[0x02A8] FUN_000002a8 (44 bytes)
+
+[0x02D4] FUN_000002d4 (44 bytes)
+
+[0x0360] FUN_00000360 (8 bytes)
+
+[0x03C4] FUN_000003c4 (88 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x041C] FUN_0000041c (58 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x04E0] FUN_000004e0 (100 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x0544] FUN_00000544 (16 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x0554] FUN_00000554 (68 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x0598] FUN_00000598 (78 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x05F0] FUN_000005f0 (346 bytes) ** CANDIDATE **
+  Reasons: large stack buffer (0x74), large stack buffer (0x54)
+
+[0x0750] FUN_00000750 (232 bytes) ** CANDIDATE **
+  Reasons: large stack buffer (0x60)
+
+[0x083C] FUN_0000083c (14 bytes)
+
+[0x084A] FUN_0000084a (4 bytes)
+
+[0x0850] FUN_00000850 (96 bytes)
+
+[0x08BC] FUN_000008bc (130 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0944] FUN_00000944 (1 bytes)
+
+[0x0BF4] FUN_00000bf4 (44 bytes)
+
+[0x0C20] FUN_00000c20 (44 bytes)
+
+[0x0C4C] FUN_00000c4c (30 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0C70] FUN_00000c70 (58 bytes)
+
+[0x0CB0] FUN_00000cb0 (74 bytes)
+
+[0x0CFC] FUN_00000cfc (80 bytes)
+
+[0x0D50] FUN_00000d50 (40 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0D7C] FUN_00000d7c (94 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index
+
+[0x0DDC] FUN_00000ddc (80 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0E30] FUN_00000e30 (48 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0E64] FUN_00000e64 (152 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0F0C] FUN_00000f0c (68 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0F54] FUN_00000f54 (16 bytes)
+
+[0x0F64] FUN_00000f64 (70 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0FB0] FUN_00000fb0 (54 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x0FEC] FUN_00000fec (66 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x1034] FUN_00001034 (60 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x1070] FUN_00001070 (30 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x10D2] FUN_000010d2 (82 bytes)
+
+[0x1124] FUN_00001124 (26 bytes)
+
+[0x120C] FUN_0000120c (154 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x12A8] FUN_000012a8 (48 bytes)
+
+[0x12E4] FUN_000012e4 (38 bytes)
+
+[0x132C] FUN_0000132c (32 bytes)
+
+[0x1350] FUN_00001350 (16 bytes)
+
+[0x1364] FUN_00001364 (156 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x1408] FUN_00001408 (10 bytes)
+
+[0x1418] FUN_00001418 (120 bytes)
+
+[0x1498] FUN_00001498 (24 bytes)
+
+[0x14B0] FUN_000014b0 (64 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x14F4] FUN_000014f4 (20 bytes)
+
+[0x150C] FUN_0000150c (16 bytes)
+
+[0x1660] FUN_00001660 (14 bytes)
+
+[0x1670] FUN_00001670 (130 bytes)
+
+[0x1704] FUN_00001704 (26 bytes)
+
+[0x1720] FUN_00001720 (330 bytes) ** CANDIDATE **
+  Reasons: large stack buffer (0x54)
+
+[0x1874] FUN_00001874 (18 bytes)
+
+[0x1886] FUN_00001886 (18 bytes)
+
+[0x1898] FUN_00001898 (14 bytes)
+
+[0x18A6] FUN_000018a6 (62 bytes)
+
+[0x192C] FUN_0000192c (42 bytes)
+
+[0x1958] FUN_00001958 (14 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x1A1C] FUN_00001a1c (60 bytes)
+
+[0x1A60] FUN_00001a60 (248 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index, param controls loop bound
+
+[0x1B60] FUN_00001b60 (178 bytes)
+
+[0x1C18] FUN_00001c18 (124 bytes)
+
+[0x1C98] FUN_00001c98 (148 bytes)
+
+[0x1D30] FUN_00001d30 (380 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x1EB4] FUN_00001eb4 (68 bytes)
+
+[0x1F04] FUN_00001f04 (52 bytes)
+
+[0x21A0] FUN_000021a0 (250 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index
+
+[0x22A0] FUN_000022a0 (346 bytes) ** CANDIDATE **
+  Reasons: local array access
+
+[0x22AA] FUN_000022aa (52 bytes)
+
+[0x2358] FUN_00002358 (70 bytes)
+
+[0x237C] FUN_0000237c (178 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x2434] FUN_00002434 (140 bytes) ** CANDIDATE **
+  Reasons: large stack buffer (0x6C), local array access, param in array index
+
+[0x24C4] FUN_000024c4 (54 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x24FC] FUN_000024fc (154 bytes)
+
+[0x25A4] FUN_000025a4 (238 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x2698] FUN_00002698 (86 bytes)
+
+[0x26F8] FUN_000026f8 (270 bytes)
+
+[0x281C] FUN_0000281c (16 bytes)
+
+[0x29AA] FUN_000029aa (38 bytes)
+
+[0x29D0] FUN_000029d0 (52 bytes)
+
+[0x2A08] FUN_00002a08 (36 bytes)
+
+[0x2A2C] FUN_00002a2c (10 bytes)
+
+[0x2A36] FUN_00002a36 (68 bytes)
+
+[0x2A7C] FUN_00002a7c (82 bytes)
+
+[0x2AD8] FUN_00002ad8 (12 bytes)
+
+[0x2AE4] FUN_00002ae4 (50 bytes)
+
+[0x2B1C] FUN_00002b1c (48 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x2B54] FUN_00002b54 (36 bytes)
+
+[0x2B80] FUN_00002b80 (164 bytes) ** CANDIDATE **
+  Reasons: local array access
+
+[0x2C30] FUN_00002c30 (36 bytes)
+
+[0x2C80] FUN_00002c80 (76 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index
+
+[0x2CD0] FUN_00002cd0 (32 bytes)
+
+[0x2CF0] FUN_00002cf0 (52 bytes)
+
+[0x2D28] FUN_00002d28 (50 bytes)
+
+[0x2D60] FUN_00002d60 (18 bytes)
+
+[0x2D80] FUN_00002d80 (36 bytes)
+
+[0x2DA4] FUN_00002da4 (112 bytes)
+
+[0x2E14] FUN_00002e14 (32 bytes)
+
+[0x2E3C] FUN_00002e3c (230 bytes)
+
+[0x2F48] FUN_00002f48 (76 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x2F94] FUN_00002f94 (16 bytes)
+
+[0x2FAC] FUN_00002fac (42 bytes)
+
+[0x2FDC] FUN_00002fdc (16 bytes)
+
+[0x2FEC] FUN_00002fec (8 bytes)
+
+[0x2FF4] FUN_00002ff4 (6 bytes)
+
+[0x2FFA] FUN_00002ffa (12 bytes)
+
+[0x3008] FUN_00003008 (80 bytes)
+
+[0x305C] FUN_0000305c (26 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x3080] FUN_00003080 (8 bytes)
+
+[0x308C] FUN_0000308c (30 bytes)
+
+[0x30C4] FUN_000030c4 (16 bytes)
+
+[0x30D4] FUN_000030d4 (12 bytes)
+
+[0x30E0] FUN_000030e0 (72 bytes)
+
+[0x312C] FUN_0000312c (214 bytes)
+
+[0x3214] FUN_00003214 (312 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x336C] FUN_0000336c (182 bytes)
+
+[0x3438] FUN_00003438 (54 bytes)
+
+[0x3480] FUN_00003480 (68 bytes)
+
+[0x34C8] FUN_000034c8 (36 bytes)
+
+[0x3538] FUN_00003538 (14 bytes)
+
+[0x354C] FUN_0000354c (24 bytes)
+
+[0x3568] FUN_00003568 (80 bytes)
+
+[0x35A0] FUN_000035a0 (74 bytes)
+
+[0x35F4] FUN_000035f4 (10 bytes)
+
+[0x3600] FUN_00003600 (8 bytes)
+
+[0x360C] FUN_0000360c (10 bytes)
+
+[0x3616] FUN_00003616 (10 bytes)
+
+[0x3620] FUN_00003620 (38 bytes)
+
+[0x3650] FUN_00003650 (224 bytes)
+
+[0x373C] FUN_0000373c (170 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x37FC] FUN_000037fc (74 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x3A4C] FUN_00003a4c (660 bytes)
+
+[0x3B6C] FUN_00003b6c (50 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x3BA4] FUN_00003ba4 (242 bytes) ** CANDIDATE **
+  Reasons: large stack buffer (0x128), param controls loop bound
+
+[0x3CB4] FUN_00003cb4 (70 bytes)
+
+[0x3CFA] FUN_00003cfa (10 bytes)
+
+[0x3D04] FUN_00003d04 (48 bytes)
+
+[0x3D34] FUN_00003d34 (50 bytes)
+
+[0x3D6C] FUN_00003d6c (52 bytes)
+
+[0x3DA4] FUN_00003da4 (40 bytes)
+
+[0x3DCC] FUN_00003dcc (52 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x3E00] FUN_00003e00 (40 bytes)
+
+[0x3E28] FUN_00003e28 (40 bytes)
+
+[0x3E68] FUN_00003e68 (100 bytes)
+
+[0x3FCC] FUN_00003fcc (82 bytes)
+
+[0x4030] FUN_00004030 (222 bytes) ** CANDIDATE **
+  Reasons: local array access, param controls loop bound
+
+[0x4118] FUN_00004118 (32 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x4138] FUN_00004138 (24 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x4150] FUN_00004150 (4 bytes)
+
+[0x4154] FUN_00004154 (70 bytes)
+
+[0x41A4] FUN_000041a4 (12 bytes)
+
+[0x41B4] FUN_000041b4 (12 bytes)
+
+[0x41C4] FUN_000041c4 (16 bytes)
+
+[0x41D8] FUN_000041d8 (114 bytes)
+
+[0x4250] FUN_00004250 (24 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x4268] FUN_00004268 (46 bytes)
+
+[0x42A8] FUN_000042a8 (44 bytes)
+
+[0x42D4] FUN_000042d4 (28 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x4388] FUN_00004388 (22 bytes)
+
+[0x43A4] FUN_000043a4 (180 bytes)
+
+[0x43CA] FUN_000043ca (8 bytes)
+
+[0x43D4] FUN_000043d4 (38 bytes)
+
+[0x4400] FUN_00004400 (18 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x4412] FUN_00004412 (82 bytes)
+
+[0x4464] FUN_00004464 (22 bytes)
+
+[0x4480] FUN_00004480 (44 bytes)
+
+[0x44B8] FUN_000044b8 (18 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x5030] FUN_00005030 (20 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x5044] FUN_00005044 (24 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x505C] FUN_0000505c (52 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x5094] FUN_00005094 (92 bytes)
+
+[0x5100] FUN_00005100 (20 bytes)
+
+[0x511C] FUN_0000511c (82 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x51FC] FUN_000051fc (58 bytes)
+
+[0x5238] FUN_00005238 (36 bytes)
+
+[0x53C4] FUN_000053c4 (214 bytes) ** CANDIDATE **
+  Reasons: large stack buffer (0x664)
+
+[0x5510] FUN_00005510 (166 bytes)
+
+[0x55C0] FUN_000055c0 (186 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x567C] FUN_0000567c (62 bytes)
+
+[0x56C4] FUN_000056c4 (86 bytes)
+
+[0x571A] FUN_0000571a (62 bytes)
+
+[0x5758] FUN_00005758 (108 bytes)
+
+[0x57C4] FUN_000057c4 (134 bytes)
+
+[0x5850] FUN_00005850 (420 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x5A28] FUN_00005a28 (60 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x5A68] FUN_00005a68 (36 bytes)
+
+[0x5A8C] FUN_00005a8c (40 bytes)
+
+[0x5AB4] FUN_00005ab4 (60 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x5AF0] FUN_00005af0 (40 bytes)
+
+[0x5B18] FUN_00005b18 (40 bytes)
+
+[0x5B40] FUN_00005b40 (74 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x5B90] FUN_00005b90 (152 bytes) ** CANDIDATE **
+  Reasons: local array access
+
+[0x5C28] FUN_00005c28 (188 bytes)
+
+[0x5D0C] FUN_00005d0c (60 bytes)
+
+[0x5D58] FUN_00005d58 (230 bytes)
+
+[0x5E50] FUN_00005e50 (192 bytes)
+
+[0x5F1C] FUN_00005f1c (52 bytes)
+
+[0x5F5C] FUN_00005f5c (58 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x5F9C] FUN_00005f9c (4 bytes)
+
+[0x5FA0] FUN_00005fa0 (226 bytes)
+
+[0x60A0] FUN_000060a0 (102 bytes)
+
+[0x6110] FUN_00006110 (188 bytes)
+
+[0x61E4] FUN_000061e4 (16 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x61F4] FUN_000061f4 (22 bytes)
+
+[0x6210] FUN_00006210 (46 bytes)
+
+[0x6244] FUN_00006244 (76 bytes)
+
+[0x629C] FUN_0000629c (34 bytes)
+
+[0x62F8] FUN_000062f8 (100 bytes)
+
+[0x63F0] FUN_000063f0 (8 bytes)
+
+[0x63FC] FUN_000063fc (102 bytes)
+
+[0x657C] FUN_0000657c (36 bytes)
+
+[0x65A4] FUN_000065a4 (14 bytes)
+
+[0x65B8] FUN_000065b8 (148 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x6650] FUN_00006650 (74 bytes)
+
+[0x66A0] FUN_000066a0 (284 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x67C0] FUN_000067c0 (26 bytes)
+
+[0x67DC] FUN_000067dc (86 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x683C] FUN_0000683c (86 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x689C] FUN_0000689c (6 bytes)
+
+[0x68A8] FUN_000068a8 (4 bytes)
+
+[0x68AC] FUN_000068ac (72 bytes)
+
+[0x68F4] FUN_000068f4 (6 bytes)
+
+[0x6900] FUN_00006900 (126 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x6984] FUN_00006984 (14 bytes)
+
+[0x6992] FUN_00006992 (60 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x69CE] FUN_000069ce (314 bytes)
+
+[0x6B76] FUN_00006b76 (12 bytes)
+
+[0x6B82] FUN_00006b82 (4 bytes)
+
+[0x6B86] FUN_00006b86 (14 bytes)
+
+[0x6B94] FUN_00006b94 (4 bytes)
+
+[0x6C98] FUN_00006c98 (54 bytes)
+
+[0x6E40] FUN_00006e40 (26 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x6E60] FUN_00006e60 (38 bytes)
+
+[0x6E86] FUN_00006e86 (48 bytes)
+
+[0x6EB8] FUN_00006eb8 (6 bytes)
+
+[0x6EC4] FUN_00006ec4 (18 bytes)
+
+[0x6EDC] FUN_00006edc (2 bytes)
+
+[0x6EE0] FUN_00006ee0 (162 bytes) ** CANDIDATE **
+  Reasons: param in array index, param controls loop bound
+
+[0x6F88] FUN_00006f88 (116 bytes)
+
+[0x7014] FUN_00007014 (320 bytes) ** CANDIDATE **
+  Reasons: large stack buffer (0x4C), large stack buffer (0x5C), local array access
+
+[0x7160] FUN_00007160 (70 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x71AC] FUN_000071ac (240 bytes)
+
+[0x72A0] FUN_000072a0 (132 bytes)
+
+[0x7328] FUN_00007328 (142 bytes)
+
+[0x73D0] FUN_000073d0 (102 bytes) ** CANDIDATE **
+  Reasons: large stack buffer (0x58)
+
+[0x7438] FUN_00007438 (68 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x748C] FUN_0000748c (54 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x74C8] FUN_000074c8 (146 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index
+
+[0x7568] FUN_00007568 (48 bytes)
+
+[0x7868] FUN_00007868 (52 bytes)
+
+[0x78A0] FUN_000078a0 (70 bytes)
+
+[0x7910] FUN_00007910 (144 bytes)
+
+[0x79A8] FUN_000079a8 (34 bytes)
+
+[0x79D0] FUN_000079d0 (76 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x7A20] FUN_00007a20 (178 bytes)
+
+[0x7AE0] FUN_00007ae0 (26 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x7AFA] FUN_00007afa (4 bytes)
+
+[0x7B00] FUN_00007b00 (136 bytes) ** CANDIDATE **
+  Reasons: local array access
+
+[0x7BA4] FUN_00007ba4 (86 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x7C08] FUN_00007c08 (212 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x7CEC] FUN_00007cec (8 bytes)
+
+[0x7CF8] FUN_00007cf8 (100 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index
+
+[0x7D80] FUN_00007d80 (26 bytes)
+
+[0x7DA0] FUN_00007da0 (18 bytes)
+
+[0x7DB8] FUN_00007db8 (18 bytes)
+
+[0x7DD0] FUN_00007dd0 (18 bytes)
+
+[0x7DE8] FUN_00007de8 (144 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index, param controls loop bound
+
+[0x7E88] FUN_00007e88 (32 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x7EAC] FUN_00007eac (34 bytes)
+
+[0x7ED8] FUN_00007ed8 (66 bytes)
+
+[0x7F20] FUN_00007f20 (98 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x7F3C] FUN_00007f3c (30 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index
+
+[0x7F5C] FUN_00007f5c (62 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x7FA4] FUN_00007fa4 (94 bytes)
+
+[0x8020] FUN_00008020 (22 bytes)
+
+[0x803C] FUN_0000803c (16 bytes)
+
+[0x804C] FUN_0000804c (14 bytes)
+
+[0x8064] FUN_00008064 (130 bytes)
+
+[0x80EC] FUN_000080ec (4 bytes)
+
+[0x80F0] FUN_000080f0 (28 bytes)
+
+[0x8110] FUN_00008110 (16 bytes)
+
+[0x8124] FUN_00008124 (38 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x8150] FUN_00008150 (22 bytes)
+
+[0x8168] FUN_00008168 (184 bytes)
+
+[0x823C] FUN_0000823c (106 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x82B0] FUN_000082b0 (54 bytes)
+
+[0x8306] FUN_00008306 (2 bytes)
+
+[0x8308] FUN_00008308 (80 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x835C] FUN_0000835c (168 bytes) ** CANDIDATE **
+  Reasons: param controls loop bound
+
+[0x8414] FUN_00008414 (34 bytes)
+
+[0x8440] FUN_00008440 (60 bytes)
+
+[0x8488] FUN_00008488 (120 bytes)
+
+[0x8500] FUN_00008500 (64 bytes) ** CANDIDATE **
+  Reasons: param in array index
+
+[0x8540] FUN_00008540 (60 bytes)
+
+[0x85DC] FUN_000085dc (98 bytes)
+
+[0x863E] FUN_0000863e (102 bytes) ** CANDIDATE **
+  Reasons: local array access, param in array index
+
+[0x86A4] FUN_000086a4 (18 bytes)
+
+[0x86BC] FUN_000086bc (18 bytes)
+
+[0x86D4] FUN_000086d4 (18 bytes)
+
+
+======================================================================
+CANDIDATES FOR CVE-2025-29951 (stack overflow)
+======================================================================
+
+[0x7DE8] FUN_00007de8 (144 bytes)
+  Flags: local array access, param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined8 FUN_00007de8(undefined4 param_1,uint param_2,undefined4 param_3,uint param_4)
+
+{
+  int iVar1;
+  uint *puVar2;
+  uint uVar3;
+  undefined4 *puVar4;
+  int iVar5;
+  uint local_18 [3];
+  
+  local_18[0] = param_2;
+  local_18[1] = param_3;
+  local_18[2] = param_4;
+  puVar2 = (uint *)FUN_00003568(DAT_00007e80);
+  if (puVar2 == (uint *)0x0) {
+    iVar5 = 0xb;
+  }
+  else {
+    local_18[2] = *puVar2;
+    FUN_0000511c();
+    iVar5 = 0;
+  }
+  iVar1 = DAT_00007e84;
+  if (iVar5 != 0) {
+LAB_00007e7c:
+    return CONCAT44(local_18[0],iVar5);
+  }
+  uVar3 = 0;
+  do {
+    local_18[uVar3] = local_18[2] >> ((uVar3 & 0x3f) << 2) & 0xf;
+    uVar3 = uVar3 + 1;
+  } while (uVar3 < 2);
+  uVar3 = 0;
+  do {
+    puVar4 = (undefined4 *)(iVar1 + uVar3 * 0x10);
+    switch(puVar4[1]) {
+    default:
+      iVar5 = 4;
+      goto LAB_00007e7c;
+    case 1:
+      iVar5 = (int)(puVar4[2] << 9) >> 0x1f;
+      if ((uint)-iVar5 < 2) {
+        if (local_18[-iVar5] == 0) {
+          *puVar4 = 0xff1;
+          puVar4[1] = 2;
+          puVar4[3] = 1;
+          puVar4[2] = 0xff;
+          iVar5 = FUN_000079d0(uVar3);
+        }
+        else {
+          iVar5 = 0;
+        }
+      }
+      else {
+        iVar5 = 4;
+      }
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+      if ((iVar5 != 0) || (uVar3 = uVar3 + 1, 0x15 < uVar3)) goto LAB_00007e7c;
+    }
+  } while( true );
+}
+
+
+----------------------------------------
+
+[0x2434] FUN_00002434 (140 bytes)
+  Flags: large stack buffer (0x6C), local array access, param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00002434(undefined4 param_1,uint param_2,int param_3,uint param_4,undefined4 param_5)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  int iVar3;
+  undefined1 auStack_6c [68];
+  uint local_28 [2];
+  
+  uVar1 = DAT_000024c0;
+  if (param_2 < 0x41) {
+    if ((param_2 & 3) == 0) {
+      iVar3 = 0;
+      FUN_00000458(auStack_6c,param_1,param_2);
+      for (; iVar2 = 0, param_4 != 0; param_4 = param_4 - local_28[0]) {
+        auStack_6c[param_2] = (char)((uint)iVar3 >> 0x18);
+        auStack_6c[param_2 + 1] = (char)((uint)iVar3 >> 0x10);
+        auStack_6c[param_2 + 2] = (char)((uint)iVar3 >> 8);
+        auStack_6c[param_2 + 3] = (char)iVar3;
+        iVar3 = iVar3 + 1;
+        iVar2 = FUN_000022aa(uVar1,auStack_6c,param_2 + 4,param_5,local_28);
+        if (iVar2 != 0) {
+          return iVar2;
+        }
+        if (param_4 <= local_28[0]) {
+          FUN_00000458(param_3,uVar1,param_4);
+          return 0;
+        }
+        FUN_00000458(param_3,uVar1);
+        param_3 = param_3 + local_28[0];
+      }
+    }
+    else {
+      iVar2 = 6;
+    }
+  }
+  else {
+    iVar2 = 5;
+  }
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x2C80] FUN_00002c80 (76 bytes)
+  Flags: local array access, param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00002c80(uint param_1,undefined4 param_2,uint *param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint local_18 [2];
+  
+  local_18[0] = 0;
+  local_18[1] = 0;
+  iVar1 = FUN_000037fc(param_1,local_18,param_4,param_4,param_1,param_2);
+  if (iVar1 == 0) {
+    uVar2 = *DAT_00002ccc;
+    *param_3 = local_18[0] & uVar2;
+    iVar1 = FUN_0000823c(param_2,local_18[0] & uVar2,0x100,0x100,0);
+    if (iVar1 == 0) {
+      iVar1 = FUN_0000571a(param_2,param_1 & 0xff,0);
+      return iVar1;
+    }
+  }
+  if (iVar1 != 0x22) {
+    iVar1 = 0x13;
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x4030] FUN_00004030 (222 bytes)
+  Flags: local array access, param controls loop bound
+  First 2000 chars of decompilation:
+
+/* WARNING: Type propagation algorithm not settling */
+
+int FUN_00004030(undefined4 param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  uint uVar4;
+  uint uVar5;
+  int local_28;
+  int local_24 [2];
+  char local_1c [4];
+  
+  local_24[1] = 0;
+  iVar1 = FUN_00001958(0x100);
+  FUN_00002d60(local_24,&local_28);
+  if (((local_24[0] == 0) || (local_28 == 0)) || (iVar1 == 0)) {
+    iVar2 = 7;
+  }
+  else {
+    FUN_0000120c(2,1,0,0x2000);
+    iVar2 = FUN_000029d0(local_24 + 1,0);
+    if ((iVar2 == 0) &&
+       (iVar2 = FUN_000018e4(local_1c,local_28,DAT_00004110,0x20,0x100,local_24[0]), iVar2 == 0)) {
+      if (local_1c[0] == '\0') {
+        iVar2 = 0x1d;
+      }
+      else {
+        iVar2 = FUN_00001874(DAT_00004114,2,0x10,local_28,0x100,iVar1);
+        if (iVar2 == 0) {
+          FUN_0000120c(2,1,0,0x2000);
+          iVar2 = FUN_000029d0(local_24 + 1,1);
+          if ((iVar2 == 0) && (iVar2 = FUN_00002f48(iVar1,param_1), iVar2 == 0)) {
+            uVar5 = 0;
+            do {
+              iVar3 = FUN_0000308c(uVar5);
+              if (iVar3 != 0) {
+                uVar4 = 0;
+                do {
+                  iVar2 = FUN_00005b40(uVar5,uVar4,0,
+                                       *(undefined4 *)(iVar1 + uVar5 * 0x10 + uVar4 * 4));
+                  if (iVar2 != 0) {
+                    return iVar2;
+                  }
+                  uVar4 = uVar4 + 1;
+                  iVar2 = 0;
+                } while (uVar4 < 4);
+              }
+              uVar5 = uVar5 + 1;
+            } while (uVar5 < 0x10);
+          }
+        }
+      }
+    }
+  }
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x1A60] FUN_00001a60 (248 bytes)
+  Flags: local array access, param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_00001a60(int param_1,uint param_2,int param_3,uint param_4,int param_5,int param_6,
+                int param_7)
+
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+  undefined4 uVar4;
+  undefined4 uVar5;
+  undefined4 uVar6;
+  undefined4 uVar7;
+  undefined4 local_3c [2];
+  int local_34;
+  uint uStack_30;
+  int iStack_2c;
+  uint uStack_28;
+  
+  uVar7 = 1;
+  local_34 = param_1;
+  uStack_30 = param_2;
+  iStack_2c = param_3;
+  uStack_28 = param_4;
+  iVar2 = FUN_00001898(param_6);
+  if (iVar2 == 0) {
+    if (((((param_5 == 0) || (param_3 == 0)) || (local_34 == 0)) ||
+        ((param_6 == 0 || (0x200 < param_4)))) || ((param_4 < param_2 || (0x600 < param_4 * 3)))) {
+      iVar2 = 4;
+    }
+    else {
+      FUN_00000458(DAT_00001b58,param_3,param_4);
+      iVar2 = DAT_00001b58;
+      FUN_00000458(DAT_00001b58 + param_4,param_5,param_4);
+      iVar3 = iVar2 + param_4 * 2;
+      FUN_00000458(iVar3,local_34,param_2);
+      if (param_2 < param_4) {
+        FUN_00000554(param_2 + param_4 * 2 + iVar2,param_4 - param_2);
+      }
+      if ((param_7 != 0) && (4 < param_2)) {
+        uVar7 = 9;
+      }
+      iVar2 = FUN_00002c54(0,local_3c);
+      piVar1 = DAT_00001b5c;
+      *DAT_00001b5c = iVar2;
+      if (iVar2 == 0) {
+        uVar4 = FUN_00005a00(iVar3);
+        uVar5 = FUN_00005a00(DAT_00001b58);
+        uVar6 = FUN_00005a00(param_6);
+        iVar2 = FUN_00000fec(local_3c[0],uVar6,uVar5,param_4,param_4,uVar4,uVar7);
+        *piVar1 = iVar2;
+        if (iVar2 == 0) {
+          FUN_0000120c(0,1,DAT_00001b58,0x600);
+          FUN_0000120c(2,1,param_6,param_4);
+          iVar2 = FUN_00002358(0,1);
+          *piVar1 = iVar2;
+          if (iVar2 == 0) {
+            return 0;
+          }
+        }
+      }
+      iVar2 = 0x19;
+    }
+  }
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x2B80] FUN_00002b80 (164 bytes)
+  Flags: local array access
+  First 2000 chars of decompilation:
+
+uint FUN_00002b80(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  bool bVar3;
+  byte local_28 [4];
+  byte local_24 [4];
+  undefined4 local_20;
+  int local_1c;
+  undefined1 auStack_18 [4];
+  undefined1 auStack_14 [4];
+  undefined1 auStack_10 [4];
+  
+  local_20 = 0;
+  local_1c = 0;
+  local_28[0] = 1;
+  local_24[0] = 1;
+  iVar1 = FUN_00002a36(local_28,auStack_18,auStack_14,auStack_10);
+  uVar2 = 0xffffffff;
+  if (((iVar1 == 0) && (iVar1 = FUN_00002a2c(&local_20,&local_1c), iVar1 == 0)) &&
+     (iVar1 = FUN_00002a08(local_24), iVar1 == 0)) {
+    bVar3 = (DAT_00002c28 & ~*(uint *)(DAT_00002c24 + 0x1c0)) == 0;
+    uVar2 = (uint)bVar3;
+    if ((local_28[0] & bVar3 & local_1c != 0 & local_24[0]) != 0) {
+      uVar2 = uVar2 | 2;
+    }
+    if ((bVar3) && (iVar1 = FUN_00003080(), iVar1 == 0)) {
+      uVar2 = uVar2 | 4;
+    }
+    iVar1 = FUN_00006ec4();
+    if (iVar1 != 0) {
+      uVar2 = uVar2 | 0x20;
+    }
+    iVar1 = FUN_00006eb8();
+    if (iVar1 != 0) {
+      uVar2 = uVar2 | 0x80;
+    }
+    if (*(char *)(DAT_00002c2c + 0x11) != '\0') {
+      uVar2 = uVar2 | 0x100;
+    }
+    if (*(char *)(DAT_00002c2c + 8) != '\0') {
+      uVar2 = uVar2 | 0x200;
+    }
+  }
+  return uVar2;
+}
+
+
+----------------------------------------
+
+[0x7014] FUN_00007014 (320 bytes)
+  Flags: large stack buffer (0x4C), large stack buffer (0x5C), local array access
+  First 2000 chars of decompilation:
+
+int FUN_00007014(int param_1,int param_2,uint param_3,int param_4,int param_5)
+
+{
+  short sVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  uint uVar5;
+  uint uVar6;
+  undefined1 *puVar7;
+  int local_64;
+  int iStack_60;
+  undefined1 auStack_5c [12];
+  undefined4 local_50;
+  undefined1 auStack_4c [20];
+  char local_38 [4];
+  int iStack_34;
+  int iStack_30;
+  uint uStack_2c;
+  int local_28;
+  
+  sVar1 = *(short *)(param_1 + 0x58);
+  puVar7 = (undefined1 *)0x0;
+  if (((sVar1 == 0x2f) || (sVar1 == 0x4c)) || (sVar1 == 0x4d)) {
+    iVar2 = 1;
+  }
+  else {
+    iVar2 = 0;
+  }
+  iStack_34 = param_1;
+  iStack_30 = param_2;
+  uStack_2c = param_3;
+  local_28 = param_4;
+  iVar3 = FUN_00008064(param_1,param_5,auStack_5c,auStack_4c,local_38);
+  if (iVar3 != 0) {
+    return iVar3;
+  }
+  if (local_38[0] != '\0') {
+    puVar7 = auStack_4c;
+  }
+  uVar5 = param_3;
+  iVar3 = param_2;
+  if (*(int *)(param_1 + 0x48) == 1) {
+    if (iVar2 == 0) {
+      uVar5 = *(int *)(param_1 + 0x54) + 0x1fU & 0xffffffe0;
+      if ((param_3 < uVar5) || (param_3 < *(uint *)(param_1 + 0x50))) {
+        return 3;
+      }
+      iVar3 = (param_3 - uVar5) + param_2;
+      uVar6 = *(int *)(param_1 + 0x54) + 0xfU & 0xfffffff0;
+    }
+    else {
+      uVar6 = *(int *)(param_1 + 0x54) + 0xfU & 0xfffffff0;
+      param_2 = 0;
+      param_3 = 0;
+    }
+  }
+  else {
+    uVar6 = *(uint *)(param_1 + 0x14);
+    param_2 = 0;
+    param_3 = 0;
+  }
+  local_64 = DAT_00007154;
+  iStack_60 = iVar2;
+  iVar4 = FUN_000071ac(param_1,iVar3,uVar5,local_28,puVar7);
+  if (iVar4 != 0) {
+    return iVar4;
+  }
+  iVar4 = FUN_0000281c();
+  if ((iVar4 == 2) || ((*(int *)(param_1 + 0x30) != 0 && (param_5 != 0)))) {
+    iVar4 = FUN_0000823c(DAT_00007158,local_28 + uVar6 + 0x100,local_50,0x200,0);
+    if (iVar4 != 0) {
+      return iVar4;
+    }
+    iVar4 = FUN_00008500(auStack_5c,DAT_00007158,DAT_00007154,puVar7);
+    if (iVar4 != 0) {
+      return iVar4;
+    }
+  }
+  i
+----------------------------------------
+
+[0x74C8] FUN_000074c8 (146 bytes)
+  Flags: local array access, param in array index
+  First 2000 chars of decompilation:
+
+int FUN_000074c8(undefined4 param_1,undefined4 param_2,int param_3,int param_4)
+
+{
+  int *piVar1;
+  int iVar2;
+  undefined4 local_2c;
+  uint local_28 [2];
+  uint local_20 [2];
+  
+  piVar1 = DAT_0000755c;
+  if ((param_3 == 5) || (param_3 == 6)) {
+    FUN_00007ba4(0,2,1);
+    iVar2 = FUN_0000083c(param_3,local_28,0,&local_2c);
+    if (iVar2 != 0) {
+      *piVar1 = 0x49;
+      return iVar2;
+    }
+  }
+  else {
+    if (param_3 != 10) {
+      return 0x22;
+    }
+    iVar2 = FUN_000037fc(10,local_20,&local_2c);
+    if (iVar2 != 0) {
+      return iVar2;
+    }
+    local_28[0] = local_20[0] & *DAT_00007560;
+  }
+  iVar2 = FUN_00008150(param_1,local_28[0],local_2c,param_2,0);
+  if (iVar2 == 0) {
+    if (param_4 == 0) {
+      param_4 = *DAT_00007564 + 0x410;
+    }
+    FUN_00007ba4(0,3,1);
+    iVar2 = FUN_00005758(param_3,param_1,param_4);
+    if (iVar2 == 0) {
+      return 0;
+    }
+  }
+  *piVar1 = param_3;
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x04E0] FUN_000004e0 (100 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined8 FUN_000004e0(undefined4 *param_1,byte *param_2,uint param_3,undefined4 param_4)
+
+{
+  uint uVar1;
+  undefined4 *puVar2;
+  undefined4 *puVar3;
+  byte *pbVar4;
+  byte *pbVar5;
+  undefined2 uVar6;
+  undefined4 uVar7;
+  undefined4 uVar8;
+  undefined4 uVar9;
+  bool bVar10;
+  bool bVar11;
+  
+  while (uVar1 = param_3 - 0x20, 0x1f < param_3) {
+    uVar7 = *(undefined4 *)(param_2 + 4);
+    uVar8 = *(undefined4 *)(param_2 + 8);
+    uVar9 = *(undefined4 *)(param_2 + 0xc);
+    *param_1 = *(undefined4 *)param_2;
+    param_1[1] = uVar7;
+    param_1[2] = uVar8;
+    param_1[3] = uVar9;
+    param_4 = *(undefined4 *)(param_2 + 0x10);
+    uVar7 = *(undefined4 *)(param_2 + 0x14);
+    uVar8 = *(undefined4 *)(param_2 + 0x18);
+    uVar9 = *(undefined4 *)(param_2 + 0x1c);
+    param_2 = param_2 + 0x20;
+    param_1[4] = param_4;
+    param_1[5] = uVar7;
+    param_1[6] = uVar8;
+    param_1[7] = uVar9;
+    param_1 = param_1 + 8;
+    param_3 = uVar1;
+  }
+  if ((bool)((byte)(uVar1 >> 4) & 1)) {
+    param_4 = *(undefined4 *)param_2;
+    uVar7 = *(undefined4 *)(param_2 + 4);
+    uVar8 = *(undefined4 *)(param_2 + 8);
+    uVar9 = *(undefined4 *)(param_2 + 0xc);
+    param_2 = param_2 + 0x10;
+    *param_1 = param_4;
+    param_1[1] = uVar7;
+    param_1[2] = uVar8;
+    param_1[3] = uVar9;
+    param_1 = param_1 + 4;
+  }
+  if ((int)(param_3 << 0x1c) < 0) {
+    param_4 = *(undefined4 *)param_2;
+    uVar7 = *(undefined4 *)(param_2 + 4);
+    param_2 = param_2 + 8;
+    *param_1 = param_4;
+    param_1[1] = uVar7;
+    param_1 = param_1 + 2;
+  }
+  puVar3 = param_1;
+  pbVar4 = param_2;
+  if ((bool)((byte)(uVar1 >> 2) & 1)) {
+    pbVar4 = param_2 + 4;
+    param_4 = *(undefined4 *)param_2;
+    puVar3 = param_1 + 1;
+    *param_1 = param_4;
+  }
+  uVar6 = (undefined2)param_4;
+  if ((uVar1 & 3) == 0) {
+    return CONCAT44(pbVar4,puVar3);
+  }
+  bVar11 = (bool)((byte)(uVar1 >> 1) & 1);
+  param_3 = param_3 << 0x1f;
+  bVar10 = (int)param_3 < 0;
+----------------------------------------
+
+[0x0544] FUN_00000544 (16 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 * FUN_00000544(undefined4 *param_1,uint param_2,undefined1 param_3)
+
+{
+  undefined2 uVar1;
+  undefined4 *puVar2;
+  undefined1 *puVar3;
+  undefined4 *puVar4;
+  uint uVar5;
+  undefined4 uVar6;
+  int iVar7;
+  bool bVar8;
+  
+  uVar1 = CONCAT11(param_3,param_3);
+  uVar6 = CONCAT22(uVar1,uVar1);
+  if (param_2 < 4) {
+    if ((param_2 & 2) != 0) {
+      puVar3 = (undefined1 *)((int)param_1 + 1);
+      *(undefined1 *)param_1 = param_3;
+      param_1 = (undefined4 *)((int)param_1 + 2);
+      *puVar3 = param_3;
+    }
+    puVar2 = param_1;
+    if ((int)(param_2 << 0x1f) < 0) {
+      puVar2 = (undefined4 *)((int)param_1 + 1);
+      *(undefined1 *)param_1 = param_3;
+    }
+    return puVar2;
+  }
+  if (((uint)param_1 & 3) != 0) {
+    iVar7 = 4 - ((uint)param_1 & 3);
+    puVar2 = param_1;
+    if (iVar7 != 2) {
+      puVar2 = (undefined4 *)((int)param_1 + 1);
+      *(undefined1 *)param_1 = param_3;
+    }
+    param_1 = puVar2;
+    if (1 < iVar7) {
+      param_1 = (undefined4 *)((int)puVar2 + 2);
+      *(undefined2 *)puVar2 = uVar1;
+    }
+    param_2 = param_2 - iVar7;
+  }
+  bVar8 = 0x1f < param_2;
+  param_2 = param_2 - 0x20;
+  do {
+    if (bVar8) {
+      *param_1 = uVar6;
+      param_1[1] = uVar6;
+      param_1[2] = uVar6;
+      param_1[3] = uVar6;
+      param_1[4] = uVar6;
+      param_1[5] = uVar6;
+      param_1[6] = uVar6;
+      param_1[7] = uVar6;
+      param_1 = param_1 + 8;
+      bVar8 = 0x1f < param_2;
+      param_2 = param_2 - 0x20;
+    }
+  } while (bVar8);
+  if ((param_2 & 0x10) != 0) {
+    *param_1 = uVar6;
+    param_1[1] = uVar6;
+    param_1[2] = uVar6;
+    param_1[3] = uVar6;
+    param_1 = param_1 + 4;
+  }
+  if ((int)(param_2 << 0x1c) < 0) {
+    *param_1 = uVar6;
+    param_1[1] = uVar6;
+    param_1 = param_1 + 2;
+  }
+  uVar5 = param_2 << 0x1e;
+  puVar2 = param_1;
+  if ((param_2 << 0x1c & 0x40000000) != 0) {
+    puVar2 = param_1 + 1;
+    *param_1 = uVar6;
+  }
+  if (uVar5 != 0) {
+    pu
+----------------------------------------
+
+[0x0554] FUN_00000554 (68 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 * FUN_00000554(undefined4 *param_1,uint param_2)
+
+{
+  undefined4 *puVar1;
+  undefined1 *puVar2;
+  undefined4 *puVar3;
+  uint uVar4;
+  int iVar5;
+  bool bVar6;
+  
+  if (param_2 < 4) {
+    if ((param_2 & 2) != 0) {
+      puVar2 = (undefined1 *)((int)param_1 + 1);
+      *(undefined1 *)param_1 = 0;
+      param_1 = (undefined4 *)((int)param_1 + 2);
+      *puVar2 = 0;
+    }
+    puVar1 = param_1;
+    if ((int)(param_2 << 0x1f) < 0) {
+      puVar1 = (undefined4 *)((int)param_1 + 1);
+      *(undefined1 *)param_1 = 0;
+    }
+    return puVar1;
+  }
+  if (((uint)param_1 & 3) != 0) {
+    iVar5 = 4 - ((uint)param_1 & 3);
+    puVar1 = param_1;
+    if (iVar5 != 2) {
+      puVar1 = (undefined4 *)((int)param_1 + 1);
+      *(undefined1 *)param_1 = 0;
+    }
+    param_1 = puVar1;
+    if (1 < iVar5) {
+      param_1 = (undefined4 *)((int)puVar1 + 2);
+      *(undefined2 *)puVar1 = 0;
+    }
+    param_2 = param_2 - iVar5;
+  }
+  bVar6 = 0x1f < param_2;
+  param_2 = param_2 - 0x20;
+  do {
+    if (bVar6) {
+      *param_1 = 0;
+      param_1[1] = 0;
+      param_1[2] = 0;
+      param_1[3] = 0;
+      param_1[4] = 0;
+      param_1[5] = 0;
+      param_1[6] = 0;
+      param_1[7] = 0;
+      param_1 = param_1 + 8;
+      bVar6 = 0x1f < param_2;
+      param_2 = param_2 - 0x20;
+    }
+  } while (bVar6);
+  if ((param_2 & 0x10) != 0) {
+    *param_1 = 0;
+    param_1[1] = 0;
+    param_1[2] = 0;
+    param_1[3] = 0;
+    param_1 = param_1 + 4;
+  }
+  if ((int)(param_2 << 0x1c) < 0) {
+    *param_1 = 0;
+    param_1[1] = 0;
+    param_1 = param_1 + 2;
+  }
+  uVar4 = param_2 << 0x1e;
+  puVar1 = param_1;
+  if ((param_2 << 0x1c & 0x40000000) != 0) {
+    puVar1 = param_1 + 1;
+    *param_1 = 0;
+  }
+  if (uVar4 != 0) {
+    puVar3 = puVar1;
+    if ((int)uVar4 < 0) {
+      puVar3 = (undefined4 *)((int)puVar1 + 2);
+      *(undefined2 *)puVar1 = 0;
+    }
+    puVar1 = puVar3;
+    if ((uVar4 & 0x40000000) != 0) {
+      puVar1 = (undefined4 *
+----------------------------------------
+
+[0x0598] FUN_00000598 (78 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 * FUN_00000598(undefined4 *param_1,uint param_2)
+
+{
+  undefined4 *puVar1;
+  undefined4 *puVar2;
+  uint uVar3;
+  bool bVar4;
+  
+  bVar4 = 0x1f < param_2;
+  param_2 = param_2 - 0x20;
+  do {
+    if (bVar4) {
+      *param_1 = 0;
+      param_1[1] = 0;
+      param_1[2] = 0;
+      param_1[3] = 0;
+      param_1[4] = 0;
+      param_1[5] = 0;
+      param_1[6] = 0;
+      param_1[7] = 0;
+      param_1 = param_1 + 8;
+      bVar4 = 0x1f < param_2;
+      param_2 = param_2 - 0x20;
+    }
+  } while (bVar4);
+  if ((param_2 & 0x10) != 0) {
+    *param_1 = 0;
+    param_1[1] = 0;
+    param_1[2] = 0;
+    param_1[3] = 0;
+    param_1 = param_1 + 4;
+  }
+  if ((int)(param_2 << 0x1c) < 0) {
+    *param_1 = 0;
+    param_1[1] = 0;
+    param_1 = param_1 + 2;
+  }
+  uVar3 = param_2 << 0x1e;
+  puVar2 = param_1;
+  if ((param_2 << 0x1c & 0x40000000) != 0) {
+    puVar2 = param_1 + 1;
+    *param_1 = 0;
+  }
+  if (uVar3 != 0) {
+    puVar1 = puVar2;
+    if ((int)uVar3 < 0) {
+      puVar1 = (undefined4 *)((int)puVar2 + 2);
+      *(undefined2 *)puVar2 = 0;
+    }
+    puVar2 = puVar1;
+    if ((uVar3 & 0x40000000) != 0) {
+      puVar2 = (undefined4 *)((int)puVar1 + 1);
+      *(undefined1 *)puVar1 = 0;
+    }
+    return puVar2;
+  }
+  return puVar2;
+}
+
+
+----------------------------------------
+
+[0x05F0] FUN_000005f0 (346 bytes)
+  Flags: large stack buffer (0x74), large stack buffer (0x54)
+  First 2000 chars of decompilation:
+
+int FUN_000005f0(undefined4 param_1,int param_2,int param_3,int param_4,undefined4 param_5,
+                undefined4 param_6,undefined4 param_7,undefined4 param_8)
+
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+  undefined4 uVar4;
+  undefined4 uVar5;
+  undefined4 uVar6;
+  undefined1 auStack_74 [32];
+  undefined1 auStack_54 [16];
+  undefined4 local_44;
+  undefined4 local_40;
+  undefined4 local_3c;
+  undefined4 local_34;
+  int iStack_30;
+  int iStack_2c;
+  int iStack_28;
+  
+  local_34 = param_1;
+  iStack_30 = param_2;
+  iStack_2c = param_3;
+  iStack_28 = param_4;
+  iVar2 = FUN_000034c8();
+  iVar3 = FUN_0000354c();
+  if ((iVar3 != 0) || (iVar2 < 6)) {
+    iVar3 = 0xb;
+    goto LAB_0000073c;
+  }
+  iVar3 = FUN_00001898(param_7);
+  if (iVar3 != 0) goto LAB_0000073c;
+  if (param_4 == 0) {
+LAB_0000063c:
+    iVar3 = 4;
+  }
+  else {
+    local_3c = FUN_00005a00(param_5);
+    uVar4 = FUN_00005a00(param_7);
+    if (param_3 == 0x10) {
+      uVar6 = 0;
+    }
+    else if (param_3 == 0x18) {
+      uVar6 = 1;
+    }
+    else {
+      if (param_3 != 0x20) goto LAB_0000063c;
+      uVar6 = 2;
+    }
+    FUN_00004138(auStack_54,param_4,0x10);
+    iVar3 = FUN_00002c54(0,&local_44);
+    piVar1 = DAT_0000074c;
+    *DAT_0000074c = iVar3;
+    if (iVar3 == 0) {
+      uVar5 = FUN_00005a00(auStack_54);
+      iVar3 = FUN_00000f54(local_44,iVar2,uVar5,0x10,8);
+      *piVar1 = iVar3;
+      if (iVar3 == 0) {
+        iVar3 = FUN_00005238(0,&local_40,1);
+        *piVar1 = iVar3;
+        if (iVar3 == 0) {
+          iVar3 = FUN_00002c54(0,&local_44);
+          *piVar1 = iVar3;
+          if (iVar3 == 0) {
+            if (param_2 == 1) {
+              iVar3 = FUN_00000c20(local_44,uVar4,local_3c,param_6,local_34,iVar2,uVar6,param_8,9);
+            }
+            else {
+              if (param_2 != 2) {
+                iVar3 = 0x2b;
+                goto LAB_0000073c;
+              }
+              uVar5 = FUN_00005a00(auStack_74);
+       
+----------------------------------------
+
+[0x0D7C] FUN_00000d7c (94 bytes)
+  Flags: local array access, param in array index
+  First 2000 chars of decompilation:
+
+void FUN_00000d7c(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,int param_5,
+                 undefined4 param_6,undefined4 param_7,undefined4 param_8,undefined4 param_9,
+                 undefined4 param_10)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  int local_3c [2];
+  int iStack_34;
+  undefined4 uStack_30;
+  undefined4 local_2c;
+  undefined4 uStack_28;
+  
+  iStack_34 = param_1;
+  uStack_30 = param_2;
+  local_2c = param_3;
+  uStack_28 = param_4;
+  iVar1 = FUN_00002c30(1,local_3c,param_3,param_9);
+  if (iVar1 == 0) {
+    uVar2 = FUN_000012e4(param_7,param_8,param_10);
+    FUN_00000d50(param_1,param_2,local_2c,param_4,param_5 << 5,param_6,uVar2);
+    *(int *)(param_1 + 0x1c) = local_3c[0] << 0x10;
+  }
+  return;
+}
+
+
+----------------------------------------
+
+[0x1D30] FUN_00001d30 (380 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_00001d30(undefined4 param_1,int param_2,undefined4 param_3,uint param_4,undefined4 param_5,
+                undefined4 param_6,int param_7,undefined4 param_8)
+
+{
+  int iVar1;
+  uint uVar2;
+  int iVar3;
+  int iVar4;
+  byte *pbVar5;
+  uint uVar6;
+  int local_44;
+  int local_40;
+  undefined1 auStack_3c [8];
+  undefined4 local_34;
+  int iStack_30;
+  undefined4 local_2c;
+  uint uStack_28;
+  
+  if ((param_4 == 0x100) || (param_4 == 0x200)) {
+    local_34 = param_1;
+    iStack_30 = param_2;
+    local_2c = param_3;
+    uStack_28 = param_4;
+    iVar1 = FUN_00001eb4(param_8,auStack_3c,&local_44);
+    iVar4 = DAT_00001eac;
+    if (iVar1 != 0) {
+      return iVar1;
+    }
+    if (local_44 != param_2) {
+      return 4;
+    }
+    if (((local_44 * 2 + 2U <= param_4) && (param_4 < 0x201)) && ((param_4 - local_44) - 1 < 0x201))
+    {
+      iVar1 = DAT_00001eac + 0x400;
+      pbVar5 = (byte *)(DAT_00001eac + 0x200);
+      FUN_00000554(pbVar5,0x200);
+      FUN_00000554(iVar1,0x200);
+      local_40 = iVar4 + 0x600;
+      FUN_00000598(local_40,0x1de);
+      for (uVar2 = 0; uVar2 < param_4; uVar2 = uVar2 + 1) {
+        *(undefined1 *)(iVar4 + uVar2) = *(undefined1 *)((param_4 - uVar2) + param_7 + -1);
+      }
+      iVar3 = FUN_00001a60(param_5,param_6,local_2c,param_4,iVar4,iVar1,0);
+      if (iVar3 != 0) {
+        return iVar3;
+      }
+      for (uVar2 = 0; uVar2 < param_4; uVar2 = uVar2 + 1) {
+        pbVar5[uVar2] = *(byte *)((param_4 - uVar2) + iVar1 + -1);
+      }
+      if (((-1 < (int)((uint)*pbVar5 << 0x18)) && (pbVar5[param_4 - 1] == 0xbc)) &&
+         (iVar3 = FUN_00002434(pbVar5 + (param_4 - local_44) + -1,local_44,iVar1,
+                               (param_4 - local_44) + -1,param_8), iVar3 == 0)) {
+        for (uVar2 = 0; uVar2 < (param_4 - local_44) - 1; uVar2 = uVar2 + 1) {
+          pbVar5[uVar2] = pbVar5[uVar2] ^ *(byte *)(iVar1 + uVar2);
+        }
+        *pbVar5 = *pbVar5 & 0x7f;
+        for (uVar2 = 0; 
+----------------------------------------
+
+[0x21A0] FUN_000021a0 (250 bytes)
+  Flags: local array access, param in array index
+  First 2000 chars of decompilation:
+
+int FUN_000021a0(int *param_1,int param_2,undefined4 param_3,int param_4)
+
+{
+  int *piVar1;
+  int iVar2;
+  int iVar3;
+  undefined4 uVar4;
+  undefined4 local_28;
+  undefined4 local_24;
+  undefined4 local_20 [2];
+  
+  if (param_1 == (int *)0x0) {
+    return 7;
+  }
+  if ((param_2 == 4) || (param_2 == 5)) {
+    iVar2 = FUN_00003480();
+  }
+  else {
+    iVar2 = FUN_000034c8();
+  }
+  iVar3 = FUN_0000354c();
+  if ((iVar3 != 0) || (iVar2 < 6)) {
+    return 0xb;
+  }
+  param_1[3] = param_4;
+  *param_1 = param_2;
+  param_1[1] = iVar2;
+  iVar2 = FUN_00001eb4(param_2,&local_24,param_1 + 2);
+  if (iVar2 != 0) {
+    return iVar2;
+  }
+  iVar2 = FUN_00002c54(0,&local_28);
+  piVar1 = DAT_0000229c;
+  *DAT_0000229c = iVar2;
+  if (iVar2 == 0) {
+    uVar4 = FUN_00005a00(local_24);
+    iVar2 = FUN_00001124(local_28,param_1[1],uVar4,*param_1,param_4 != 0 | 8);
+    *piVar1 = iVar2;
+    if (iVar2 == 0) {
+      iVar2 = FUN_00005238(0,local_20,1);
+      *piVar1 = iVar2;
+      if (iVar2 == 0) {
+        if (param_4 == 0) {
+          *(undefined1 *)(param_1 + 4) = 1;
+LAB_00002284:
+          FUN_0000120c(0,1,local_24,param_1[2]);
+          iVar2 = FUN_00001f04(0,local_20[0]);
+          return iVar2;
+        }
+        *(undefined1 *)(param_1 + 4) = 0;
+        iVar2 = FUN_00002c54(0,&local_28);
+        *piVar1 = iVar2;
+        if (iVar2 == 0) {
+          uVar4 = FUN_00005a00(param_3);
+          iVar2 = FUN_0000113e(local_28,uVar4,param_4,param_1[1],*param_1,0x19);
+          *piVar1 = iVar2;
+          if (iVar2 == 0) {
+            iVar2 = FUN_00005238(0,local_20,1);
+            *piVar1 = iVar2;
+            if (iVar2 == 0) {
+              FUN_0000120c(0,1,param_3,param_4);
+              goto LAB_00002284;
+            }
+          }
+        }
+      }
+    }
+  }
+  return 0x1e;
+}
+
+
+----------------------------------------
+
+[0x3BA4] FUN_00003ba4 (242 bytes)
+  Flags: large stack buffer (0x128), param controls loop bound
+  First 2000 chars of decompilation:
+
+void FUN_00003ba4(uint param_1,uint param_2)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  uint uVar5;
+  int iVar6;
+  bool bVar7;
+  undefined1 auStack_128 [260];
+  
+  if ((DAT_00003c9c & ~*(uint *)(DAT_00003c98 + 0x1c0)) == 0) {
+    param_2 = 0;
+    param_1 = param_1 & 0xfffffff7 | 1;
+  }
+  iVar2 = FUN_00002fec(param_1,1);
+  FUN_00002fec(param_1,2);
+  iVar3 = FUN_00002fec(param_1,4);
+  uVar1 = DAT_00003ca4;
+  iVar4 = DAT_00003ca0;
+  uVar5 = 0;
+  if (iVar2 != 0) {
+    uVar5 = 0x100;
+  }
+  if (iVar3 != 0) {
+    uVar5 = uVar5 | 1;
+  }
+  iVar2 = 0;
+  do {
+    iVar6 = 0;
+    iVar3 = FUN_00003568(*(undefined4 *)(iVar4 + iVar2 * 4));
+    if (iVar3 == 0) {
+      iVar6 = 0xb;
+    }
+    else {
+      *(undefined4 *)(iVar3 + 0x148) = uVar1;
+      *(uint *)(iVar3 + 0x144) = (param_2 & 0xf) << 0x10 | uVar5;
+      FUN_0000511c();
+    }
+  } while ((iVar6 == 0) && (iVar2 = iVar2 + 1, iVar2 < 0x10));
+  if (iVar6 == 0) {
+    bVar7 = (int)(param_1 << 0x1c) < 0;
+    if ((*DAT_00003ca8 == 2) || (*DAT_00003ca8 == 1)) {
+      FUN_00004030(bVar7);
+      return;
+    }
+    iVar2 = *DAT_00003cac + DAT_00003cb0;
+    FUN_0000192c(auStack_128,0x100);
+    FUN_000004e0(iVar2,auStack_128,0x100);
+    iVar4 = FUN_0000120c(0,1,iVar2,0x20);
+    if (iVar4 == 0) {
+      FUN_00002f48(iVar2,bVar7);
+    }
+  }
+  return;
+}
+
+
+----------------------------------------
+
+[0x505C] FUN_0000505c (52 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+void FUN_0000505c(uint param_1)
+
+{
+  undefined4 *puVar1;
+  uint uVar2;
+  
+  puVar1 = DAT_00005090;
+  param_1 = param_1 >> 2;
+  if (param_1 == 0) {
+    param_1 = 1;
+  }
+  uVar2 = 0;
+  do {
+    *(undefined4 *)(uVar2 + (int)puVar1) = 0;
+    uVar2 = uVar2 + 4;
+  } while (uVar2 < 0x24);
+  *puVar1 = 0x101;
+  do {
+  } while ((uint)puVar1[8] < puVar1[8] + param_1);
+  *puVar1 = 0;
+  DataSynchronizationBarrier(0xf);
+  InstructionSynchronizationBarrier(0xf);
+  return;
+}
+
+
+----------------------------------------
+
+[0x5B90] FUN_00005b90 (152 bytes)
+  Flags: local array access
+  First 2000 chars of decompilation:
+
+int FUN_00005b90(uint param_1,uint *param_2,undefined4 param_3,uint param_4)
+
+{
+  uint *puVar1;
+  int iVar2;
+  uint *puVar3;
+  uint uVar4;
+  uint *local_20;
+  uint local_1c;
+  
+  iVar2 = 0;
+  local_20 = (uint *)0x0;
+  if (param_2 == (uint *)0x0) {
+LAB_00005bee:
+    iVar2 = 7;
+  }
+  else {
+    puVar3 = param_2 + 0x10;
+    for (uVar4 = 0; uVar4 < *param_2; uVar4 = uVar4 + 1) {
+      local_1c = puVar3[1];
+      puVar1 = puVar3 + 2;
+      if (*puVar3 == param_1) goto LAB_00005bca;
+      puVar3 = puVar3 + 2 + local_1c * 2;
+    }
+    iVar2 = 0x22;
+    puVar1 = local_20;
+    local_1c = param_4;
+LAB_00005bca:
+    local_20 = puVar1;
+    if (iVar2 != 0x22) {
+      if (iVar2 != 0) {
+        return iVar2;
+      }
+      if (local_20 == (uint *)0x0) goto LAB_00005bee;
+      if ((param_1 == 0x203) || (param_1 == 0x281)) {
+        for (uVar4 = 0; uVar4 < local_1c; uVar4 = uVar4 + 1) {
+          *(uint *)local_20[uVar4 * 2] = local_20[uVar4 * 2 + 1];
+        }
+      }
+      else {
+        for (uVar4 = 0; uVar4 < local_1c; uVar4 = uVar4 + 1) {
+          FUN_000086bc(local_20[uVar4 * 2],local_20[uVar4 * 2 + 1]);
+        }
+      }
+    }
+    iVar2 = 0;
+  }
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x5F5C] FUN_00005f5c (58 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00005f5c(uint param_1,uint *param_2)
+
+{
+  uint uVar1;
+  uint *puVar2;
+  
+  uVar1 = param_1 + 0xfc000000 >> 0x1a;
+  if ((uVar1 < 0x30) && (0x3ffffff < param_1)) {
+    puVar2 = (uint *)(DAT_00005f98 + uVar1 * 0x10);
+    *param_2 = param_1 & 0x3ffffff;
+    param_2[1] = 0;
+    uVar1 = *puVar2;
+    *param_2 = param_1 & 0x3ffffff | uVar1 << 0x1a;
+    param_2[1] = uVar1 >> 6;
+    return 0;
+  }
+  return 10;
+}
+
+
+----------------------------------------
+
+[0x6900] FUN_00006900 (126 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00006900(uint param_1,uint *param_2,uint *param_3)
+
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  undefined4 uVar4;
+  uint uVar5;
+  uint uVar6;
+  uint uVar7;
+  
+  uVar1 = FUN_00007db8(0x378c);
+  uVar2 = FUN_00007db8(DAT_00006980);
+  uVar3 = FUN_00007db8(DAT_00006980 + -0x54);
+  if (uVar1 == 0) {
+    return 2;
+  }
+  if ((uVar2 == 0) || (uVar3 == 0)) {
+    return 10;
+  }
+  uVar6 = uVar1 * 0x100000;
+  uVar7 = uVar6 - param_1;
+  uVar1 = uVar1 >> 0xc;
+  uVar5 = uVar1 - (uVar6 < param_1);
+  if (uVar5 < uVar1 || uVar1 - uVar5 < (uint)(uVar7 <= uVar6)) {
+    if (param_2 != (uint *)0x0) {
+      uVar6 = uVar2 * 0x1000000 + uVar7;
+      uVar1 = (uVar2 >> 8) + uVar5 + (uint)CARRY4(uVar2 * 0x1000000,uVar7);
+      if (uVar1 <= uVar5 && (uint)(uVar7 <= uVar6) <= uVar1 - uVar5) goto LAB_00006968;
+      *param_2 = uVar6;
+      param_2[1] = uVar1;
+    }
+    if (param_3 != (uint *)0x0) {
+      uVar1 = uVar3 * 0x1000000 + uVar7;
+      uVar2 = (uVar3 >> 8) + uVar5 + (uint)CARRY4(uVar3 * 0x1000000,uVar7);
+      if (uVar2 <= uVar5 && (uint)(uVar7 <= uVar1) <= uVar2 - uVar5) goto LAB_00006968;
+      *param_3 = uVar1;
+      param_3[1] = uVar2;
+    }
+    uVar4 = 0;
+  }
+  else {
+LAB_00006968:
+    uVar4 = 0x27;
+  }
+  return uVar4;
+}
+
+
+----------------------------------------
+
+[0x6EE0] FUN_00006ee0 (162 bytes)
+  Flags: param in array index, param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_00006ee0(int param_1,int *param_2,uint *param_3,int param_4)
+
+{
+  int iVar1;
+  int iVar2;
+  int *piVar3;
+  int *piVar4;
+  uint uVar5;
+  int local_28;
+  
+  if (((param_1 == 0) || (param_2 == (int *)0x0)) || (*DAT_00006f84 == 0)) {
+    iVar1 = 7;
+  }
+  else {
+    local_28 = param_4;
+    iVar1 = FUN_000069ce(param_1,&local_28);
+    if (iVar1 == 0) {
+      uVar5 = 0;
+      do {
+        iVar1 = local_28;
+        piVar4 = (int *)*DAT_00006f84;
+        for (piVar3 = piVar4 + 0x14; piVar3 < (int *)(*piVar4 + (int)piVar4);
+            piVar3 = (int *)((int)piVar3 + *piVar3)) {
+          iVar2 = FUN_000003c4(piVar3 + 4,param_1 + 0x38,0x10);
+          if ((iVar2 == 0) && (piVar3[2] == iVar1)) {
+            *param_2 = (int)(piVar3 + 3);
+            param_2[1] = 4;
+            param_2[2] = (int)(piVar3 + 0x14);
+            param_2[3] = (uint)piVar3[8] >> 3;
+            iVar1 = 0;
+            goto LAB_00006f56;
+          }
+        }
+        iVar1 = 0xa0;
+LAB_00006f56:
+        if (iVar1 == 0) {
+          if (param_3 == (uint *)0x0) {
+            return 0;
+          }
+          *param_3 = uVar5;
+          return 0;
+        }
+        if (*(char *)(param_1 + 0x7f) == '\0') {
+          return iVar1;
+        }
+        if (*(int *)(param_1 + 0x18) != 0) {
+          return iVar1;
+        }
+        uVar5 = uVar5 + 1;
+        param_1 = param_1 + 0x100;
+        if (3 < uVar5) {
+          return iVar1;
+        }
+      } while( true );
+    }
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x7CF8] FUN_00007cf8 (100 bytes)
+  Flags: local array access, param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00007cf8(uint param_1,uint param_2,uint *param_3,undefined4 *param_4)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  uint *local_20;
+  undefined4 *local_1c;
+  
+  local_20 = param_3;
+  local_1c = param_4;
+  iVar1 = FUN_00007868(&local_20,&local_1c);
+  if (iVar1 == 0) {
+    *local_20 = (param_2 & 0x7fc) + 1 | (param_1 & 7) << 0xb | ((uint)param_3 & 0xff) << 0x10 |
+                0x4000;
+    DataSynchronizationBarrier(0xf);
+    InstructionSynchronizationBarrier(0xf);
+    uVar2 = local_1c[1];
+    DataSynchronizationBarrier(0xf);
+    InstructionSynchronizationBarrier(0xf);
+    *param_4 = *local_1c;
+    param_4[1] = uVar2;
+    FUN_0000511c(local_20);
+    FUN_0000511c(local_1c);
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x7F3C] FUN_00007f3c (30 bytes)
+  Flags: local array access, param in array index
+  First 2000 chars of decompilation:
+
+void FUN_00007f3c(undefined4 param_1,undefined4 param_2)
+
+{
+  undefined4 local_28 [7];
+  
+  FUN_00000598(local_28,0x18);
+  local_28[0] = param_2;
+  FUN_00007f5c(param_1,local_28);
+  return;
+}
+
+
+----------------------------------------
+
+[0x863E] FUN_0000863e (102 bytes)
+  Flags: local array access, param in array index
+  First 2000 chars of decompilation:
+
+int FUN_0000863e(uint param_1,uint param_2,undefined4 *param_3,uint *param_4,undefined4 param_5,
+                undefined4 param_6)
+
+{
+  int iVar1;
+  undefined4 *local_28;
+  uint *local_24;
+  
+  local_28 = param_3;
+  local_24 = param_4;
+  iVar1 = FUN_00007868(&local_24,&local_28);
+  if (iVar1 == 0) {
+    *local_24 = (param_2 & 0x7fc) + 1 | (param_1 & 7) << 0xb | ((uint)param_3 & 0xff) << 0x10 |
+                0x4000;
+    DataSynchronizationBarrier(0xf);
+    InstructionSynchronizationBarrier(0xf);
+    *local_28 = param_5;
+    local_28[1] = param_6;
+    DataSynchronizationBarrier(0xf);
+    InstructionSynchronizationBarrier(0xf);
+    FUN_0000511c(local_24);
+    FUN_0000511c(local_28);
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x010C] FUN_0000010c (8 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+void FUN_0000010c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  *param_1 = param_3;
+  param_1[1] = param_4;
+  return;
+}
+
+
+----------------------------------------
+
+[0x03C4] FUN_000003c4 (88 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_000003c4(uint *param_1,uint *param_2,uint param_3)
+
+{
+  uint *puVar1;
+  uint *puVar2;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
+  
+  if ((((uint)param_1 | (uint)param_2) & 3) == 0) {
+    while (3 < param_3) {
+      uVar5 = *param_1;
+      param_1 = param_1 + 1;
+      uVar3 = *param_2;
+      param_2 = param_2 + 1;
+      param_3 = param_3 - 4;
+      if (uVar5 != uVar3) {
+        if ((uVar5 << 0x18 | (uVar5 >> 8 & 0xff) << 0x10 | (uVar5 >> 0x10 & 0xff) << 8 |
+            uVar5 >> 0x18) <=
+            (uVar3 << 0x18 | (uVar3 >> 8 & 0xff) << 0x10 | (uVar3 >> 0x10 & 0xff) << 8 |
+            uVar3 >> 0x18)) {
+          return -1;
+        }
+        return 1;
+      }
+    }
+  }
+  if (param_3 != 0) {
+    if ((param_3 & 1) == 0) goto LAB_000003fc;
+    param_3 = param_3 + 1;
+    puVar1 = param_1;
+    puVar2 = param_2;
+    while( true ) {
+      param_1 = (uint *)((int)puVar1 + 1);
+      param_2 = (uint *)((int)puVar2 + 1);
+      iVar4 = (uint)(byte)*puVar1 - (uint)(byte)*puVar2;
+      if (iVar4 != 0) {
+        return iVar4;
+      }
+      param_3 = param_3 - 2;
+      if (param_3 == 0) break;
+LAB_000003fc:
+      puVar1 = (uint *)((int)param_1 + 1);
+      puVar2 = (uint *)((int)param_2 + 1);
+      iVar4 = (uint)(byte)*param_1 - (uint)(byte)*param_2;
+      if (iVar4 != 0) {
+        return iVar4;
+      }
+    }
+    return 0;
+  }
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x041C] FUN_0000041c (58 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_0000041c(uint *param_1)
+
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  undefined4 uVar3;
+  undefined4 uVar4;
+  short sVar5;
+  int3 iVar6;
+  uint *puVar7;
+  uint *puVar8;
+  int iVar9;
+  uint uVar10;
+  
+  puVar8 = param_1;
+  while (((uint)puVar8 & 3) != 0) {
+    puVar7 = (uint *)((int)puVar8 + 1);
+    uVar10 = *puVar8;
+    puVar8 = puVar7;
+    if ((char)uVar10 == '\0') {
+      return (int)puVar7 - ((int)param_1 + 1);
+    }
+  }
+  do {
+    uVar10 = *puVar8;
+    puVar8 = puVar8 + 1;
+    uVar1 = UnsignedSaturate(1 - (uVar10 & 0xff),8);
+    uVar2 = UnsignedSaturate(1 - (uVar10 >> 8 & 0xff),8);
+    uVar3 = UnsignedSaturate(1 - (uVar10 >> 0x10 & 0xff),8);
+    uVar4 = UnsignedSaturate(1 - (uVar10 >> 0x18),8);
+    sVar5 = CONCAT11((char)uVar2,(char)uVar1);
+    iVar6 = CONCAT12((char)uVar3,sVar5);
+  } while (CONCAT13((char)uVar4,iVar6) == 0);
+  iVar9 = (int)puVar8 - (int)((int)param_1 + 1);
+  if ((char)uVar1 == '\0') {
+    if (sVar5 == 0) {
+      if (iVar6 != 0) {
+        return iVar9 + -1;
+      }
+    }
+    else {
+      iVar9 = iVar9 + -2;
+    }
+    return iVar9;
+  }
+  return iVar9 + -3;
+}
+
+
+----------------------------------------
+
+[0x0750] FUN_00000750 (232 bytes)
+  Flags: large stack buffer (0x60)
+  First 2000 chars of decompilation:
+
+int FUN_00000750(undefined4 param_1,int param_2,int param_3,undefined4 param_4,undefined4 param_5,
+                undefined4 param_6,undefined4 param_7)
+
+{
+  int *piVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined4 uVar4;
+  undefined1 auStack_60 [32];
+  undefined4 local_40;
+  undefined4 local_3c;
+  undefined4 local_38;
+  undefined4 uStack_34;
+  int iStack_30;
+  int iStack_2c;
+  undefined4 local_28;
+  
+  uStack_34 = param_1;
+  iStack_30 = param_2;
+  iStack_2c = param_3;
+  local_28 = param_4;
+  iVar2 = FUN_00001898(param_6);
+  if (iVar2 == 0) {
+    local_38 = FUN_00005a00(local_28);
+    local_3c = FUN_00005a00(param_6);
+    if (param_3 == 0x10) {
+      uVar4 = 0;
+    }
+    else if (param_3 == 0x18) {
+      uVar4 = 1;
+    }
+    else {
+      if (param_3 != 0x20) {
+        return 4;
+      }
+      uVar4 = 2;
+    }
+    iVar2 = FUN_00002c54(0,&local_40);
+    piVar1 = DAT_00000838;
+    *DAT_00000838 = iVar2;
+    if (iVar2 == 0) {
+      if (param_2 == 1) {
+        iVar2 = FUN_00000cb0(local_40,local_3c,local_38,param_5,param_1,uVar4,param_7,9);
+      }
+      else {
+        if (param_2 != 2) {
+          return 0x2b;
+        }
+        uVar3 = FUN_00005a00(auStack_60);
+        FUN_00004138(auStack_60,param_1,param_3);
+        FUN_0000120c(0,1,auStack_60,param_3);
+        iVar2 = FUN_00000c70(local_40,local_3c,local_38,param_5,uVar3,uVar4,param_7,9);
+      }
+      *piVar1 = iVar2;
+      if (iVar2 == 0) {
+        FUN_0000120c(0,1,local_28,param_5);
+        FUN_0000120c(2,1,param_6,param_5);
+        iVar2 = FUN_00002358(0,1);
+        *piVar1 = iVar2;
+        if (iVar2 == 0) {
+          return 0;
+        }
+      }
+    }
+    iVar2 = 0x1b;
+  }
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x08BC] FUN_000008bc (130 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4
+FUN_000008bc(uint param_1,uint param_2,int *param_3,undefined4 *param_4,undefined4 *param_5,
+            undefined4 *param_6,int param_7)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  uint uVar3;
+  undefined4 uVar4;
+  
+  uVar1 = 0;
+  if (((param_3 == (int *)0x0) || (param_5 == (undefined4 *)0x0)) || (param_7 == 0)) {
+    uVar1 = 7;
+  }
+  else if (*(uint *)(param_7 + 8) < 0x35) {
+    for (uVar3 = 0; uVar3 < *(uint *)(param_7 + 8); uVar3 = uVar3 + 1) {
+      if ((*(uint *)(param_7 + uVar3 * 0x18 + 0x10) & param_2) == param_1) {
+        iVar2 = param_7 + uVar3 * 0x18;
+        *param_3 = *(int *)(iVar2 + 0x18) - *DAT_00000940;
+        *param_5 = *(undefined4 *)(iVar2 + 0x14);
+        if (param_4 != (undefined4 *)0x0) {
+          uVar4 = *(undefined4 *)(iVar2 + 0x24);
+          *param_4 = *(undefined4 *)(iVar2 + 0x20);
+          param_4[1] = uVar4;
+        }
+        if (param_6 != (undefined4 *)0x0) {
+          *param_6 = *(undefined4 *)(iVar2 + 0x10);
+        }
+        break;
+      }
+    }
+    if (*(uint *)(param_7 + 8) == uVar3) {
+      uVar1 = 0x22;
+    }
+  }
+  else {
+    uVar1 = 0xf;
+  }
+  return uVar1;
+}
+
+
+----------------------------------------
+
+[0x0C4C] FUN_00000c4c (30 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4
+FUN_00000c4c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+            undefined4 param_5,undefined4 param_6)
+
+{
+  int iVar1;
+  
+  *param_1 = param_6;
+  param_1[1] = param_4;
+  param_1[2] = param_3;
+  iVar1 = *(int *)(DAT_00000c6c + 8) << 0x10;
+  param_1[3] = iVar1;
+  param_1[4] = param_2;
+  param_1[5] = iVar1;
+  param_1[6] = param_5;
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x0D50] FUN_00000d50 (40 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4
+FUN_00000d50(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+            undefined4 param_5,int param_6,undefined4 param_7)
+
+{
+  int iVar1;
+  
+  *param_1 = param_7;
+  param_1[1] = param_4;
+  param_1[2] = param_3;
+  iVar1 = *(int *)(DAT_00000d78 + 8);
+  param_1[3] = param_6 << 0x12 | iVar1 << 0x10;
+  param_1[4] = param_2;
+  param_1[5] = iVar1 << 0x10;
+  param_1[6] = param_5;
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x0DDC] FUN_00000ddc (80 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4
+FUN_00000ddc(uint *param_1,uint param_2,uint param_3,uint param_4,int param_5,int param_6,
+            undefined4 param_7)
+
+{
+  uint uVar1;
+  int iVar2;
+  
+  uVar1 = FUN_00002d80(param_7);
+  param_1[2] = param_2;
+  iVar2 = DAT_00000e2c;
+  *param_1 = (param_5 << 0xd | 0x580U) << 5 | uVar1 | 0x2000008;
+  param_1[1] = param_3;
+  iVar2 = *(int *)(iVar2 + 8);
+  param_1[3] = param_6 << 0x12 | iVar2 << 0x10;
+  param_1[4] = 0;
+  param_1[5] = 0;
+  param_1[6] = param_4;
+  param_1[7] = iVar2 << 0x10;
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x0E30] FUN_00000e30 (48 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+void FUN_00000e30(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                 undefined4 param_5)
+
+{
+  undefined4 uVar1;
+  int iVar2;
+  
+  uVar1 = FUN_00001498(0,param_5);
+  param_1[2] = param_3;
+  *param_1 = uVar1;
+  param_1[1] = param_4;
+  iVar2 = *(int *)(DAT_00000e60 + 8) << 0x10;
+  param_1[3] = iVar2;
+  param_1[4] = param_2;
+  param_1[5] = iVar2;
+  param_1[6] = 0;
+  param_1[7] = 0;
+  return;
+}
+
+
+----------------------------------------
+
+[0x0E64] FUN_00000e64 (152 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00000e64(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                undefined4 param_5,uint param_6,undefined4 param_7,undefined4 param_8,
+                undefined4 param_9,uint param_10,undefined4 param_11,int param_12)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  uint uVar3;
+  undefined4 extraout_r3;
+  undefined8 uVar4;
+  undefined8 uVar5;
+  undefined8 uVar6;
+  undefined4 local_30;
+  undefined4 local_2c;
+  
+  local_30 = param_3;
+  local_2c = param_4;
+  iVar1 = FUN_00002c30(param_5,&local_30);
+  if ((iVar1 == 0) && (iVar1 = FUN_00002c30(param_9,&local_2c), iVar1 == 0)) {
+    uVar4 = FUN_00001660(param_3,extraout_r3,param_5);
+    uVar5 = FUN_00001660(param_7,param_8,param_9);
+    if (param_12 << 0x1e < 0) {
+      uVar2 = 2;
+    }
+    else if (param_12 << 0x1d < 0) {
+      uVar2 = 1;
+    }
+    else {
+      uVar2 = 0;
+    }
+    uVar6 = FUN_00001498(uVar2,param_12);
+    *param_1 = (int)uVar6;
+    param_1[1] = param_11;
+    param_1[2] = (int)uVar5;
+    uVar3 = FUN_000043ca(local_2c,(int)((ulonglong)uVar6 >> 0x20),(int)uVar5,
+                         (int)((ulonglong)uVar5 >> 0x20));
+    param_1[3] = uVar3 | param_10;
+    param_1[4] = (int)uVar4;
+    uVar3 = FUN_000043ca(local_30,param_10,(int)uVar4,(int)((ulonglong)uVar4 >> 0x20));
+    param_1[5] = uVar3 | param_6;
+    param_1[6] = 0;
+    param_1[7] = 0;
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x0F0C] FUN_00000f0c (68 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4
+FUN_00000f0c(undefined4 *param_1,undefined4 param_2,int param_3,int param_4,undefined4 param_5,
+            undefined4 param_6)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 extraout_r3;
+  int local_20;
+  
+  local_20 = param_4;
+  iVar1 = FUN_00002c30(1,&local_20);
+  if (iVar1 == 0) {
+    uVar2 = FUN_00001498(extraout_r3,param_6);
+    *param_1 = uVar2;
+    param_1[1] = param_5;
+    param_1[2] = param_3 << 5;
+    param_1[3] = local_20 << 0x10;
+    param_1[4] = param_2;
+    param_1[5] = *(int *)(DAT_00000f50 + 8) << 0x10;
+    param_1[6] = 0;
+    param_1[7] = 0;
+  }
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x0F64] FUN_00000f64 (70 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00000f64(undefined4 *param_1,int param_2,undefined4 param_3,int param_4,undefined4 param_5,
+                undefined4 param_6)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 extraout_r3;
+  int local_20;
+  
+  local_20 = param_4;
+  iVar1 = FUN_00002c30(1,&local_20);
+  if (iVar1 == 0) {
+    uVar2 = FUN_00001498(extraout_r3,param_6);
+    param_1[2] = param_3;
+    *param_1 = uVar2;
+    param_1[1] = param_5;
+    param_1[3] = *(int *)(DAT_00000fac + 8) << 0x10;
+    param_1[4] = param_2 << 5;
+    param_1[5] = local_20 << 0x10;
+    param_1[6] = 0;
+    param_1[7] = 0;
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x0FB0] FUN_00000fb0 (54 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+void FUN_00000fb0(uint *param_1,uint param_2,uint param_3,uint param_4,undefined4 param_5)
+
+{
+  uint uVar1;
+  
+  uVar1 = FUN_00002d80(param_5);
+  param_1[2] = param_3;
+  *param_1 = uVar1 | 0x600018;
+  param_1[1] = param_4;
+  uVar1 = *(int *)(DAT_00000fe8 + 8) << 0x10;
+  param_1[3] = uVar1;
+  param_1[4] = param_2;
+  param_1[5] = uVar1;
+  param_1[6] = 0;
+  param_1[7] = 0;
+  return;
+}
+
+
+----------------------------------------
+
+[0x0FEC] FUN_00000fec (66 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4
+FUN_00000fec(uint *param_1,uint param_2,uint param_3,int param_4,int param_5,uint param_6,
+            undefined4 param_7)
+
+{
+  uint uVar1;
+  
+  uVar1 = FUN_00002d80(param_7);
+  *param_1 = uVar1 | 0x18 | param_5 << 8 | 0x400000;
+  param_1[1] = param_4 + param_5;
+  param_1[2] = param_3;
+  uVar1 = *(int *)(DAT_00001030 + 8) << 0x10;
+  param_1[3] = uVar1;
+  param_1[4] = param_2;
+  param_1[5] = uVar1;
+  param_1[6] = param_6;
+  param_1[7] = uVar1;
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x1034] FUN_00001034 (60 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00001034(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 local_20;
+  
+  local_20 = param_4;
+  iVar1 = FUN_00002c30(param_5,&local_20);
+  if (iVar1 == 0) {
+    *param_1 = param_8;
+    param_1[1] = param_6;
+    param_1[2] = param_3;
+    uVar2 = FUN_0000150c(param_7,local_20,param_3);
+    param_1[3] = uVar2;
+    param_1[6] = 0;
+    param_1[7] = 0;
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x1070] FUN_00001070 (30 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+void FUN_00001070(undefined4 *param_1,undefined4 param_2,undefined4 param_3,int param_4,
+                 undefined4 param_5)
+
+{
+  *param_1 = param_5;
+  param_1[1] = param_3;
+  param_1[2] = param_2;
+  param_1[3] = param_4 << 0x12 | *(int *)(DAT_00001090 + 8) << 0x10;
+  param_1[6] = 0;
+  param_1[7] = 0;
+  return;
+}
+
+
+----------------------------------------
+
+[0x120C] FUN_0000120c (154 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_0000120c(int param_1,int param_2,uint param_3,uint param_4)
+
+{
+  uint uVar1;
+  uint uVar2;
+  undefined4 uVar3;
+  bool bVar4;
+  undefined4 in_cr5;
+  undefined4 in_cr6;
+  undefined4 in_cr7;
+  undefined4 in_cr10;
+  undefined4 in_cr14;
+  
+  uVar3 = 0;
+  bVar4 = param_4 < 0x2000;
+  uVar2 = param_3 & 0xffffffe0;
+  if ((~param_4 < param_3) || (0xffffffe0 < param_3 + param_4)) {
+LAB_0000123c:
+    uVar3 = 4;
+  }
+  else {
+    uVar1 = param_3 + param_4 + 0x1f & 0xffffffe0;
+    if (param_2 == 0) {
+      if (param_1 != 1) {
+        uVar3 = 4;
+      }
+      if (bVar4) {
+        for (; uVar2 < uVar1; uVar2 = uVar2 + 0x20) {
+          coprocessor_moveto(0xf,0,1,uVar2,in_cr7,in_cr5);
+        }
+      }
+      else {
+        coprocessor_moveto(0xf,0,0,0,in_cr7,in_cr5);
+      }
+    }
+    else {
+      if (param_2 != 1) goto LAB_0000123c;
+      if (param_1 == 0) {
+        if (bVar4) {
+          for (; uVar2 < uVar1; uVar2 = uVar2 + 0x20) {
+            coprocessor_moveto(0xf,0,1,uVar2,in_cr7,in_cr10);
+          }
+        }
+        else {
+          FUN_000002a8();
+        }
+      }
+      else if (param_1 == 1) {
+        for (; uVar2 < uVar1; uVar2 = uVar2 + 0x20) {
+          coprocessor_moveto(0xf,0,1,uVar2,in_cr7,in_cr6);
+        }
+      }
+      else if (param_1 == 2) {
+        if (bVar4) {
+          for (; uVar2 < uVar1; uVar2 = uVar2 + 0x20) {
+            coprocessor_moveto(0xf,0,1,uVar2,in_cr7,in_cr14);
+          }
+        }
+        else {
+          FUN_000002d4();
+        }
+      }
+      else {
+        uVar3 = 4;
+      }
+    }
+    DataSynchronizationBarrier(0xf);
+  }
+  return uVar3;
+}
+
+
+----------------------------------------
+
+[0x1364] FUN_00001364 (156 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00001364(uint param_1,undefined4 param_2,uint param_3,uint param_4)
+
+{
+  byte bVar1;
+  byte bVar2;
+  byte bVar3;
+  byte bVar4;
+  int iVar5;
+  int iVar6;
+  undefined4 uVar7;
+  int iVar8;
+  uint *puVar9;
+  
+  iVar6 = FUN_00002ff4();
+  if (iVar6 == 0) {
+    uVar7 = 0x31;
+  }
+  else if ((param_4 < 4) || ((param_4 & param_4 - 1) != 0)) {
+    uVar7 = 0x32;
+  }
+  else {
+    bVar2 = (byte)param_4;
+    bVar3 = (byte)(param_4 >> 8);
+    bVar4 = (byte)(param_4 >> 0x10);
+    bVar1 = (byte)(param_4 >> 0x18);
+    iVar6 = LZCOUNT((uint)(byte)((((((((bVar2 & 1) << 1 | bVar2 >> 1 & 1) << 1 | bVar2 >> 2 & 1) <<
+                                     1 | bVar2 >> 3 & 1) << 1 | bVar2 >> 4 & 1) << 1 |
+                                  bVar2 >> 5 & 1) << 1 | bVar2 >> 6 & 1) << 1 | bVar2 >> 7) << 0x18
+                    | (uint)(byte)((((((((bVar3 & 1) << 1 | bVar3 >> 1 & 1) << 1 | bVar3 >> 2 & 1)
+                                       << 1 | bVar3 >> 3 & 1) << 1 | bVar3 >> 4 & 1) << 1 |
+                                    bVar3 >> 5 & 1) << 1 | bVar3 >> 6 & 1) << 1 | bVar3 >> 7) <<
+                      0x10 | (uint)(byte)((((((((bVar4 & 1) << 1 | bVar4 >> 1 & 1) << 1 |
+                                              bVar4 >> 2 & 1) << 1 | bVar4 >> 3 & 1) << 1 |
+                                            bVar4 >> 4 & 1) << 1 | bVar4 >> 5 & 1) << 1 |
+                                          bVar4 >> 6 & 1) << 1 | bVar4 >> 7) << 8 |
+                    (uint)(byte)((((((((bVar1 & 1) << 1 | bVar1 >> 1 & 1) << 1 | bVar1 >> 2 & 1) <<
+                                     1 | bVar1 >> 3 & 1) << 1 | bVar1 >> 4 & 1) << 1 |
+                                  bVar1 >> 5 & 1) << 1 | bVar1 >> 6 & 1) << 1 | bVar1 >> 7));
+    bVar2 = (byte)param_3;
+    bVar3 = (byte)(param_3 >> 8);
+    bVar4 = (byte)(param_3 >> 0x10);
+    bVar1 = (byte)(param_3 >> 0x18);
+    if ((uint)LZCOUNT((uint)(byte)((((((((bVar2 & 1) << 1 | bVar2 >> 1 & 1) << 1 | bVar2 >> 2
+----------------------------------------
+
+[0x14B0] FUN_000014b0 (64 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4 FUN_000014b0(int param_1,int param_2)
+
+{
+  int iVar1;
+  uint *puVar2;
+  undefined4 uVar3;
+  
+  uVar3 = 0;
+  iVar1 = FUN_00002ff4();
+  if (iVar1 == 0) {
+    uVar3 = 0x31;
+  }
+  else {
+    puVar2 = *(uint **)(DAT_000014f0 + param_1 * 4);
+    iVar1 = DAT_000014f0 + -0x54 + param_1 * 0x1c;
+    puVar2[1] = *(int *)(iVar1 + 4) + (param_2 + 1U & *(int *)(iVar1 + 0x10) - 1U) * 0x20;
+    *puVar2 = *puVar2 | 1;
+  }
+  return uVar3;
+}
+
+
+----------------------------------------
+
+[0x1720] FUN_00001720 (330 bytes)
+  Flags: large stack buffer (0x54)
+  First 2000 chars of decompilation:
+
+int FUN_00001720(int param_1,int param_2,int param_3,int param_4,undefined4 param_5,int param_6)
+
+{
+  undefined4 *puVar1;
+  int *piVar2;
+  int iVar3;
+  int iVar4;
+  undefined4 uVar5;
+  int iVar6;
+  undefined4 uVar7;
+  undefined1 auStack_54 [32];
+  undefined4 local_34;
+  undefined4 local_30;
+  undefined4 local_2c;
+  undefined4 local_28;
+  
+  if (((param_1 == 0) || (param_4 == 0)) || (param_6 == 0)) {
+    return 4;
+  }
+  if (param_2 != 2) {
+    return 0x2b;
+  }
+  iVar3 = FUN_00001898(param_6);
+  if (iVar3 != 0) {
+    return iVar3;
+  }
+  if (param_3 == 0x10) {
+    uVar7 = 0;
+  }
+  else if (param_3 == 0x18) {
+    uVar7 = 1;
+  }
+  else {
+    if (param_3 != 0x20) {
+      return 4;
+    }
+    uVar7 = 2;
+  }
+  iVar3 = FUN_000034c8();
+  iVar4 = FUN_0000354c();
+  puVar1 = DAT_0000186c;
+  if ((iVar4 == 0) && (5 < iVar3)) {
+    *DAT_0000186c = 0;
+    puVar1[1] = 0;
+    puVar1[2] = 0;
+    puVar1[3] = 0;
+    iVar4 = FUN_00001c98(DAT_0000186c,iVar3,0x10,0,0);
+    if (iVar4 == 0) {
+      local_28 = FUN_00005a00(param_4);
+      local_2c = FUN_00005a00(param_6);
+      iVar4 = FUN_00002c54(0,&local_34);
+      piVar2 = DAT_00001870;
+      *DAT_00001870 = iVar4;
+      if (iVar4 == 0) {
+        uVar5 = FUN_00005a00(auStack_54);
+        FUN_00004138(auStack_54,param_1,param_3);
+        FUN_0000120c(0,1,auStack_54,param_3);
+        iVar4 = FUN_00000ddc(local_34,local_28,param_5,uVar5,uVar7,iVar3,0x21);
+        *piVar2 = iVar4;
+        if (iVar4 == 0) {
+          iVar4 = FUN_00005238(0,&local_30,1);
+          *piVar2 = iVar4;
+          if (iVar4 == 0) {
+            iVar4 = FUN_00002c54(0,&local_34);
+            *piVar2 = iVar4;
+            if (iVar4 == 0) {
+              iVar4 = FUN_00000efc(local_34,local_2c,iVar3,0x10,9);
+              *piVar2 = iVar4;
+              if (iVar4 == 0) {
+                iVar4 = FUN_00005238(0,&local_30,1);
+                *piVar2 = iVar4;
+                if (iVar4 == 0) {
+               
+----------------------------------------
+
+[0x1958] FUN_00001958 (14 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00001958(uint param_1)
+
+{
+  if (0x200 < param_1) {
+    return 0;
+  }
+  return DAT_00001968;
+}
+
+
+----------------------------------------
+
+[0x22A0] FUN_000022a0 (346 bytes)
+  Flags: local array access
+  First 2000 chars of decompilation:
+
+int FUN_000022a0(undefined4 param_1,int param_2,undefined4 *param_3)
+
+{
+  int *piVar1;
+  int iVar2;
+  undefined4 uVar3;
+  int iVar4;
+  int iVar5;
+  undefined4 local_30;
+  undefined4 local_2c;
+  undefined4 local_28;
+  undefined4 local_24 [2];
+  
+  iVar5 = -1;
+  iVar2 = FUN_00001898();
+  if (iVar2 == 0) {
+    if ((param_2 == 4) || (param_2 == 5)) {
+      iVar5 = FUN_00003480();
+    }
+    else {
+      iVar5 = FUN_000034c8();
+    }
+    iVar2 = FUN_0000354c();
+    if ((iVar2 == 0) && (5 < iVar5)) {
+      iVar2 = FUN_00001eb4(param_2,&local_2c,&local_30);
+      if (iVar2 == 0) {
+        iVar2 = FUN_00002c54(0,&local_28);
+        piVar1 = DAT_0000219c;
+        *DAT_0000219c = iVar2;
+        if (iVar2 == 0) {
+          uVar3 = FUN_00005a00(local_2c);
+          iVar2 = FUN_00001124(local_28,iVar5,uVar3,param_2,8);
+          *piVar1 = iVar2;
+          if (iVar2 == 0) {
+            iVar2 = FUN_00005238(0,local_24,1);
+            *piVar1 = iVar2;
+            if (iVar2 == 0) {
+              FUN_0000120c(0,1,local_2c,local_30);
+              iVar2 = FUN_00002c54(0,&local_28);
+              *piVar1 = iVar2;
+              if (iVar2 == 0) {
+                iVar2 = FUN_000010d2(local_28,1,1,0,1,0x20,0x20,iVar5,param_2,0x18);
+                *piVar1 = iVar2;
+                if (iVar2 == 0) {
+                  iVar2 = FUN_00005238(0,local_24,1);
+                  *piVar1 = iVar2;
+                  if (iVar2 == 0) {
+                    iVar2 = FUN_00002c54(0,&local_28);
+                    *piVar1 = iVar2;
+                    if (iVar2 == 0) {
+                      uVar3 = FUN_00005a00(param_1);
+                      iVar2 = FUN_00000efc(local_28,uVar3,iVar5,local_30,9);
+                      *piVar1 = iVar2;
+                      if (iVar2 == 0) {
+                        iVar2 = FUN_00005238(0,local_24,1);
+                        *piVar1 = iVar2;
+                        if (iVar2 == 0) {
+                          FUN_0000120c(2
+----------------------------------------
+
+[0x237C] FUN_0000237c (178 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_0000237c(int param_1,uint param_2,undefined4 param_3,uint param_4,uint *param_5)
+
+{
+  int *piVar1;
+  int iVar2;
+  undefined4 uVar3;
+  uint local_34;
+  undefined4 local_30;
+  uint local_2c;
+  
+  if ((param_1 == 0) || (param_2 == 0)) {
+    iVar2 = 4;
+  }
+  else {
+    local_34 = param_2;
+    local_30 = param_3;
+    local_2c = param_4;
+    iVar2 = FUN_00001898(param_2);
+    if (iVar2 == 0) {
+      if ((param_2 + 0x1f & 0xffffffe0) == param_2) {
+        local_2c = FUN_00005a00(param_1);
+        uVar3 = FUN_00005a00(param_2);
+        iVar2 = FUN_00002c54(0,&local_30);
+        piVar1 = DAT_00002430;
+        *DAT_00002430 = iVar2;
+        if (iVar2 == 0) {
+          iVar2 = FUN_00000fb0(local_30,uVar3,local_2c,param_3,9);
+          *piVar1 = iVar2;
+          if (iVar2 == 0) {
+            FUN_000014f4(param_4,0);
+            FUN_0000120c(0,1,param_1,param_3);
+            iVar2 = FUN_00002358(0,1);
+            *piVar1 = iVar2;
+            if (((iVar2 == 0) && (FUN_0000132c(&local_34,0), local_34 <= param_4)) &&
+               (local_34 != 0)) {
+              FUN_0000120c(1,1,param_2);
+              if (param_5 == (uint *)0x0) {
+                return 0;
+              }
+              *param_5 = local_34;
+              return 0;
+            }
+          }
+        }
+        iVar2 = 0x1f;
+      }
+      else {
+        iVar2 = 6;
+      }
+    }
+  }
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x24C4] FUN_000024c4 (54 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+void FUN_000024c4(uint param_1)
+
+{
+  uint uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  int iVar5;
+  uint uVar6;
+  bool bVar7;
+  undefined8 uVar8;
+  
+  if (param_1 != 0) {
+    uVar8 = FUN_00002cf0();
+    uVar3 = (uint)((ulonglong)uVar8 >> 0x20);
+    uVar1 = (uint)uVar8;
+    uVar2 = uVar1;
+    do {
+      uVar8 = FUN_00002cf0(uVar2);
+      uVar4 = (uint)((ulonglong)uVar8 >> 0x20);
+      uVar2 = (uint)uVar8;
+      if (uVar3 < uVar4 || uVar4 - uVar3 < (uint)(uVar1 <= uVar2)) {
+        uVar6 = -uVar1;
+        iVar5 = (uVar4 - uVar3) - (uint)(uVar2 < uVar1);
+      }
+      else {
+        uVar6 = ~uVar1;
+        iVar5 = ~uVar3 + uVar4 + (uint)CARRY4(uVar6,uVar2);
+      }
+      bVar7 = uVar6 + uVar2 <= param_1;
+      uVar2 = -(uint)!bVar7 - iVar5;
+    } while ((uint)-iVar5 < (uint)bVar7);
+  }
+  return;
+}
+
+
+----------------------------------------
+
+[0x25A4] FUN_000025a4 (238 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_000025a4(int param_1,int param_2,int param_3,int param_4,int param_5,uint param_6,
+                uint param_7,int param_8)
+
+{
+  int iVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  uVar3 = 1;
+  if ((((param_1 == 0) || (param_2 == 0)) || (param_4 == 0)) ||
+     (((param_5 == 0 || (param_6 == 0)) || (param_7 == 0)))) {
+    iVar2 = 4;
+  }
+  else if ((param_6 & 3) == 0) {
+    if (param_3 == 0) {
+      iVar2 = 0;
+    }
+    else {
+      iVar2 = FUN_0000041c(param_3);
+      iVar2 = iVar2 + 1;
+    }
+    uVar5 = iVar2 + param_5 + 8;
+    if (uVar5 < 0x81) {
+      iVar4 = 4;
+      if (param_3 != 0) {
+        FUN_00000458(DAT_00002694,param_3,iVar2);
+        iVar4 = iVar2 + 4;
+      }
+      iVar1 = DAT_00002694;
+      iVar2 = DAT_00002694 + -100;
+      FUN_00000458(iVar2 + iVar4 + 0x60,param_4,param_5);
+      uVar6 = iVar4 + param_5 + 4;
+      *(uint *)(iVar2 + iVar4 + param_5 + 0x60) = param_7 << 3;
+      if (uVar6 == uVar5) {
+        do {
+          if (param_8 == 0) {
+            *(uint *)(iVar1 + -4) =
+                 uVar3 << 0x18 | (uVar3 >> 8 & 0xff) << 0x10 | (uVar3 >> 0x10 & 0xff) << 8 |
+                 uVar3 >> 0x18;
+          }
+          else {
+            *(uint *)(iVar1 + -4) = uVar3;
+          }
+          uVar3 = uVar3 + 1;
+          iVar2 = FUN_0000196c(iVar1 + -4,uVar6,param_1,param_2,iVar1 + 0x7c);
+          if (iVar2 != 0) {
+            return iVar2;
+          }
+          uVar5 = 0x20;
+          if (param_7 < 0x21) {
+            uVar5 = param_7;
+          }
+          FUN_00000458(param_6,iVar1 + 0x7c,uVar5);
+          param_7 = param_7 - uVar5;
+          param_6 = param_6 + uVar5;
+          iVar2 = 0;
+        } while (param_7 != 0);
+      }
+      else {
+        iVar2 = 5;
+      }
+    }
+    else {
+      iVar2 = 3;
+    }
+  }
+  else {
+    iVar2 = 6;
+  }
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x2B1C] FUN_00002b1c (48 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00002b1c(int param_1,int param_2,uint param_3)
+
+{
+  if (((param_1 != 0) && (param_2 != 0)) && (param_3 != 0)) {
+    if (0x440 < param_3) {
+      return 5;
+    }
+    FUN_00000458(param_1,DAT_00002b4c,0x38);
+    FUN_00000458(param_2,DAT_00002b50,param_3);
+    return 0;
+  }
+  return 7;
+}
+
+
+----------------------------------------
+
+[0x2F48] FUN_00002f48 (76 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_00002f48(int param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  uint uVar3;
+  uint uVar4;
+  
+  iVar2 = 0;
+  uVar4 = 0;
+  do {
+    iVar1 = FUN_0000308c(uVar4);
+    if (iVar1 != 0) {
+      iVar2 = 0;
+      if (uVar4 < 0x10) {
+        if (param_2 == 0) {
+          uVar3 = 0;
+          do {
+            iVar2 = FUN_00005b40(uVar4,uVar3,0,*(undefined4 *)(param_1 + uVar4 * 0x10 + uVar3 * 4));
+            if (iVar2 != 0) break;
+            uVar3 = uVar3 + 1;
+          } while (uVar3 < 4);
+        }
+      }
+      else {
+        iVar2 = 0x27;
+      }
+      if (iVar2 != 0) {
+        return iVar2;
+      }
+    }
+    uVar4 = uVar4 + 1;
+    if (0xf < uVar4) {
+      return iVar2;
+    }
+  } while( true );
+}
+
+
+----------------------------------------
+
+[0x305C] FUN_0000305c (26 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_0000305c(uint param_1)
+
+{
+  if (((param_1 <= param_1 + 1) && (DAT_00003078 <= param_1)) && (param_1 + 1 <= DAT_0000307c)) {
+    return 1;
+  }
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x3214] FUN_00003214 (312 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined8 FUN_00003214(int param_1,undefined4 param_2)
+
+{
+  uint *puVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  int iVar5;
+  undefined4 uVar6;
+  
+  FUN_00007ba4(0,0xc0);
+  puVar1 = DAT_0000334c;
+  *DAT_0000334c = *DAT_0000334c | 3;
+  puVar1[1] = puVar1[1] | 0xff;
+  *DAT_00003350 = 0x80000000;
+  iVar5 = 0x37;
+  if (param_1 == 1) {
+    DAT_0000334c[-7] = DAT_0000334c[-7] | 0x3000000;
+    iVar4 = FUN_00003600(DAT_00003368,DAT_00003368 >> 0x19);
+    if (iVar4 == 0) {
+      iVar5 = 0xb;
+      goto LAB_0000328c;
+    }
+    iVar2 = FUN_00003568(0x3c00000);
+    if (iVar2 == 0) {
+      FUN_00005094(iVar4);
+      goto LAB_0000328c;
+    }
+    iVar5 = FUN_00001c18(iVar4,iVar2,0);
+    FUN_00005094(iVar4);
+  }
+  else {
+    uVar6 = 8;
+    FUN_00007ba4(0,1);
+    iVar2 = FUN_00003568(0x3c00000);
+    if (iVar2 == 0) goto LAB_0000328c;
+    if (*DAT_00003354 != '\0') {
+      uVar6 = 0x108;
+    }
+    iVar5 = 0;
+    param_2 = 2;
+    FUN_000066a0(0,uVar6,iVar2,0x40000,2,0,0);
+  }
+  FUN_0000511c(iVar2);
+LAB_0000328c:
+  if (iVar5 != 0) {
+    FUN_00007ba4(1,iVar5,2);
+  }
+  FUN_000061f4(DAT_00003358,2);
+  FUN_00007ba4(0,2,1);
+  uVar6 = DAT_0000335c;
+  do {
+    FUN_000041d8();
+    uVar3 = FUN_00007db8(uVar6);
+  } while ((uVar3 & 1) == 0);
+  iVar5 = FUN_000042a8(1);
+  if (iVar5 != 0) {
+    FUN_00007ba4(1,iVar5,2);
+  }
+  if ((param_1 != 1) && (*DAT_00003360 << 3 < 0)) {
+    iVar4 = FUN_000042a8(0xe);
+    if (iVar4 != 0) {
+      FUN_00007ba4(1,iVar4,2);
+    }
+    FUN_000086bc(DAT_00003364,1000);
+  }
+  FUN_00007ba4(0,0xc1);
+  return CONCAT44(param_2,iVar5);
+}
+
+
+----------------------------------------
+
+[0x373C] FUN_0000373c (170 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_0000373c(uint param_1,uint param_2,uint *param_3)
+
+{
+  undefined4 uVar1;
+  uint uVar2;
+  uint *puVar3;
+  int extraout_r3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  uint uVar7;
+  uint uVar8;
+  undefined4 in_cr5;
+  undefined4 in_cr7;
+  undefined4 in_cr8;
+  undefined4 local_2c;
+  
+  uVar2 = DAT_000037f4;
+  uVar1 = DAT_000037e8;
+  local_2c = 0;
+  if (param_3 == (uint *)0x0) {
+    local_2c = 7;
+  }
+  else if (((param_1 < DAT_000037ec) || (DAT_000037f0 < param_2)) || (param_2 <= param_1)) {
+    local_2c = 2;
+  }
+  else if (((param_1 & 0xfff) == 0) && (uVar8 = param_2 - param_1, (uVar8 & 0xfff) == 0)) {
+    uVar7 = uVar8 + DAT_000037f4;
+    coprocessor_moveto(0xf,0,0,0,in_cr8,in_cr7);
+    coprocessor_moveto(0xf,0,6,0,in_cr7,in_cr5);
+    DataSynchronizationBarrier(0xf);
+    uVar4 = param_1;
+    while (uVar5 = uVar2, uVar6 = param_1, uVar4 < param_2) {
+      FUN_000030d4(uVar1,uVar4);
+      uVar4 = extraout_r3 + 0x1000;
+    }
+    for (; uVar5 < uVar7; uVar5 = uVar5 + 0x1000) {
+      FUN_000030c4(uVar1,uVar5,uVar6,0x7f);
+      uVar6 = uVar6 + 0x1000;
+    }
+    FUN_0000120c(2,1,uVar1,0x400);
+    puVar3 = DAT_000037f8;
+    *DAT_000037f8 = param_1;
+    puVar3[1] = uVar2;
+    puVar3[2] = uVar8;
+    *param_3 = uVar7;
+  }
+  else {
+    local_2c = 6;
+  }
+  return local_2c;
+}
+
+
+----------------------------------------
+
+[0x37FC] FUN_000037fc (74 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4 FUN_000037fc(int param_1,int *param_2,undefined4 *param_3)
+
+{
+  undefined4 uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  uVar1 = 0x22;
+  if ((param_2 == (int *)0x0) || (param_3 == (undefined4 *)0x0)) {
+    uVar1 = 7;
+  }
+  else {
+    uVar2 = 0;
+    iVar3 = *DAT_00003848 + 0x10;
+    while( true ) {
+      if (*(uint *)(*DAT_00003848 + 8) <= uVar2) {
+        return 0x22;
+      }
+      if (*(int *)(iVar3 + uVar2 * 0x10) == param_1) break;
+      uVar2 = uVar2 + 1;
+    }
+    iVar3 = iVar3 + uVar2 * 0x10;
+    if ((*(int *)(iVar3 + 8) != 0) && (*(int *)(iVar3 + 4) != 0)) {
+      *param_2 = *(int *)(iVar3 + 8);
+      param_2[1] = 0;
+      *param_3 = *(undefined4 *)(iVar3 + 4);
+      return 0;
+    }
+  }
+  return uVar1;
+}
+
+
+----------------------------------------
+
+[0x3B6C] FUN_00003b6c (50 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00003b6c(int param_1,int param_2)
+
+{
+  int iVar1;
+  uint uVar2;
+  
+  iVar1 = DAT_00003ba0;
+  if (param_1 != 0) {
+    DataSynchronizationBarrier(0xf);
+    InstructionSynchronizationBarrier(0xf);
+    uVar2 = 0;
+    do {
+      *(undefined4 *)(param_2 * 0x10 + uVar2 * 4 + iVar1) = *(undefined4 *)(param_1 + uVar2 * 4);
+      uVar2 = uVar2 + 1;
+    } while (uVar2 < 4);
+    DataSynchronizationBarrier(0xf);
+    InstructionSynchronizationBarrier(0xf);
+    return 0;
+  }
+  return 7;
+}
+
+
+----------------------------------------
+
+[0x3DCC] FUN_00003dcc (52 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00003dcc(undefined4 *param_1)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 uVar3;
+  undefined4 extraout_r3;
+  
+  if (param_1 == (undefined4 *)0x0) {
+    iVar1 = 4;
+  }
+  else {
+    if (param_1[4] == 4) {
+      iVar1 = FUN_00003da4(*param_1,param_1[1],param_1[2],param_1[3]);
+      return iVar1;
+    }
+    if (param_1[4] == 6) {
+      uVar2 = param_1[2];
+      uVar3 = param_1[3];
+      iVar1 = FUN_0000360c(*param_1,param_1[1]);
+      if (iVar1 == 0) {
+        iVar1 = 0x3a;
+      }
+      else {
+        iVar1 = FUN_00003d04(iVar1,uVar2,uVar3);
+        if (iVar1 == 0) {
+          iVar1 = FUN_00005094(extraout_r3);
+          return iVar1;
+        }
+      }
+      return iVar1;
+    }
+    iVar1 = 0x35;
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x4118] FUN_00004118 (32 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+void FUN_00004118(int param_1,uint param_2)
+
+{
+  undefined1 uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  for (uVar2 = 0; uVar2 < param_2 >> 1; uVar2 = uVar2 + 1) {
+    uVar1 = *(undefined1 *)(param_1 + uVar2);
+    iVar3 = (param_2 - uVar2) + param_1;
+    *(undefined1 *)(param_1 + uVar2) = *(undefined1 *)(iVar3 + -1);
+    *(undefined1 *)(iVar3 + -1) = uVar1;
+  }
+  return;
+}
+
+
+----------------------------------------
+
+[0x4138] FUN_00004138 (24 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+void FUN_00004138(int param_1,int param_2,uint param_3)
+
+{
+  uint uVar1;
+  
+  for (uVar1 = 0; uVar1 < param_3; uVar1 = uVar1 + 1) {
+    *(undefined1 *)((param_3 - uVar1) + param_1 + -1) = *(undefined1 *)(param_2 + uVar1);
+  }
+  return;
+}
+
+
+----------------------------------------
+
+[0x4250] FUN_00004250 (24 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00004250(undefined4 *param_1)
+
+{
+  undefined4 uVar1;
+  
+  if (param_1 != (undefined4 *)0x0) {
+    uVar1 = FUN_00000850(*param_1,param_1[1],param_1[2],param_1[3],param_1[4],
+                         *(undefined1 *)(param_1 + 5));
+    return uVar1;
+  }
+  return 4;
+}
+
+
+----------------------------------------
+
+[0x42D4] FUN_000042d4 (28 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_000042d4(int param_1,undefined4 param_2,undefined4 *param_3)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  undefined4 uVar4;
+  
+  iVar2 = FUN_00007f3c();
+  iVar3 = DAT_000085d4;
+  iVar1 = DAT_000085d0;
+  if (iVar2 != 0) {
+    return iVar2;
+  }
+  if (*(int *)(DAT_000085d0 + 4) == param_1) {
+    do {
+      iVar2 = FUN_00007db8(iVar3);
+    } while (iVar2 == 0);
+    if (iVar2 == 1) {
+      if (param_3 != (undefined4 *)0x0) {
+        uVar4 = FUN_00007db8(DAT_000085d4 + -4);
+        *param_3 = uVar4;
+      }
+      if (param_1 == 8) {
+        *DAT_000085d8 = 2;
+      }
+      iVar3 = 0;
+      *(undefined4 *)(iVar1 + 4) = 0;
+    }
+    else {
+      iVar3 = 0x3f;
+    }
+  }
+  else {
+    iVar3 = 0x40;
+  }
+  return iVar3;
+}
+
+
+----------------------------------------
+
+[0x4400] FUN_00004400 (18 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00004400(undefined4 param_1,uint param_2,uint param_3)
+
+{
+  int iVar1;
+  undefined4 uStack_28;
+  undefined4 uStack_24;
+  uint uStack_20;
+  undefined4 uStack_1c;
+  uint auStack_18 [3];
+  
+  uStack_1c = 0;
+  uStack_28 = 0;
+  uStack_24 = 0;
+  uStack_20 = 0;
+  iVar1 = FUN_00000850(param_3 & 0xff,&uStack_1c,&uStack_28,&uStack_20,auStack_18,
+                       (param_3 & 0xffffff) >> 0x14);
+  if (iVar1 == 0) {
+    if (param_2 < uStack_20) {
+      iVar1 = 3;
+    }
+    else {
+      iVar1 = FUN_0000823c(param_1,uStack_1c,uStack_20,param_2,(auStack_18[0] & 0xfffff) >> 0x13);
+    }
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x44B8] FUN_000044b8 (18 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+void FUN_000044b8(undefined4 *param_1)
+
+{
+  FUN_00001886(*param_1,param_1[1],param_1[2],param_1[3],param_1[5],param_1[6]);
+  return;
+}
+
+
+----------------------------------------
+
+[0x5030] FUN_00005030 (20 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+void FUN_00005030(undefined4 *param_1)
+
+{
+  FUN_00001a60(*param_1,param_1[1],param_1[2],param_1[3],param_1[4],param_1[5],1);
+  return;
+}
+
+
+----------------------------------------
+
+[0x5044] FUN_00005044 (24 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+void FUN_00005044(undefined4 *param_1)
+
+{
+  FUN_00001d30(*param_1,param_1[1],param_1[2],param_1[3],param_1[4],param_1[5],param_1[6],3);
+  return;
+}
+
+
+----------------------------------------
+
+[0x511C] FUN_0000511c (82 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_0000511c(uint param_1)
+
+{
+  uint *puVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  if (param_1 == 0) {
+    return 0x38;
+  }
+  if (0xffffff < param_1) {
+    DataSynchronizationBarrier(0xf);
+    InstructionSynchronizationBarrier(0xf);
+    uVar2 = param_1 - 0x1000000 >> 0x14;
+    if (uVar2 < 0x1c) {
+      puVar1 = (uint *)(DAT_00005170 + (uVar2 & 0xfffffffe) * 2);
+      if ((uVar2 & 1) == 0) {
+        uVar3 = *puVar1 & 0xffff0000;
+      }
+      else {
+        uVar3 = (uint)(ushort)*puVar1;
+      }
+      *puVar1 = uVar3;
+      *DAT_00005174 = 1 << (0x1f - uVar2 & 0xff) | *DAT_00005174;
+      return 0;
+    }
+  }
+  return 0x39;
+}
+
+
+----------------------------------------
+
+[0x53C4] FUN_000053c4 (214 bytes)
+  Flags: large stack buffer (0x664)
+  First 2000 chars of decompilation:
+
+int FUN_000053c4(int param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined1 auStack_664 [1600];
+  undefined4 local_24;
+  undefined4 auStack_20 [2];
+  
+  if (*(int *)(param_1 + 8) == 0x60) {
+    uVar3 = 0x71;
+  }
+  else {
+    if (*(int *)(param_1 + 8) != 0x68) {
+      return 4;
+    }
+    uVar3 = 0x72;
+  }
+  iVar1 = FUN_00005f9c(param_1);
+  if (iVar1 != 0) {
+    return iVar1;
+  }
+  iVar1 = FUN_00000850(uVar3,&local_24,0,auStack_20,0,*(undefined1 *)(param_1 + 0x1c));
+  if (((iVar1 == 0) &&
+      (iVar1 = FUN_00008150(DAT_0000549c,local_24,auStack_20[0],0x200,0), iVar1 == 0)) &&
+     (iVar1 = FUN_000057c4(0x73,auStack_664,0,0,1,0,0), iVar1 == 0)) {
+    uVar3 = **(undefined4 **)(param_1 + 0x14);
+    iVar2 = FUN_00007910(**(int **)(param_1 + 0xc) + *DAT_000054a0,uVar3);
+    if (iVar2 == 0) {
+      return 10;
+    }
+    iVar1 = FUN_000056c4(iVar2,uVar3,auStack_664,DAT_0000549c,0);
+    FUN_00008308(iVar2,uVar3);
+    if (iVar1 == 0) {
+      return 0;
+    }
+  }
+  FUN_00007ba4(0,iVar1,2);
+  FUN_00006edc(*(undefined4 *)(param_1 + 8),iVar1);
+  FUN_00008306(3,*(undefined4 *)(param_1 + 8),(**(uint **)(param_1 + 0x18) & 0xffffff) >> 0x14,
+               (**(uint **)(param_1 + 0x18) & 0x7ffffff) >> 0x18);
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x55C0] FUN_000055c0 (186 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_000055c0(uint **param_1,uint param_2,uint param_3,uint *param_4)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint **ppuVar3;
+  uint uVar4;
+  uint local_28;
+  uint *puStack_24;
+  
+  uVar2 = ((uint)param_1 & 0xffffff) >> 0x14;
+  ppuVar3 = param_1;
+  local_28 = param_3;
+  puStack_24 = param_4;
+  if (param_4 == (uint *)0x0) {
+    iVar1 = 7;
+  }
+  else {
+    uVar4 = param_2;
+    if ((*param_4 < 0x100) || (~*param_4 < param_3)) {
+      iVar1 = 3;
+    }
+    else if ((~param_2 & 0xff) == 0) {
+      ppuVar3 = &puStack_24;
+      uVar4 = 0;
+      iVar1 = FUN_0000084a(param_1,param_2,&local_28,0,ppuVar3,0);
+      if (iVar1 == 0) {
+        ppuVar3 = (uint **)0x0;
+        iVar1 = FUN_0000823c(param_3,local_28,0x100,0x100,0);
+        if ((iVar1 == 0) && (iVar1 = FUN_0000571a(param_3,(uint)param_1 & 0xff,uVar2), iVar1 == 0))
+        {
+          ppuVar3 = (uint **)0x2;
+          iVar1 = FUN_00007014(param_3,param_3 + 0x100,*param_4 - 0x100,local_28,2);
+          if (iVar1 == 0) {
+            uVar2 = FUN_00006984(param_3);
+            *param_4 = uVar2;
+            return 0;
+          }
+        }
+      }
+    }
+    else {
+      iVar1 = 4;
+    }
+    FUN_00000554(param_3,*param_4);
+    *param_4 = 0;
+    param_2 = uVar4;
+  }
+  FUN_00006edc((uint)param_1 & 0xff,iVar1);
+  FUN_00008306(3,(uint)param_1 & 0xff,uVar2,((uint)param_1 & 0x7ffffff) >> 0x18,ppuVar3,param_2);
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x5850] FUN_00005850 (420 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_00005850(undefined1 *param_1,undefined1 *param_2,int param_3)
+
+{
+  undefined4 *puVar1;
+  uint uVar2;
+  int iVar3;
+  int iVar4;
+  undefined4 uVar5;
+  int iVar6;
+  byte bVar7;
+  uint local_54;
+  uint local_50;
+  int local_4c;
+  int local_48;
+  int local_44;
+  int local_40;
+  uint local_3c;
+  int *local_38;
+  undefined1 *puStack_30;
+  undefined1 *puStack_2c;
+  int local_28;
+  
+  local_50 = 0;
+  local_40 = 0;
+  local_3c = 0;
+  local_44 = 0;
+  local_4c = 0;
+  local_48 = 0;
+  *param_2 = 0;
+  *param_1 = 0;
+  puStack_30 = param_1;
+  puStack_2c = param_2;
+  local_28 = param_3;
+  FUN_00007ba4(0,6,1);
+  bVar7 = 0;
+  local_38 = &local_40;
+  do {
+    local_54 = (uint)bVar7;
+    iVar3 = FUN_00000850(0x62,local_38,&local_50,&local_3c,&local_48);
+    puVar1 = DAT_000059f4;
+    if (iVar3 != 0) break;
+    bVar7 = bVar7 + 1;
+  } while (-1 < local_48 << 0xf);
+  if (iVar3 != 0) {
+    FUN_00007ba4(0,iVar3,2);
+    return 0x90;
+  }
+  if (-1 < local_48 << 0xe) {
+    *param_2 = 1;
+    *puVar1 = 0x49;
+    return 0x89;
+  }
+  if (local_4c != 0) {
+    return 3;
+  }
+  iVar3 = local_3c + local_50 + 0x9e0;
+  iVar6 = (uint)CARRY4(local_3c,local_50) + (uint)(0xfffff61f < local_3c + local_50);
+  if (iVar6 != 0 && (uint)(iVar3 == 0) <= 1U - iVar6) {
+    return 3;
+  }
+  iVar3 = FUN_00003600(local_50,0,(1 - iVar6) - (uint)(iVar3 != 0),-iVar3);
+  if (iVar3 == 0) {
+    return 0xb;
+  }
+  FUN_00007ba4(0,7,1);
+  uVar2 = local_3c;
+  iVar6 = local_40;
+  *param_1 = 1;
+  local_54 = 0;
+  if (local_48 << 0xc < 0) {
+    iVar4 = FUN_0000823c(&local_54,local_40 + 0x14,4,4,0);
+    if (iVar4 == 0) {
+      uVar5 = 1;
+      iVar6 = iVar6 + 0x100;
+      goto LAB_0000594c;
+    }
+  }
+  else {
+    uVar5 = 0;
+    local_54 = local_3c;
+LAB_0000594c:
+    iVar4 = FUN_0000823c(iVar3,iVar6,local_54,uVar2,uVar5);
+  }
+  iVar6 = DAT_000059f8;
+  if (iVar4 == 0) {
+    *(undefined4 *)(DAT_000059f8 + 0x3c) = 4;
+    iVar4 = FUN_000068ac(iVar3,loc
+----------------------------------------
+
+[0x5A28] FUN_00005a28 (60 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00005a28(uint param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int *piVar3;
+  undefined4 uVar4;
+  
+  uVar4 = 0;
+  if (param_1 < 3) {
+    piVar3 = *(int **)(DAT_00005a64 + param_1 * 4);
+    do {
+      iVar2 = *piVar3 << 0x1e;
+      iVar1 = FUN_00002ffa(param_1,param_2);
+    } while (iVar1 == 0 && -1 < iVar2);
+    if (iVar2 < 0) {
+      uVar4 = FUN_00002ae4(piVar3,param_1);
+    }
+  }
+  else {
+    uVar4 = 0x30;
+  }
+  return uVar4;
+}
+
+
+----------------------------------------
+
+[0x5AB4] FUN_00005ab4 (60 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00005ab4(undefined4 *param_1)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 uVar3;
+  undefined4 extraout_r3;
+  
+  if (param_1 == (undefined4 *)0x0) {
+    iVar1 = 4;
+  }
+  else {
+    if (param_1[4] == 4) {
+      iVar1 = FUN_00005a8c(*param_1,param_1[1],*(undefined4 *)param_1[2],param_1[3]);
+      return iVar1;
+    }
+    if (param_1[4] == 6) {
+      uVar3 = param_1[3];
+      uVar2 = *(undefined4 *)param_1[2];
+      iVar1 = FUN_0000360c(*param_1,param_1[1]);
+      if (iVar1 == 0) {
+        iVar1 = 0x3a;
+      }
+      else {
+        iVar1 = FUN_00005a68(iVar1,uVar2,uVar3);
+        if (iVar1 == 0) {
+          iVar1 = FUN_00005094(extraout_r3);
+          return iVar1;
+        }
+      }
+      return iVar1;
+    }
+    iVar1 = 0x35;
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x5B40] FUN_00005b40 (74 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00005b40(uint param_1,int param_2,int param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  
+  if (0xf < param_1) {
+    return 0x27;
+  }
+  if (param_3 == 0) {
+    FUN_000086bc(*(undefined4 *)(DAT_00005b8c + param_1 * 4),param_2 + 0x3c);
+    iVar1 = DAT_00005b8c + 0x80;
+  }
+  else {
+    if (param_3 != 1) {
+      return 0x15;
+    }
+    FUN_000086bc(*(undefined4 *)(DAT_00005b8c + 0x40 + param_1 * 4));
+    iVar1 = DAT_00005b8c + 0xc0;
+  }
+  FUN_000086bc(*(undefined4 *)(iVar1 + param_1 * 4),param_4);
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x61E4] FUN_000061e4 (16 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_000061e4(int param_1,uint param_2,int param_3)
+
+{
+  if ((param_1 == 0) && (param_2 <= param_2 + param_3)) {
+    return 1;
+  }
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x65B8] FUN_000065b8 (148 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_000065b8(int param_1,int param_2)
+
+{
+  uint uVar1;
+  int iVar2;
+  uint uVar3;
+  uint uVar4;
+  
+  uVar4 = 0xffffffff;
+  for (uVar3 = 0; iVar2 = DAT_0000664c, uVar3 < *(uint *)(param_1 + 0x100); uVar3 = uVar3 + 1) {
+    iVar2 = param_1 + uVar3 * 0x20;
+    if (*(char *)(iVar2 + 0x195) == '\0') {
+      uVar1 = FUN_00008110(*(undefined1 *)(iVar2 + 0x184));
+      if ((uVar1 == *(ushort *)(param_2 + 0x58)) &&
+         (*(char *)(iVar2 + 0x194) == *(char *)(param_2 + 0x7d))) {
+        uVar4 = *(uint *)(param_1 + uVar3 * 0x20 + 0x180);
+        goto LAB_00006622;
+      }
+    }
+  }
+  uVar3 = 0;
+  do {
+    uVar1 = FUN_00008110(*(undefined1 *)(iVar2 + uVar3 * 4));
+    if (uVar1 == *(ushort *)(param_2 + 0x58)) {
+      iVar2 = 0x97;
+      goto LAB_00006626;
+    }
+    uVar3 = uVar3 + 1;
+  } while (uVar3 < 0x14);
+  uVar4 = 0;
+LAB_00006622:
+  iVar2 = 0;
+LAB_00006626:
+  if ((iVar2 == 0) && (*(uint *)(param_2 + 0x4c) < uVar4)) {
+    iVar2 = 0x96;
+  }
+  if ((*(char *)(DAT_0000664c + -4) == '\0') && (iVar2 != 0)) {
+    *(byte *)(DAT_0000664c + -2) = *(byte *)(DAT_0000664c + -2) | 2;
+    iVar2 = 0;
+  }
+  return iVar2;
+}
+
+
+----------------------------------------
+
+[0x66A0] FUN_000066a0 (284 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+void FUN_000066a0(int param_1,uint param_2,uint param_3,uint param_4,undefined4 param_5,
+                 byte *param_6,int param_7)
+
+{
+  undefined4 uVar1;
+  uint uVar2;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
+  uint uVar6;
+  uint local_2c;
+  uint uStack_28;
+  
+  uVar6 = 0;
+  uVar5 = 0;
+  local_2c = param_3;
+  uStack_28 = param_4;
+  if (param_3 == 0) {
+    iVar4 = 0x12;
+    goto LAB_00006790;
+  }
+  if (~param_3 < param_4) {
+LAB_000066c0:
+    iVar4 = 3;
+  }
+  else {
+    uVar3 = DAT_000067bc;
+    if (param_7 != 0) {
+      if (param_4 < 0x100) goto LAB_000066c0;
+      param_4 = param_4 - 0x100;
+      uVar3 = param_3;
+      param_3 = param_3 + 0x100;
+    }
+    if (param_6 == (byte *)0x0) {
+      if (param_1 == 0) {
+        uVar6 = (param_2 & 0x7fffff) >> 0x13;
+        uVar5 = (param_2 & 0xffff) >> 8;
+        iVar4 = FUN_00002c80(param_2,uVar3,&local_2c,&uStack_28,param_2);
+      }
+      else {
+        iVar4 = FUN_0000083c(param_2,&local_2c,0,&uStack_28);
+        if (iVar4 != 0) goto LAB_00006790;
+        iVar4 = FUN_0000823c(uVar3,local_2c,0x100,0x100,0);
+      }
+    }
+    else {
+      for (iVar4 = 0; iVar4 < (int)(uint)*param_6; iVar4 = iVar4 + 1) {
+        if (*(uint *)(*(int *)(param_6 + 8) + iVar4 * 8) == param_2) {
+          local_2c = *(int *)(param_6 + 4) + *(int *)(*(int *)(param_6 + 8) + iVar4 * 8 + 4);
+          iVar4 = FUN_0000823c(uVar3,local_2c,0x100,0x100,0);
+          if (iVar4 != 0) goto LAB_00006734;
+          iVar4 = 0;
+          if (*(char *)(uVar3 + 0x5a) == '\0') {
+            uVar2 = (uint)*(byte *)(uVar3 + 0x7d);
+          }
+          else {
+            if (*(char *)(uVar3 + 0x5a) != '\x01') goto LAB_00006734;
+            uVar2 = (uint)*(ushort *)(uVar3 + 0x58);
+          }
+          if (uVar2 != param_2) {
+            iVar4 = 0x91;
+          }
+          goto LAB_00006734;
+        }
+      }
+      iVar4 = 0x16;
+    }
+LAB_00006734:
+    if ((iVar4 == 0) && (iVar4 = FUN_00007014(uV
+----------------------------------------
+
+[0x67DC] FUN_000067dc (86 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_000067dc(undefined4 param_1,undefined4 *param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  uint uVar4;
+  int local_24;
+  
+  iVar2 = DAT_00006838;
+  iVar1 = DAT_00006834;
+  uVar4 = 0;
+  local_24 = 0;
+  do {
+    iVar3 = FUN_0000823c(&local_24,*(undefined4 *)(iVar1 + uVar4 * 4),4,4,0);
+    if (iVar3 != 0) break;
+    if (local_24 == iVar2) {
+      iVar3 = FUN_0000823c(param_1,*(int *)(iVar1 + uVar4 * 4) + 0x1c,4,4,0);
+      *param_2 = *(undefined4 *)(iVar1 + uVar4 * 4);
+      break;
+    }
+    uVar4 = uVar4 + 1;
+  } while (uVar4 < 6);
+  if (uVar4 == 6) {
+    iVar3 = 0x22;
+  }
+  return iVar3;
+}
+
+
+----------------------------------------
+
+[0x683C] FUN_0000683c (86 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_0000683c(undefined4 param_1,undefined4 *param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  uint uVar4;
+  int local_24;
+  
+  iVar2 = DAT_00006898;
+  iVar1 = DAT_00006894;
+  uVar4 = 0;
+  local_24 = 0;
+  do {
+    iVar3 = FUN_0000823c(&local_24,*(undefined4 *)(iVar1 + uVar4 * 4),4,4,0);
+    if (iVar3 != 0) break;
+    if (local_24 == iVar2) {
+      iVar3 = FUN_0000823c(param_1,*(int *)(iVar1 + uVar4 * 4) + 0x14,4,4,0);
+      *param_2 = *(undefined4 *)(iVar1 + uVar4 * 4);
+      break;
+    }
+    uVar4 = uVar4 + 1;
+  } while (uVar4 < 6);
+  if (uVar4 == 6) {
+    iVar3 = 0x22;
+  }
+  return iVar3;
+}
+
+
+----------------------------------------
+
+[0x6992] FUN_00006992 (60 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00006992(int param_1,int *param_2)
+
+{
+  int iVar1;
+  
+  if ((param_2 != (int *)0x0) && (param_1 != 0)) {
+    if (*(int *)(param_1 + 0x3c) == 0x800) {
+      iVar1 = param_1 + 0x140;
+    }
+    else {
+      if (*(int *)(param_1 + 0x3c) != 0x1000) {
+        return 0x14;
+      }
+      iVar1 = param_1 + 0x240;
+    }
+    param_2[2] = iVar1;
+    *param_2 = param_1 + 0x40;
+    param_2[1] = *(uint *)(param_1 + 0x38) >> 3;
+    param_2[3] = *(uint *)(param_1 + 0x3c) >> 3;
+    return 0;
+  }
+  return 7;
+}
+
+
+----------------------------------------
+
+[0x6E40] FUN_00006e40 (26 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+uint FUN_00006e40(uint param_1)
+
+{
+  if ((DAT_00006e5c[1] >> (param_1 & 0xff) & 1) != 0) {
+    return 0;
+  }
+  return *DAT_00006e5c >> (param_1 & 0xff) & 1;
+}
+
+
+----------------------------------------
+
+[0x7160] FUN_00007160 (70 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_00007160(undefined4 param_1,uint param_2,int param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  uint local_1c;
+  int local_18;
+  undefined4 uStack_14;
+  
+  if (((param_2 < 0x800001) && (param_2 <= param_2 + param_3)) && (param_2 + param_3 < 0x800001)) {
+    local_1c = param_2;
+    local_18 = param_3;
+    uStack_14 = param_4;
+    iVar1 = FUN_000037fc(param_1,&local_18,&local_1c,param_4,param_1);
+    if (iVar1 == 0) {
+      iVar1 = FUN_0000823c(*DAT_000071a8 + param_2,local_18,local_1c + 0x1f & 0xffffffe0,param_3,0);
+    }
+  }
+  else {
+    iVar1 = 3;
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x73D0] FUN_000073d0 (102 bytes)
+  Flags: large stack buffer (0x58)
+  First 2000 chars of decompilation:
+
+int FUN_000073d0(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  undefined1 auStack_58 [48];
+  int local_28;
+  undefined4 uStack_24;
+  undefined1 auStack_20 [12];
+  
+  if (((param_1 == 0x95) || (param_1 == 0x42)) || (param_1 == 0x91)) {
+    iVar1 = FUN_00005f5c(param_2,auStack_20);
+    if (iVar1 == 0) {
+      FUN_000066a0(0,param_1,param_2,param_3,2,0,1);
+      local_28 = FUN_00006984(param_2);
+      local_28 = local_28 + 0x100;
+      uStack_24 = 3;
+      iVar1 = FUN_000068ac(param_2,local_28,3,auStack_58,0x30);
+      if (iVar1 == 0) {
+        iVar1 = 0;
+      }
+    }
+  }
+  else {
+    iVar1 = 4;
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+[0x7438] FUN_00007438 (68 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00007438(int param_1)
+
+{
+  uint *puVar1;
+  uint uVar2;
+  uint *puVar3;
+  uint uVar4;
+  int iVar5;
+  
+  iVar5 = *DAT_0000747c + DAT_00007480;
+  if (param_1 == 0) {
+    puVar1 = (uint *)FUN_00003568(DAT_00007488);
+    iVar5 = iVar5 + 0x3000;
+  }
+  else {
+    puVar1 = (uint *)FUN_00003568(DAT_00007484);
+  }
+  if (puVar1 != (uint *)0x0) {
+    uVar2 = 0;
+    do {
+      puVar3 = (uint *)(iVar5 + uVar2);
+      uVar2 = uVar2 + 4;
+      uVar4 = *puVar3;
+      *puVar1 = uVar4 & 0xffff;
+      puVar1[1] = uVar4 >> 0x10;
+      puVar1 = puVar1 + 2;
+    } while (uVar2 < 0x3000);
+    FUN_0000511c();
+    return 0;
+  }
+  return 7;
+}
+
+
+----------------------------------------
+
+[0x748C] FUN_0000748c (54 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+longlong FUN_0000748c(undefined4 param_1,uint param_2,int param_3,uint param_4,undefined4 param_5)
+
+{
+  if (((param_2 < 0x800001) && (param_2 <= param_2 + param_3)) && (param_2 + param_3 < 0x800001)) {
+    FUN_000066a0(0,param_1,param_2 + *DAT_000074c4,param_3,param_4,0,param_5);
+    return (ulonglong)param_4 << 0x20;
+  }
+  return CONCAT44(param_2,3);
+}
+
+
+----------------------------------------
+
+[0x79D0] FUN_000079d0 (76 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_000079d0(uint param_1)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  if (0x15 < param_1) {
+    return 4;
+  }
+  iVar1 = FUN_00003568(DAT_00007a1c);
+  if (iVar1 != 0) {
+    iVar2 = FUN_00003568(DAT_00007a1c + 4);
+    if (iVar2 != 0) {
+      FUN_0000803c(iVar1,iVar2,param_1,0xff1);
+      FUN_0000511c(iVar1);
+      FUN_0000511c(iVar2);
+      return 0;
+    }
+    FUN_0000511c(iVar1);
+  }
+  return 0xb;
+}
+
+
+----------------------------------------
+
+[0x7AE0] FUN_00007ae0 (26 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+byte FUN_00007ae0(int param_1,int param_2,uint param_3)
+
+{
+  byte bVar1;
+  uint uVar2;
+  
+  bVar1 = 0;
+  for (uVar2 = 0; uVar2 < param_3; uVar2 = uVar2 + 1) {
+    bVar1 = bVar1 | *(byte *)(param_1 + uVar2) ^ *(byte *)(param_2 + uVar2);
+  }
+  return bVar1;
+}
+
+
+----------------------------------------
+
+[0x7B00] FUN_00007b00 (136 bytes)
+  Flags: local array access
+  First 2000 chars of decompilation:
+
+void FUN_00007b00(void)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  undefined1 auStack_40 [32];
+  undefined4 local_20;
+  undefined4 local_1c [2];
+  
+  iVar1 = DAT_00007b88;
+  local_20 = 0;
+  FUN_0000192c(DAT_00007b88,0x20);
+  iVar4 = DAT_00007b88 + 0x20;
+  FUN_0000192c(iVar4,0x10);
+  FUN_0000192c(DAT_00007b88 + 0x30,0x10);
+  iVar3 = DAT_00007b88 + 0x50;
+  iVar2 = FUN_000022a0(iVar3,3,local_1c);
+  if (iVar2 == 0) {
+    iVar2 = FUN_000025a4(iVar3,local_1c[0],s_PDS_Key_Encryption_Key_00007b8c,&local_20,4,auStack_40,
+                         0x20,0);
+    if (iVar2 == 0) {
+      iVar2 = FUN_00001886(auStack_40,2,0x20,iVar4,0x10,DAT_00007b88 + 0x40);
+      if (iVar2 == 0) {
+        FUN_00001886(auStack_40,2,0x20,iVar1,0x20,iVar3);
+      }
+    }
+  }
+  return;
+}
+
+
+----------------------------------------
+
+[0x7BA4] FUN_00007ba4 (86 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+void FUN_00007ba4(int param_1,uint param_2,int param_3)
+
+{
+  char *pcVar1;
+  uint *puVar2;
+  uint uVar3;
+  
+  pcVar1 = DAT_00007bfc;
+  uVar3 = *(uint *)(DAT_00007bfc + 4);
+  if (param_3 == 0) {
+    uVar3 = uVar3 & 0xff000000 | param_2 << 0x10;
+  }
+  else {
+    if (param_3 != 1) {
+      if (param_3 == 2) {
+        *(uint *)(DAT_00007bfc + 4) = uVar3 & 0xffffff00 | param_2;
+      }
+      goto LAB_00007bd6;
+    }
+    uVar3 = uVar3 & 0xffff0000 | param_2 << 8;
+  }
+  *(uint *)(DAT_00007bfc + 4) = uVar3;
+LAB_00007bd6:
+  puVar2 = DAT_00007c00;
+  uVar3 = *(uint *)(pcVar1 + 4) | 0xee000000;
+  *(uint *)(pcVar1 + 4) = uVar3;
+  *puVar2 = uVar3;
+  if (*pcVar1 != '\0') {
+    FUN_00005af0(DAT_00007c04,0xfffd,uVar3,4);
+  }
+  if (param_1 != 0) {
+    do {
+                    /* WARNING: Do nothing block with infinite loop */
+    } while( true );
+  }
+  return;
+}
+
+
+----------------------------------------
+
+[0x7C08] FUN_00007c08 (212 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_00007c08(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  undefined4 *puVar2;
+  int iVar3;
+  int iVar4;
+  undefined4 extraout_r1;
+  undefined4 uVar5;
+  int iVar6;
+  uint uVar7;
+  undefined4 uVar8;
+  undefined4 local_30;
+  undefined4 local_2c;
+  
+  local_30 = param_3;
+  local_2c = param_4;
+  FUN_00007ba4(0,0xbd,0,param_4,param_1,param_2);
+  puVar2 = (undefined4 *)FUN_00003568(DAT_00007ce4);
+  iVar3 = 0xb;
+  if (puVar2 != (undefined4 *)0x0) {
+    *puVar2 = 2;
+    DataSynchronizationBarrier(0xf);
+    FUN_0000511c();
+    iVar3 = 0;
+  }
+  if ((iVar3 != 0) || (iVar3 = FUN_00007de8(), iVar1 = DAT_00007ce8, iVar3 != 0)) {
+    return iVar3;
+  }
+  uVar7 = 0;
+  iVar3 = 0;
+  do {
+    iVar6 = iVar1 + uVar7 * 0x10;
+    switch(*(undefined4 *)(iVar6 + 4)) {
+    default:
+      return 4;
+    case 1:
+    case 3:
+    case 6:
+      iVar4 = FUN_00003568(*(int *)(iVar6 + 8) + 0x28);
+      iVar3 = 0xb;
+      if (iVar4 != 0) {
+        FUN_00000104();
+        FUN_0000010c(iVar4,extraout_r1,*(undefined4 *)(iVar6 + 8),extraout_r1);
+        DataSynchronizationBarrier(0xf);
+        FUN_0000511c(iVar4);
+        iVar3 = 0;
+      }
+      break;
+    case 2:
+      break;
+    case 4:
+    case 5:
+      iVar3 = FUN_00007cf8(5,0x228,*(undefined4 *)(iVar6 + 8),&local_30);
+      if (iVar3 == 0) {
+        uVar5 = *(undefined4 *)(iVar6 + 8);
+        uVar8 = local_2c;
+        local_30 = uVar5;
+        iVar3 = FUN_0000863e(5,0x228,*(undefined4 *)(iVar6 + 8));
+        DataSynchronizationBarrier(0xf);
+        FUN_00007cf8(5,0x228,*(undefined4 *)(iVar6 + 8),&local_30,uVar5,uVar8);
+      }
+    }
+    if (iVar3 != 0) {
+      return iVar3;
+    }
+    uVar7 = uVar7 + 1;
+    if (0x15 < uVar7) {
+      return 0;
+    }
+  } while( true );
+}
+
+
+----------------------------------------
+
+[0x7E88] FUN_00007e88 (32 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+void FUN_00007e88(int param_1,uint param_2)
+
+{
+  undefined1 uVar1;
+  uint uVar2;
+  int iVar3;
+  
+  for (uVar2 = 0; uVar2 < param_2 >> 1; uVar2 = uVar2 + 1) {
+    uVar1 = *(undefined1 *)(param_1 + uVar2);
+    iVar3 = (param_2 - uVar2) + param_1;
+    *(undefined1 *)(param_1 + uVar2) = *(undefined1 *)(iVar3 + -1);
+    *(undefined1 *)(iVar3 + -1) = uVar1;
+  }
+  return;
+}
+
+
+----------------------------------------
+
+[0x7F20] FUN_00007f20 (98 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+int FUN_00007f20(int param_1,undefined4 param_2,undefined4 *param_3)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  undefined4 uVar4;
+  
+  iVar2 = FUN_00007f5c();
+  iVar3 = DAT_000085d4;
+  iVar1 = DAT_000085d0;
+  if (iVar2 != 0) {
+    return iVar2;
+  }
+  if (*(int *)(DAT_000085d0 + 4) == param_1) {
+    do {
+      iVar2 = FUN_00007db8(iVar3);
+    } while (iVar2 == 0);
+    if (iVar2 == 1) {
+      if (param_3 != (undefined4 *)0x0) {
+        uVar4 = FUN_00007db8(DAT_000085d4 + -4);
+        *param_3 = uVar4;
+      }
+      if (param_1 == 8) {
+        *DAT_000085d8 = 2;
+      }
+      iVar3 = 0;
+      *(undefined4 *)(iVar1 + 4) = 0;
+    }
+    else {
+      iVar3 = 0x3f;
+    }
+  }
+  else {
+    iVar3 = 0x40;
+  }
+  return iVar3;
+}
+
+
+----------------------------------------
+
+[0x7F5C] FUN_00007f5c (62 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00007f5c(undefined4 param_1,undefined4 *param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  iVar1 = DAT_00007fa0;
+  if (*(int *)(DAT_00007f9c + 4) != 0) {
+    return 0x40;
+  }
+  *(undefined4 *)(DAT_00007f9c + 4) = param_1;
+  do {
+    iVar2 = FUN_00007db8(iVar1);
+  } while (iVar2 == 0);
+  FUN_000086bc(iVar1,0);
+  FUN_000086bc(DAT_00007fa0 + -4,*param_2);
+  FUN_000086bc(DAT_00007fa0 + 0x14,param_1);
+  return 0;
+}
+
+
+----------------------------------------
+
+[0x8124] FUN_00008124 (38 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+uint FUN_00008124(int param_1,uint param_2)
+
+{
+  uint uVar1;
+  int iVar2;
+  
+  if (param_1 == 100) {
+    iVar2 = DAT_0000814c;
+    if (0xf < param_2) {
+      return 0;
+    }
+  }
+  else {
+    if (param_1 != 0x65) {
+      uVar1 = FUN_00008110();
+      return uVar1;
+    }
+    if (0xf < param_2) {
+      return 0;
+    }
+    iVar2 = DAT_0000814c + 0x20;
+  }
+  return (uint)*(ushort *)(iVar2 + param_2 * 2);
+}
+
+
+----------------------------------------
+
+[0x823C] FUN_0000823c (106 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_0000823c(undefined4 param_1,uint param_2,uint param_3,uint param_4,int param_5)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  uint local_1c;
+  
+  if (((param_3 != 0) && (param_4 != 0)) && (param_2 <= ~param_3)) {
+    if ((*DAT_000082a8 < param_2) || (*DAT_000082a8 < param_2 + param_3)) {
+      return 3;
+    }
+    if (*DAT_000082ac == 0) {
+      return 10;
+    }
+    iVar1 = *DAT_000082ac + param_2;
+    if (param_5 != 0) {
+      local_1c = 0;
+      uVar2 = FUN_0000237c(iVar1,param_1,param_3,param_4,&local_1c);
+      return uVar2;
+    }
+    if (param_3 <= param_4) {
+      local_1c = param_4;
+      if (param_3 < 0x400) {
+        FUN_00000458(param_1,iVar1);
+        return 0;
+      }
+      uVar2 = FUN_00001c18(iVar1,param_1,param_3,param_4,param_3);
+      return uVar2;
+    }
+  }
+  return 4;
+}
+
+
+----------------------------------------
+
+[0x8308] FUN_00008308 (80 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_00008308(uint param_1,uint param_2)
+
+{
+  uint uVar1;
+  uint uVar2;
+  
+  if ((~param_2 < param_1) || (param_2 == 0)) {
+    return 4;
+  }
+  uVar1 = FUN_00006b86(param_1);
+  if (uVar1 < 0x1d) {
+    DataSynchronizationBarrier(0xf);
+    InstructionSynchronizationBarrier(0xf);
+    uVar2 = param_1 - 0x1000000 >> 0x14;
+    if ((uVar2 < 0x1d) && (uVar2 + uVar1 < 0x1d)) {
+      *DAT_00008358 =
+           *DAT_00008358 |
+           (uint)((1 << (uVar1 & 0xff)) + -1 << (0x20 - uVar1 & 0xff)) >> (uVar2 & 0xff);
+      return 0;
+    }
+  }
+  return 10;
+}
+
+
+----------------------------------------
+
+[0x835C] FUN_0000835c (168 bytes)
+  Flags: param controls loop bound
+  First 2000 chars of decompilation:
+
+undefined4 FUN_0000835c(int *param_1)
+
+{
+  undefined4 *puVar1;
+  undefined2 uVar2;
+  uint uVar3;
+  undefined4 *puVar4;
+  int iVar5;
+  uint uVar6;
+  undefined4 uVar7;
+  int local_28;
+  int local_24;
+  
+  uVar6 = 0;
+  local_28 = 0;
+  local_24 = 0;
+  if ((*param_1 == DAT_00008404) &&
+     (uVar3 = FUN_000067c0(10,*(short *)((int)param_1 + 10) + -10,param_1),
+     *(ushort *)(param_1 + 2) == uVar3)) {
+    puVar4 = (undefined4 *)((uint)*(ushort *)(param_1 + 7) + (int)param_1);
+    FUN_00000598(puVar4,0x88);
+    puVar1 = DAT_0000840c;
+    *puVar4 = DAT_00008408;
+    uVar7 = *puVar1;
+    uVar3 = 0;
+    do {
+      iVar5 = FUN_00006e60(uVar7,uVar3 & 0xffff);
+      if (iVar5 != 0) {
+        if (0x1f < uVar6) goto LAB_000083ae;
+        *(undefined2 *)(puVar4 + uVar6 + 2) = *(undefined2 *)(DAT_00008410 + uVar3 * 2);
+        *(undefined1 *)((int)puVar4 + uVar6 * 4 + 10) = 0;
+        FUN_000078a0(uVar3,&local_28,&local_24);
+        if ((local_28 != 0) && (local_24 != 0)) {
+          *(short *)(puVar4 + uVar6 + 2) = (short)local_28;
+          *(char *)((int)puVar4 + uVar6 * 4 + 10) = (char)local_24;
+        }
+        uVar6 = uVar6 + 1;
+      }
+      uVar3 = uVar3 + 1;
+    } while (uVar3 < 0x32);
+    uVar2 = FUN_000067c0(0,0x88,puVar4);
+    *(undefined2 *)((int)param_1 + 0x1e) = uVar2;
+    uVar2 = FUN_000067c0(10,*(short *)((int)param_1 + 10) + -10,param_1);
+    *(undefined2 *)(param_1 + 2) = uVar2;
+    uVar7 = 0;
+  }
+  else {
+LAB_000083ae:
+    uVar7 = 0x95;
+  }
+  return uVar7;
+}
+
+
+----------------------------------------
+
+[0x8500] FUN_00008500 (64 bytes)
+  Flags: param in array index
+  First 2000 chars of decompilation:
+
+int FUN_00008500(undefined4 *param_1,int param_2,int param_3,undefined4 *param_4)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  if ((((param_1 == (undefined4 *)0x0) || (param_2 == 0)) || (param_3 == 0)) ||
+     (param_4 == (undefined4 *)0x0)) {
+    iVar1 = 7;
+  }
+  else {
+    iVar1 = FUN_00001d30(param_3,param_4[2],param_1[2],param_1[3],*param_1,param_1[1],param_2,
+                         *param_4);
+    iVar2 = FUN_0000281c();
+    if ((iVar2 != 2) && (iVar1 != 0)) {
+      iVar1 = 0;
+    }
+  }
+  return iVar1;
+}
+
+
+----------------------------------------
+
+
+Total candidates: 97
