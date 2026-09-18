@@ -65,10 +65,9 @@ Verdicts: `SAFE`, `NEEDS_REVIEW`, `SUSPICIOUS`, `NOT_REVIEWED`, `DEAD_CODE`, `UT
 - **role:** Validates APCB structure size, enforces 0x4F0 cap + buffer bounds
 - **apcb_contact:** YES — primary size validation gate
 - **verdict:** SAFE — size capped, buffer check present
-- **confidence:** MEDIUM — validated via Ghidra decompile, should verify the compare instruction is unsigned
-- **assumptions:** Ghidra correctly decompiles the size comparison as unsigned
-- **what_would_change:** If the compare is signed, a large APCB size (bit 31 set) could bypass the cap
-- **last_reviewed:** session 11
+- **confidence:** HIGH — ARM-level verification confirms ALL branches are unsigned (BHI, BLS)
+- **assumptions:** None remaining
+- **last_reviewed:** session 12 (skeptical validation pass)
 
 ---
 
@@ -77,30 +76,31 @@ Verdicts: `SAFE`, `NEEDS_REVIEW`, `SUSPICIOUS`, `NOT_REVIEWED`, `DEAD_CODE`, `UT
 ### 0x2434 — RSA Key Buffer Handler
 - **size:** 140 bytes (312 per catalog — discrepancy, verify)
 - **role:** HKDF-expand-like key derivation, copies param_1 into stack buffer
-- **stack_buffers:** auStack_6c (68 bytes)
-- **bounds_check:** `param_2 < 0x41` at entry
+- **stack_buffers:** auStack_6c (68 bytes), stack frame 80 bytes total
+- **bounds_check:** `CMP R5, #0x40` + `BLS` (unsigned less-or-equal) at entry — max copy 64 bytes
 - **copy:** `FUN_00000458(auStack_6c, param_1, param_2)` — memcpy to stack
 - **apcb_contact:** INDIRECT — param_2 traces through crypto chain, origin unclear
-- **verdict:** SAFE — 0x41 (65) fits in 68-byte buffer
-- **confidence:** MEDIUM
-- **assumptions:** (1) The `< 0x41` compare is UNSIGNED (Ghidra shows BHS/BLO). (2) param_2 genuinely comes from a code path, not directly from APCB token data.
-- **what_would_change:** If compare is signed (BLT/BGE instead of BLO/BHS), negative param_2 bypasses. If param_2 traces to raw APCB data, attacker controls the size directly.
-- **action_needed:** Verify compare instruction at ARM level. Trace param_2 origin through callers.
-- **last_reviewed:** session 11
+- **verdict:** SAFE — 64 fits in 68-byte buffer, compare is unsigned
+- **confidence:** HIGH — ARM-level verification: CMP R5, #0x40 + BLS (unsigned). Stack frame 80 bytes confirmed.
+- **assumptions:** param_2 origin through callers not fully traced (but irrelevant — unsigned check catches all values > 0x40)
+- **last_reviewed:** session 12 (skeptical validation pass, ARM bytes verified)
 
 ### 0x1D30 — RSA-PSS Signature Verifier
 - **size:** 380 bytes
 - **role:** RSA-PSS verification with MGF1
 - **stack_buffers:** auStack_3c (8 bytes — small, part of larger structure)
-- **copy:** `FUN_00000458(DAT_00001eac + local_44 + 0x608, pbVar5 + uVar2 + 1, iVar1)` — memcpy with computed size to GLOBAL buffer
-- **bounds_check:** `param_4 == 0x100 || param_4 == 0x200` (key size), plus `local_44 * 2 + 2 <= param_4` and `uVar6 < 0x1df`
+- **copy:** `FUN_00000458(DAT_00001eac + local_44 + 0x608, pbVar5 + uVar2 + 1, iVar1)` — memcpy with computed size to GLOBAL buffer at 0xAB00
+- **bounds_check:** Five defense layers verified at ARM level:
+  1. FUN_00001eb4 hash algorithm ID check: `CMP r3, #6; BHS error` — only known digests (0x14..0x40)
+  2. Caller match: `CMP local_44, param_2; BEQ` — digest size must match expected
+  3. Structural bound: `2 + 2*local_44 <= param_4` — ensures room
+  4. Loop guard: `CMP r0, r6; BHI` (unsigned) — uVar2 cannot exceed (param_4 - local_44 - 2)
+  5. Total-size cap: `CMP r7, r11(=0x1DE); BHI error` — fires BEFORE memcpy
 - **apcb_contact:** INDIRECT — processes signatures on APCB-adjacent data
-- **verdict:** NEEDS_REVIEW
-- **confidence:** LOW
-- **assumptions:** Prior analysis dismissed this because copy destination is global (DAT_00001eac), not stack. But the INTERACTION between local_44 (hash-size dependent, from FUN_00001eb4), param_4 (key size, constrained to 0x100/0x200), and iVar1 (computed as `(param_4 - local_44) - uVar2 - 2`) is complex. An integer underflow in iVar1 computation could produce a large copy size.
-- **what_would_change:** If iVar1 can underflow (e.g., uVar2 >= param_4 - local_44 - 1), the memcpy size wraps to ~4GB. The loop `for uVar2 = 0; uVar2 < (param_4 - local_44) - 2 && pbVar5[uVar2] == 0` controls uVar2 but depends on attacker-influenced data in pbVar5.
-- **action_needed:** Manual analysis of the iVar1 computation path. Can uVar2 grow large enough to cause underflow? What controls the pbVar5 data the loop scans?
-- **last_reviewed:** session 11
+- **verdict:** SAFE — iVar1 >= 0 structurally guaranteed by loop guard (Layer 4)
+- **confidence:** HIGH — all five layers verified at ARM instruction level (session 12)
+- **critical note:** Prior sessions dismissed this for the WRONG reason ("copy dest is global, not stack" — that is not a valid safety argument). The actual safety comes from the multi-layered input validation. The final `sub.w r8, r0, #2` at 0x1E4E has S-bit=0 (no flags set, no underflow check), but the loop guard makes underflow structurally impossible.
+- **last_reviewed:** session 12 (skeptical validation pass, ARM bytes verified)
 
 ### 0x3BA4 — Boot Config / CCP Setup
 - **size:** 242 bytes
@@ -110,14 +110,28 @@ Verdicts: `SAFE`, `NEEDS_REVIEW`, `SUSPICIOUS`, `NOT_REVIEWED`, `DEAD_CODE`, `UT
 - **confidence:** HIGH
 - **last_reviewed:** session 11
 
+### 0x53C4 — PSP Command Handler (cmd 0x60/0x68)
+- **size:** 214 bytes
+- **role:** Command dispatch → fill stack buffer with PSP-internal data → copy out to mapped memory
+- **stack_buffers:** SP+0xC through SP+0x64B = 1612 bytes available
+- **stack_frame:** `SUB SP, SP, #0x658` (1624 bytes) + 6 regs pushed (24 bytes) = 1648 bytes total
+- **copy:** FUN_000057C4 called with `MOVW R8, #0x640` (1600 bytes) — hardcoded immediate
+- **bounds_check:** 1600 < 1612 (12-byte margin). Second operation uses constant 0x200.
+- **apcb_contact:** NO — reads PSP-internal state, not APCB data
+- **verdict:** SAFE — all copy sizes are hardcoded constants
+- **confidence:** HIGH — ARM-level verification of SUB SP and MOVW R8 immediates
+- **reachability:** No direct callers found (no BL/BLX targets 0x53C4/0x53C5 in binary). Likely dead code or externally dispatched via PSP mailbox command table.
+- **last_reviewed:** session 12 (skeptical validation pass, ARM bytes verified)
+
 ### 0x75A4 — Config Buffer Builder
 - **size:** varies (part of larger chain)
-- **role:** Reads APCB-derived data, writes to 0x4F000 region
+- **role:** Reads APCB-derived data from SRAM 0xB800 area, writes to 0x4F000 region
 - **apcb_contact:** YES — primary APCB data consumer
 - **verdict:** SAFE — no stack buffers, no loops, all copy sizes hardcoded
 - **confidence:** HIGH
-- **notes:** Callee chain fully analyzed (apcb_parsing_deep.py)
-- **last_reviewed:** session 11
+- **notes:** Callee chain fully analyzed (apcb_parsing_deep.py). Session 12 literal pool decode reveals config_buf+0x660 is sourced from SRAM 0xB814 (APCB header area). Pool entries: 0x77E4→0xB808, 0x77E8→0xB814, 0x77EC→0xB820. Value at 0xB814 is likely attacker-controlled (within APCB image). However, config_buf at 0x4F000 is never read by ABL4 (Vector A closure confirmed), so the attacker-controlled value is a dead end.
+- **open_question:** Does PSP_BL itself ever read back config_buf+0x660 and use it as an address or function pointer? If so, write-what-where via APCB→config_buf→PSP_BL is possible.
+- **last_reviewed:** session 12 (literal pool decode added)
 
 ---
 
@@ -225,8 +239,8 @@ stack buffer with attacker-controlled size" and found none.
 
 | Address | Size | Why re-check |
 |---------|------|-------------|
-| 0x1D30 | 380 | RSA-PSS verifier, complex bounds interaction (see detailed entry above) |
-| 0x53C4 | 214 | Largest stack buffer in binary (0x664 = 1636 bytes), not deeply analyzed |
+| ~~0x1D30~~ | ~~380~~ | ~~RSA-PSS verifier~~ — **RESOLVED session 12: SAFE** (5 defense layers, ARM-verified) |
+| ~~0x53C4~~ | ~~214~~ | ~~Largest stack buffer~~ — **RESOLVED session 12: SAFE** (hardcoded 0x640, no callers) |
 | 0x7014 | 320 | Two large stack buffers (0x4C + 0x5C), local array access |
 | 0x1A60 | 248 | local array + param index + param loop bound — triple flag |
 | 0x66A0 | 284 | Large function, param controls loop bound |
@@ -252,9 +266,21 @@ said "no obvious memcpy-to-stack-with-variable-size" but that's a narrow check.
 6. APCB literal reference trace — 5 functions (apcb_parsing_deep.py)
 7. 22 suspect functions fully decompiled (deep_decompile_suspects.py)
 
-### What it DID NOT check:
-- Semantic correctness of bounds checks (signed vs unsigned, off-by-one)
-- Integer arithmetic overflow/underflow in size computations
-- Indirect data flow through global buffers (function A writes to global, function B uses it unsafely)
-- Dynamic behavior (PSPEmu tracing)
+### What session 12 skeptical validation added:
+1. ARM-level verification of signed/unsigned for FUN_00002434 (CMP+BLS = unsigned) and FUN_00001670 (BHI/BLS = unsigned)
+2. ARM-level integer underflow analysis of FUN_00001D30 — 5 defense layers, iVar1 >= 0 structurally guaranteed
+3. ARM-level stack frame analysis of FUN_000053C4 — hardcoded 0x640 copy into 1612-byte buffer, no callers
+4. Confirmed FUN_000044CC dead code (zero references of any kind, neighbor has 72 proving scanner works)
+5. Confirmed stack base 0x92000 (5 literal pool entries)
+6. Decoded FUN_000075A4 literal pool — config_buf+0x660 sourced from SRAM 0xB814 (APCB header area)
+7. Function pointer table scan — only 1 in entire binary (0x03B8, 3 entries), none reference dead code
+8. **Identified new vulnerability class: write-what-where primitives** (analysis in progress)
+9. Corrected FUN_00001D30 dismissal reasoning: "global buffer dest = safe" is WRONG; actual safety is from bounds checks
+
+### What it DID NOT check (before session 12):
+- ~~Semantic correctness of bounds checks (signed vs unsigned, off-by-one)~~ — **partially addressed session 12** for FUN_00002434, FUN_00001670, FUN_00001D30
+- ~~Integer arithmetic overflow/underflow in size computations~~ — **addressed session 12** for FUN_00001D30
+- Indirect data flow through global buffers (function A writes to global, function B uses it unsafely) — **OPEN**
+- Dynamic behavior (PSPEmu tracing) — **OPEN** (requires emulator, out of scope for static analysis)
 - Functions below 0x0300 (exception handlers, startup stubs — mostly covered by SVC analysis but not exhaustively)
+- **Write-what-where primitives** — APCB-derived values used as memory write destinations (NEW, session 12, analysis in progress)
