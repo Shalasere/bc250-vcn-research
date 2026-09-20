@@ -2,7 +2,37 @@
 
 **Enable VCN (Video Core Next 2.0.3) hardware on AMD BC-250 by overcoming firmware-imposed isolation gates.**
 
-## Latest Status: 2026-09-14/15 — Mechanism Understood End-to-End
+## Latest Status: 2026-09-20 — TOCTOU Analysis Complete, All Runtime Paths DEAD
+
+📄 **`research/TOCTOU_ANALYSIS_2026_09_20.md`** — Systematic
+Time-of-Check-Time-of-Use analysis across all 6 gates in the VCN enablement
+chain. **No exploitable race condition exists from software at runtime.**
+
+Gate 2 (permission table: populated at boot, queried minutes later at runtime)
+was the only candidate with a meaningful time window. Three independent access
+vectors were investigated and all are closed:
+
+1. **CCP MEMTYPE_LOCAL** (board-tested): CCP command queue registers are
+   completely invisible from the host on BC-250. Full 1MB BAR2 scan found
+   only PSP mailbox/status registers and TRNG. Scripts: `code/toctou-analysis/`
+2. **PSP SRAM via SMN**: Architecturally invisible on Zen2/Zen3 — no
+   index/data window register pair exists.
+3. **Known CVEs**: CVE-2023-31316 requires TMR bypass (circular), Sinkclose
+   targets SMRAM not PSP, CVE-2021-46757 requires TA context we don’t have.
+
+**All remaining VCN enablement paths require taking the board offline:**
+- APCB Variant G flash (Robin5.00 DFG+CBSG transplant — built, pending flash)
+- Voltage glitch (PSPReverse SVI2 attack, needs Teensy ~$24)
+
+### Session 13 (2026-09-18): CCP Overflow Chain Resolved
+
+All 4 exploitation avenues from the CCP alignment overflow chain were
+systematically tested and resolved. The chain was confirmed as a real
+vulnerability in the CCP descriptor parser, but the copy sizes are
+**hardcoded** (0x100/0x2F00/0x4F0), not derived from entry.size —
+buffer-contained by design.
+
+## Status: 2026-09-14/15 — Mechanism Understood End-to-End
 
 📄 **`research/BC250_VCN_UNLOCK_STATE_2026_09_14.md`** — The "island isolation
 gate" from the 09-06/09-11 reports is now identified precisely: BC-250's PSP
@@ -124,7 +154,9 @@ code/
   ├── vcn_smu_adapter.py      : SMU communication with error handling (215 lines)
   │                             Message validation, format verification
   ├── execute_fix_hw.py       : Hardware-aware runner (imports real bc250-smu)
-  └── execute_fix.py          : Mock/demo harness (testing without hardware)
+  ├── execute_fix.py          : Mock/demo harness (testing without hardware)
+  ├── psp-rce-analysis/       : 26 PSP bootloader binary analysis scripts
+  └── toctou-analysis/        : CCP SRAM probe + BAR2/BAR5 scan (board-tested)
 ```
 
 ## What's Included
