@@ -1,0 +1,10 @@
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
+@@ -2665,6 +2665,7 @@
+ 				amdgpu_device_ip_block_add(adev, &jpeg_v2_0_ip_block);
+ 			break;
+ 		case IP_VERSION(2, 0, 3):
++			amdgpu_device_ip_block_add(adev, &vcn_v2_0_ip_block);
+ 			break;
+ 		case IP_VERSION(2, 5, 0):
+ 			amdgpu_device_ip_block_add(adev, &vcn_v2_5_ip_block);

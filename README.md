@@ -2,7 +2,19 @@
 
 **Enable VCN (Video Core Next 2.0.3) hardware on AMD BC-250 by overcoming firmware-imposed isolation gates.**
 
-## Latest Status: 2026-09-20 — TOCTOU Analysis Complete, All Runtime Paths DEAD
+## Latest Status: 2026-09-30 — Direct-load driver-side proven; SMU-side `PowerUpVcn` confirmed present but PREREQ-locked
+
+📄 **`research/SESSION_SUMMARY_2026_09_30.md`** — Two-day session updating the picture on two fronts:
+
+1. **Driver-side `LOAD_IP_FW(VCN)` wall is bypassable.** A new `amdgpu.vcn_direct` module parameter routes VCN firmware through the driver's own `AMDGPU_FW_LOAD_DIRECT` path: allocate a driver-managed BO, `memcpy` the 405 KB `cyan_skillfish2_vcn.bin` into it, program LMI VCPU_CACHE_64BIT_BAR to point there, skip PSP autoload registration. **`amdgpu` fully loads with VCN 2.0 enumerated in the IP-block list**, `/dev/dri/card1` present, board stable. The `TEE_ERROR_ITEM_NOT_FOUND` wall from the earlier reports is never hit because PSP is never asked to load VCN. Full source + `PATCHES.md` + WSL cross-build recipe in `code/direct-load/`.
+
+2. **The SMU firmware DOES ship `PowerUpVcn` handlers** at msg IDs 0x2A and 0x2B — they return `RESP=0xFD REJECTED_PREREQ`, not `0xFE UNKNOWN_CMD`. This directly confirms the community's "seems accessible if some flag is passed to SMU at boot from BIOS" hypothesis (`api_q3.py` note): **the code is present, gated by an unmet prerequisite**. The unlock lives at BIOS-init time in a msg sequence we haven't extracted. `research/SESSION_SUMMARY_2026_09_30.md` has the full mailbox transcript.
+
+3. **Q0 and Q3 mailboxes are the same underlying SMU mailbox.** Sweeping msgs 0x3E–0x50 via the Q0-address SMN pair returned the same clock values (100/1200/1254/3500/1500 MHz) prior work found via the Q3-address pair, byte-for-byte. One msg-ID space, two SMN transports.
+
+**Combined picture**: driver-side wall down, SMU-side wall standing. Direct-load is a working half of the puzzle — reusable once an SMU unlock is discovered. Session author is halting active research on this specific board; the writeup is intended as a reference for future attempts.
+
+## Status: 2026-09-20 — TOCTOU Analysis Complete, All Runtime Paths DEAD
 
 📄 **`research/TOCTOU_ANALYSIS_2026_09_20.md`** — Systematic
 Time-of-Check-Time-of-Use analysis across all 6 gates in the VCN enablement
