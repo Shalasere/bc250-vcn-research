@@ -329,7 +329,7 @@ If you use this research, cite:
 
 ```
 BC-250 VCN Enablement Research
-Jacob Burns (jacob.burns@wwt.com)
+Shalasere
 September 2026
 https://github.com/shalasere/bc250-vcn
 ```
